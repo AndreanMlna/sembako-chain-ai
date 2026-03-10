@@ -1,0 +1,326 @@
+// ==========================================
+// SEMBAKO-CHAIN AI - Prisma Database Schema
+// ==========================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---- Enums ----
+enum UserRole {
+  PETANI
+  MITRA_TOKO
+  KURIR
+  PEMBELI
+  REGULATOR
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+enum MetodeJual {
+  DISTRIBUSI
+  LANGSUNG
+}
+
+enum StatusPanen {
+  TANAM
+  TUMBUH
+  SIAP_PANEN
+  DIPANEN
+}
+
+enum StatusKesehatan {
+  SEHAT
+  PERINGATAN
+  SAKIT
+}
+
+enum TipeTransaksi {
+  PEMBAYARAN
+  PENARIKAN
+  TOP_UP
+  REFUND
+}
+
+enum StatusTransaksi {
+  PENDING
+  BERHASIL
+  GAGAL
+}
+
+// ---- Models ----
+
+model User {
+  id        String   @id @default(cuid())
+  nama      String
+  email     String   @unique
+  password  String
+  telepon   String
+  role      UserRole
+  avatar    String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Alamat
+  jalan      String?
+  kelurahan  String?
+  kecamatan  String?
+  kabupaten  String?
+  provinsi   String?
+  kodePos    String?
+  latitude   Float?
+  longitude  Float?
+
+  // Relations
+  lahan           Lahan[]
+  mitraToko       MitraToko?
+  kurirProfile    KurirProfile?
+  orders          Order[]         @relation("PembeliOrders")
+  deliveries      Job[]           @relation("KurirJobs")
+  transaksiKirim  Transaksi[]     @relation("TransaksiPengirim")
+  transaksiTerima Transaksi[]     @relation("TransaksiPenerima")
+  notifikasi      Notifikasi[]
+  wallet          EWallet?
+  produk          Produk[]
+  cropChecks      HasilCropCheck[]
+
+  @@map("users")
+}
+
+model EWallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  saldo     Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("e_wallets")
+}
+
+model Lahan {
+  id          String   @id @default(cuid())
+  petaniId    String
+  nama        String
+  luasHektar  Float
+  jalan       String?
+  kelurahan   String?
+  kecamatan   String?
+  kabupaten   String?
+  provinsi    String?
+  kodePos     String?
+  latitude    Float?
+  longitude   Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  petani  User      @relation(fields: [petaniId], references: [id])
+  tanaman Tanaman[]
+
+  @@map("lahan")
+}
+
+model Tanaman {
+  id               String          @id @default(cuid())
+  lahanId          String
+  nama             String
+  varietasNama     String
+  tanggalTanam     DateTime
+  estimasiPanen    DateTime
+  statusPanen      StatusPanen     @default(TANAM)
+  statusKesehatan  StatusKesehatan @default(SEHAT)
+  jumlahKg         Float?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  lahan      Lahan            @relation(fields: [lahanId], references: [id])
+  cropChecks HasilCropCheck[]
+
+  @@map("tanaman")
+}
+
+model HasilCropCheck {
+  id               String          @id @default(cuid())
+  tanamanId        String
+  userId           String
+  fotoUrl          String
+  hasilDiagnosa    String
+  tingkatKeparahan Int             // 0-100
+  solusi           String[]
+  statusKesehatan  StatusKesehatan
+  createdAt        DateTime        @default(now())
+
+  tanaman Tanaman @relation(fields: [tanamanId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@map("hasil_crop_checks")
+}
+
+model MitraToko {
+  id         String @id @default(cuid())
+  userId     String @unique
+  namaToko   String
+  jenisToko  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user      User            @relation(fields: [userId], references: [id])
+  inventori InventoryItem[]
+
+  @@map("mitra_toko")
+}
+
+model InventoryItem {
+  id         String @id @default(cuid())
+  tokoId     String
+  produkId   String
+  stok       Int
+  minStok    Int    @default(10)
+  hargaJual  Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  toko   MitraToko @relation(fields: [tokoId], references: [id])
+  produk Produk    @relation(fields: [produkId], references: [id])
+
+  @@map("inventory_items")
+}
+
+model KurirProfile {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  jenisKendaraan  String
+  platNomor       String
+  isAvailable     Boolean @default(true)
+  rating          Float   @default(5.0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("kurir_profiles")
+}
+
+model Produk {
+  id             String   @id @default(cuid())
+  petaniId       String
+  nama           String
+  kategori       String
+  deskripsi      String?
+  satuan         String
+  fotoUrl        String?
+  hargaPerSatuan Float
+  stokTersedia   Float
+  metodeJual     MetodeJual @default(LANGSUNG)
+  latitude       Float?
+  longitude      Float?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  petani    User            @relation(fields: [petaniId], references: [id])
+  orderItems OrderItem[]
+  inventori  InventoryItem[]
+
+  @@map("produk")
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  pembeliId         String
+  metodeJual        MetodeJual
+  status            OrderStatus @default(PENDING)
+  totalHarga        Float
+  ongkosKirim       Float       @default(0)
+  qrCode            String?
+  alamatPengiriman  String?
+  latitude          Float?
+  longitude         Float?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  pembeli    User        @relation("PembeliOrders", fields: [pembeliId], references: [id])
+  items      OrderItem[]
+  job        Job?
+  transaksi  Transaksi[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id       String @id @default(cuid())
+  orderId  String
+  produkId String
+  jumlah   Float
+  harga    Float
+  subtotal Float
+
+  order  Order  @relation(fields: [orderId], references: [id])
+  produk Produk @relation(fields: [produkId], references: [id])
+
+  @@map("order_items")
+}
+
+model Job {
+  id            String      @id @default(cuid())
+  kurirId       String?
+  orderId       String      @unique
+  status        OrderStatus @default(PENDING)
+  estimasiJarak Float?
+  estimasiWaktu Float?
+  ongkosKirim   Float       @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  kurir User?  @relation("KurirJobs", fields: [kurirId], references: [id])
+  order Order  @relation(fields: [orderId], references: [id])
+
+  @@map("jobs")
+}
+
+model Transaksi {
+  id          String          @id @default(cuid())
+  orderId     String?
+  pengirimId  String
+  penerimaId  String
+  jumlah      Float
+  tipe        TipeTransaksi
+  status      StatusTransaksi @default(PENDING)
+  referensi   String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  order    Order? @relation(fields: [orderId], references: [id])
+  pengirim User   @relation("TransaksiPengirim", fields: [pengirimId], references: [id])
+  penerima User   @relation("TransaksiPenerima", fields: [penerimaId], references: [id])
+
+  @@map("transaksi")
+}
+
+model Notifikasi {
+  id        String   @id @default(cuid())
+  userId    String
+  judul     String
+  pesan     String
+  tipe      String   @default("INFO") // INFO, PERINGATAN, SUKSES, ERROR
+  dibaca    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notifikasi")
+}
