@@ -15,6 +15,8 @@ services:
 
   # ----------------------------------------------------------
   # PostgreSQL database
+  # ⚠️  Credentials below are for local development only.
+  #     For production, use Docker secrets or environment files.
   # ----------------------------------------------------------
   db:
     image: postgres:16-alpine
@@ -53,10 +55,12 @@ services:
         condition: service_healthy
     environment:
       # ---- Database ----
+      # ⚠️  Development credentials — change for production!
       DATABASE_URL: postgresql://sembako:sembako_pass@db:5432/sembako_chain_ai
       # ---- NextAuth ----
       NEXTAUTH_URL: http://localhost:3000
-      # WARNING: change this secret before deploying to production!
+      # ⚠️  REQUIRED: Generate a strong secret before deploying to production:
+      #     openssl rand -base64 32
       NEXTAUTH_SECRET: docker-sembako-secret-change-in-production
       # ---- API ----
       NEXT_PUBLIC_API_URL: http://localhost:3000/api

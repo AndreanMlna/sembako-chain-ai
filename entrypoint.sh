@@ -23,12 +23,12 @@ if [ "$SEED_DB" = "true" ]; then
 
   # Count users via a small inline Node.js snippet.
   # Using a heredoc with quoted marker so the shell never expands $disconnect.
-  USER_COUNT=$(node - << 'JSEOF'
+  USER_COUNT=$(node - << 'JSEOF' 2>/dev/null
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 prisma.user.count()
   .then(n => { console.log(n); return prisma.$disconnect() })
-  .catch(() => { console.log(0); process.exit(0) })
+  .catch(err => { process.stderr.write('seed-check error: ' + err.message + '\n'); console.log(0); process.exit(0) })
 JSEOF
 )
 
