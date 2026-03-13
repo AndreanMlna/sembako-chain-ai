@@ -1,47 +1,50 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type LucideIcon, Circle } from "lucide-react";
-import * as LucideIcons from "lucide-react";
-import { cn } from "@/lib/utils";
-import { UserRole } from "@/types";
-import { NAV_ITEMS } from "@/constants";
+import { useAuthStore } from "@/store/auth-store"; // Pakai store auth kita
+import {
+    LayoutDashboard, ShoppingBag, Truck,
+    Sprout, Database, Wallet, User
+} from "lucide-react";
 
-const icons = LucideIcons as unknown as Record<string, LucideIcon>;
+// Pisahkan list menu berdasarkan Role
+const MENU_PEMBELI = [
+    { name: "Dashboard", href: "/pembeli", icon: LayoutDashboard },
+    { name: "Katalog", href: "/pembeli/katalog", icon: ShoppingBag },
+    { name: "Pre-Order", href: "/pembeli/pre-order", icon: Sprout },
+    // ... dst
+];
 
-interface SidebarProps {
-  role: UserRole;
-}
+const MENU_PETANI = [
+    { name: "Dashboard", href: "/petani", icon: LayoutDashboard },
+    { name: "Data Lahan", href: "/petani/lahan", icon: Database },
+    // ... dst
+];
 
-export default function Sidebar({ role }: SidebarProps) {
-  const pathname = usePathname();
-  const navItems = NAV_ITEMS[role] || [];
+export default function Sidebar() {
+    const pathname = usePathname();
+    const { user } = useAuthStore(); // Ambil data user & role
 
-  return (
-    <aside className="hidden w-64 shrink-0 border-r bg-white md:block">
-      <nav className="flex flex-col gap-1 p-4">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          const IconComponent = icons[item.icon] || Circle;
+    // LOGIC FIX: Tentukan menu berdasarkan Role User, bukan cuma URL
+    const menus = user?.role === "petani" ? MENU_PETANI : MENU_PEMBELI;
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-green-50 text-green-700"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-              )}
-            >
-              <IconComponent className="h-5 w-5" />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-    </aside>
-  );
+    return (
+        <aside className="w-64 border-r border-border bg-card/50">
+            <nav className="space-y-1 p-4">
+                {menus.map((item) => (
+                    <Link
+                        key={item.name}
+                        href={item.href}
+                        className={cn(
+                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
+                            pathname === item.href ? "bg-primary/10 text-primary" : "text-foreground/50 hover:text-foreground"
+                        )}
+                    >
+                        <item.icon className="h-4 w-4" />
+                        {item.name}
+                    </Link>
+                ))}
+            </nav>
+        </aside>
+    );
 }

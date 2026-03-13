@@ -3,24 +3,20 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-// 1. Tambahkan import getSession dari next-auth/react
 import { signIn, getSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "@/lib/validators";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginInput>({
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
 
@@ -35,47 +31,42 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError(result.error);
+        setError("Email atau password salah");
       } else {
-        // 2. Ambil sesi terbaru untuk mengecek role akun yang baru saja login
         const session = await getSession();
-
-        // Asumsi data role tersimpan di session.user.role
-        // Menggunakan "as any" untuk menghindari error TypeScript jika type Session belum di-extend
         const userRole = (session?.user as any)?.role;
 
-        // 3. Tentukan rute redirect berdasarkan Role
-        let redirectPath = "/"; // Default fallback
+        let redirectPath = "/";
         if (userRole === "PETANI") redirectPath = "/petani";
         else if (userRole === "MITRA_TOKO") redirectPath = "/mitra-toko";
         else if (userRole === "KURIR") redirectPath = "/kurir";
         else if (userRole === "PEMBELI") redirectPath = "/pembeli";
         else if (userRole === "REGULATOR") redirectPath = "/regulator";
 
-        // 4. Arahkan ke dashboard spesifik
         router.push(redirectPath);
         router.refresh();
       }
     } catch (err) {
-      setError("Terjadi kesalahan, silakan coba lagi");
+      setError("Terjadi kesalahan sistem");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-      <div className="rounded-xl border bg-white p-8 shadow-sm">
-        <h2 className="mb-6 text-center text-xl font-semibold text-gray-900">
-          Masuk ke Akun Anda
+      <div className="rounded-2xl border border-border bg-card p-8 shadow-xl shadow-primary/5">
+        <h2 className="mb-6 text-center text-2xl font-bold text-foreground tracking-tight">
+          Masuk ke Akun
         </h2>
 
         {error && (
-            <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
+            <div className="mb-6 flex items-center gap-2 rounded-lg bg-red-500/10 p-3 text-sm font-medium text-red-500">
+              <AlertCircle className="h-4 w-4" />
               {error}
             </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <Input
               id="email"
               label="Email"
@@ -85,36 +76,30 @@ export default function LoginPage() {
               {...register("email")}
           />
 
-          <Input
-              id="password"
-              label="Password"
-              type="password"
-              placeholder="Masukkan password"
-              error={errors.password?.message}
-              {...register("password")}
-          />
-
-          <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" className="rounded" />
-              Ingat saya
-            </label>
-            <Link
-                href="/forgot-password"
-                className="text-sm text-green-600 hover:underline"
-            >
-              Lupa password?
-            </Link>
+          <div className="space-y-1">
+            <Input
+                id="password"
+                label="Password"
+                type="password"
+                placeholder="Masukkan password"
+                error={errors.password?.message}
+                {...register("password")}
+            />
+            <div className="flex justify-end">
+              <Link href="/forgot-password" title="Lupa password" className="text-xs font-bold text-primary hover:underline">
+                Lupa password?
+              </Link>
+            </div>
           </div>
 
-          <Button type="submit" className="w-full" isLoading={isLoading}>
-            Masuk
+          <Button type="submit" className="w-full font-bold py-6 shadow-lg shadow-primary/20" isLoading={isLoading}>
+            Masuk Sekarang
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-500">
+        <p className="mt-8 text-center text-sm text-foreground/50">
           Belum punya akun?{" "}
-          <Link href="/register" className="text-green-600 hover:underline">
+          <Link href="/register" className="font-bold text-primary hover:underline">
             Daftar sekarang
           </Link>
         </p>

@@ -1,26 +1,72 @@
 @import "tailwindcss";
 
-:root {
-  --background: #064e3b;
-  --foreground: #ededed;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --sembako-darkest: #051f20;
+    --sembako-darker: #0b2b26;
+    --sembako-dark: #163832;
+    --sembako-primary: #235347;
+    --sembako-light: #8eb69b;
+    --sembako-accent: #daf1de;
+
+    --background: #f1f8f3;
+    --foreground: var(--sembako-darkest);
+    --card-bg: #ffffff;
+    --nav-bg: var(--sembako-darkest);
+    --border-color: rgba(5, 31, 32, 0.1);
+  }
+
+  .dark {
+    --background: var(--sembako-darkest);
+    --foreground: var(--sembako-accent);
+    --card-bg: var(--sembako-dark);
+    --nav-bg: #031415;
+    --border-color: rgba(218, 241, 222, 0.1);
   }
 }
 
+/* --- THE BOUNCE FIX --- */
+html {
+  /* Jangan kunci height di 100% atau h-screen */
+  height: -webkit-fill-available;
+  /* Biarkan browser handle bounce secara native */
+  overscroll-behavior-y: bounce;
+}
+
 body {
-  background: var(--background);
+  min-height: 100vh;
+  /* Pakai auto agar scroll-nya 'lepas' ke window */
+  height: auto !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Support untuk momentum scrolling di iOS */
+  -webkit-overflow-scrolling: touch;
+
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+  /* Hilangkan highlight biru saat tap */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* --- THEME MAPPING --- */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card-bg);
+  --color-nav: var(--nav-bg);
+  --color-border: var(--border-color);
+  --color-primary: var(--sembako-primary);
+  --color-accent: var(--sembako-accent);
+}
+
+/* Animasi simpel biar transisi halaman smooth */
+.animate-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
