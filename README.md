@@ -26,7 +26,7 @@ cd sembako-chain-ai
 npm install
 ```
 
-> **Catatan:** Node.js hanya digunakan satu kali untuk mengunduh `node_modules` karena container Docker tidak memiliki akses ke npm registry. Setelah itu semua berjalan di dalam Docker.
+> **Catatan:** `node_modules` perlu diinstal di host terlebih dahulu karena container Docker **dalam environment ini** tidak memiliki akses keluar ke npm registry. Jika kamu menjalankan Docker di mesin biasa dengan akses internet penuh, kamu bisa melewati langkah ini — pastikan `node_modules/` dihapus dari `.dockerignore` dan tambahkan kembali `RUN npm ci` ke dalam `Dockerfile`.
 
 #### 2. Build & Jalankan semua service
 
