@@ -1,50 +1,53 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuthStore } from "@/store/auth-store"; // Pakai store auth kita
-import {
-    LayoutDashboard, ShoppingBag, Truck,
-    Sprout, Database, Wallet, User
-} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { NAV_ITEMS } from "@/constants";
+import * as LucideIcons from "lucide-react";
+import { Circle, type LucideIcon } from "lucide-react";
+import { useAuthStore } from "@/store/auth-store"; // 1. IMPORT STORE
 
-// Pisahkan list menu berdasarkan Role
-const MENU_PEMBELI = [
-    { name: "Dashboard", href: "/pembeli", icon: LayoutDashboard },
-    { name: "Katalog", href: "/pembeli/katalog", icon: ShoppingBag },
-    { name: "Pre-Order", href: "/pembeli/pre-order", icon: Sprout },
-    // ... dst
-];
-
-const MENU_PETANI = [
-    { name: "Dashboard", href: "/petani", icon: LayoutDashboard },
-    { name: "Data Lahan", href: "/petani/lahan", icon: Database },
-    // ... dst
-];
-
-export default function Sidebar() {
+export default function Sidebar() { // 2. HAPUS PROPS ROLE
     const pathname = usePathname();
-    const { user } = useAuthStore(); // Ambil data user & role
+    const { user } = useAuthStore(); // 3. AMBIL ROLE DARI USER AKTIF
 
-    // LOGIC FIX: Tentukan menu berdasarkan Role User, bukan cuma URL
-    const menus = user?.role === "petani" ? MENU_PETANI : MENU_PEMBELI;
+    // Fallback ke pembeli jika user belum load
+    const userRole = user?.role || "pembeli";
+
+    // Memastikan role valid sebagai key untuk NAV_ITEMS
+    const navItems = NAV_ITEMS[userRole as keyof typeof NAV_ITEMS] || [];
+
+    const icons = LucideIcons as unknown as Record<string, LucideIcon>;
 
     return (
-        <aside className="w-64 border-r border-border bg-card/50">
-            <nav className="space-y-1 p-4">
-                {menus.map((item) => (
-                    <Link
-                        key={item.name}
-                        href={item.href}
-                        className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
-                            pathname === item.href ? "bg-primary/10 text-primary" : "text-foreground/50 hover:text-foreground"
-                        )}
-                    >
-                        <item.icon className="h-4 w-4" />
-                        {item.name}
-                    </Link>
-                ))}
+        <div className="h-full bg-transparent py-4">
+            <nav className="flex flex-col gap-1 px-4">
+                {navItems.map((item) => {
+                    // Cek aktif pake 'startsWith' supaya submenu tetep highlight
+                    const isActive = pathname.startsWith(item.href);
+                    const IconComponent = icons[item.icon] || Circle;
+
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                                isActive
+                                    ? "bg-accent/20 text-accent shadow-sm ring-1 ring-white/10"
+                                    : "text-accent/60 hover:bg-white/5 hover:text-accent"
+                            )}
+                        >
+                            <IconComponent className={cn(
+                                "h-5 w-5 transition-colors",
+                                isActive ? "text-accent" : "text-accent/40"
+                            )} />
+                            <span>{item.label}</span>
+                        </Link>
+                    );
+                })}
             </nav>
-        </aside>
+        </div>
     );
 }
