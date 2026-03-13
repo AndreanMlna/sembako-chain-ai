@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Providers } from "@/components/providers"; // Import Providers Anda
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Sembako-Chain AI",
@@ -20,6 +17,7 @@ export default function RootLayout({
                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
+<<<<<<< HEAD
     return (
         <html lang="id" suppressHydrationWarning>
         <body className={inter.className} suppressHydrationWarning>
@@ -33,3 +31,11 @@ export default function RootLayout({
         </html>
     );
 }
+=======
+  return (
+    <html lang="id">
+      <body suppressHydrationWarning>{children}</body>
+    </html>
+  );
+}
+>>>>>>> ba046db (feat: add Docker containerization with Compose, healthchecks, and entrypoint)

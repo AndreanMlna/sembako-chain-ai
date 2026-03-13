@@ -4,7 +4,105 @@ Platform rantai pasok komoditas sembako berbasis AI — menghubungkan petani, mi
 
 ---
 
-## Cara Menjalankan di Linux (dari Nol)
+## 🐳 Menjalankan dengan Docker (Cara Tercepat)
+
+Cara paling mudah untuk menjalankan seluruh proyek tanpa perlu menginstal Node.js atau PostgreSQL secara manual.
+
+### Prasyarat
+
+| Perangkat Lunak | Versi Minimum | Cara Cek |
+|---|---|---|
+| **Docker** | 24.x | `docker --version` |
+| **Docker Compose** | 2.x | `docker compose version` |
+| **Node.js** *(hanya untuk langkah 1)* | 18.x | `node -v` |
+
+### Langkah-Langkah
+
+#### 1. Clone & Install dependensi di host
+
+```bash
+git clone https://github.com/FarrelGhozy/sembako-chain-ai.git
+cd sembako-chain-ai
+npm install
+```
+
+> **Catatan:** Node.js hanya digunakan satu kali untuk mengunduh `node_modules` karena container Docker tidak memiliki akses ke npm registry. Setelah itu semua berjalan di dalam Docker.
+
+#### 2. Build & Jalankan semua service
+
+```bash
+docker compose up --build
+```
+
+Docker Compose akan otomatis:
+- Menjalankan PostgreSQL 16
+- Menerapkan migrasi database (`prisma migrate deploy`)
+- Mengisi data demo (`npm run db:seed`) — hanya jika database masih kosong
+- Menjalankan server Next.js di port 3000
+
+Tunggu hingga muncul pesan: **`✓ Ready in ...ms`**
+
+Buka browser: **http://localhost:3000**
+
+#### 3. Menjalankan ulang (tanpa rebuild)
+
+```bash
+docker compose up
+```
+
+#### 4. Menghentikan semua service
+
+```bash
+# Hentikan tanpa menghapus data
+docker compose down
+
+# Hentikan dan hapus semua data (database akan direset)
+docker compose down -v
+```
+
+### Akun Demo (tersedia setelah startup pertama)
+
+| Role | Email | Password |
+|---|---|---|
+| **Petani** | `petani@demo.com` | `password123` |
+| **Mitra Toko** | `toko@demo.com` | `password123` |
+| **Kurir** | `kurir@demo.com` | `password123` |
+| **Pembeli** | `pembeli@demo.com` | `password123` |
+| **Regulator** | `regulator@demo.com` | `password123` |
+
+### Konfigurasi Docker (opsional)
+
+Variabel environment di `docker-compose.yml` yang bisa disesuaikan:
+
+| Variabel | Default | Keterangan |
+|---|---|---|
+| `NEXTAUTH_SECRET` | `docker-sembako-secret-...` | **Ganti ini untuk production!** |
+| `SEED_DB` | `true` | Set ke `false` setelah data sudah ada |
+| `NEXTAUTH_URL` | `http://localhost:3000` | Ganti jika deploy ke server lain |
+
+### Troubleshooting Docker
+
+**Port 3000 atau 5432 sudah terpakai:**
+```bash
+# Ganti port di docker-compose.yml, misalnya:
+# ports: - "3001:3000"  # untuk app
+# ports: - "5433:5432"  # untuk db
+```
+
+**Perlu melihat log secara real-time:**
+```bash
+docker compose logs -f app   # log aplikasi
+docker compose logs -f db    # log database
+```
+
+**Reset total (mulai dari awal):**
+```bash
+docker compose down -v && docker compose up --build
+```
+
+---
+
+## Cara Menjalankan di Linux (Tanpa Docker)
 
 ### 1. Prasyarat
 
