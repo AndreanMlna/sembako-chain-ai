@@ -40,6 +40,8 @@ Docker Compose akan otomatis:
 - Mengisi data demo (`npm run db:seed`) — hanya jika database masih kosong
 - Menjalankan server Next.js di port 3000
 
+Secara default, aplikasi bisa dibuka di **http://localhost:3000** dan PostgreSQL Docker diekspos ke host di **localhost:5433** agar tidak bentrok dengan PostgreSQL lokal yang sering memakai port 5432.
+
 Tunggu hingga muncul pesan: **`✓ Ready in ...ms`**
 
 Buka browser: **http://localhost:3000**
@@ -79,6 +81,7 @@ Variabel environment di `docker-compose.yml` yang bisa disesuaikan:
 | `NEXTAUTH_SECRET` | `docker-sembako-secret-...` | **Ganti ini untuk production!** |
 | `SEED_DB` | `true` | Set ke `false` setelah data sudah ada |
 | `NEXTAUTH_URL` | `http://localhost:3000` | Ganti jika deploy ke server lain |
+| `DB_PORT` | `5433` | Port PostgreSQL di host. Ubah ke `5432` jika port itu kosong |
 
 ### Troubleshooting Docker
 
@@ -86,7 +89,7 @@ Variabel environment di `docker-compose.yml` yang bisa disesuaikan:
 ```bash
 # Ganti port di docker-compose.yml, misalnya:
 # ports: - "3001:3000"  # untuk app
-# ports: - "5433:5432"  # untuk db
+# DB_PORT=5434 docker compose up --build  # untuk db
 ```
 
 **Perlu melihat log secara real-time:**
