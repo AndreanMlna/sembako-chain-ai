@@ -6,26 +6,27 @@ import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "@/constants";
 import * as LucideIcons from "lucide-react";
 import { Circle, type LucideIcon } from "lucide-react";
-import { useAuthStore } from "@/store/auth-store"; // 1. IMPORT STORE
+import { UserRole } from "@/types";
 
-export default function Sidebar() { // 2. HAPUS PROPS ROLE
+interface SidebarProps {
+    role: UserRole;
+}
+
+export default function Sidebar({ role }: SidebarProps) {
     const pathname = usePathname();
-    const { user } = useAuthStore(); // 3. AMBIL ROLE DARI USER AKTIF
-
-    // Fallback ke pembeli jika user belum load
-    const userRole = user?.role || "pembeli";
 
     // Memastikan role valid sebagai key untuk NAV_ITEMS
-    const navItems = NAV_ITEMS[userRole as keyof typeof NAV_ITEMS] || [];
+    const navItems = NAV_ITEMS[role] || [];
 
+    // Casting LucideIcons agar TypeScript tidak bingung saat indexing
     const icons = LucideIcons as unknown as Record<string, LucideIcon>;
 
     return (
         <div className="h-full bg-transparent py-4">
             <nav className="flex flex-col gap-1 px-4">
                 {navItems.map((item) => {
-                    // Cek aktif pake 'startsWith' supaya submenu tetep highlight
-                    const isActive = pathname.startsWith(item.href);
+                    const isActive = pathname === item.href;
+                    // Ambil komponen icon, jika tidak ketemu pakai Circle sebagai fallback
                     const IconComponent = icons[item.icon] || Circle;
 
                     return (
