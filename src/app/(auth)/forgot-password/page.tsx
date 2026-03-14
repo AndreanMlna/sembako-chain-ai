@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MailCheck } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 
@@ -14,70 +14,49 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    try {
-      // TODO: Implement forgot password logic
-      console.log("Forgot password:", email);
+    // Simulasi logic reset
+    setTimeout(() => {
       setIsSubmitted(true);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
       setIsLoading(false);
-    }
+    }, 1500);
   };
 
   return (
-    <div className="rounded-xl border bg-white p-8 shadow-sm">
-      {isSubmitted ? (
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Email Terkirim
-          </h2>
-          <p className="mt-2 text-sm text-gray-500">
-            Kami telah mengirim link reset password ke <strong>{email}</strong>.
-            Silakan cek inbox Anda.
-          </p>
-          <Link
-            href="/login"
-            className="mt-6 inline-flex items-center gap-2 text-sm text-green-600 hover:underline"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Kembali ke halaman login
-          </Link>
-        </div>
-      ) : (
-        <>
-          <h2 className="mb-2 text-center text-xl font-semibold text-gray-900">
-            Lupa Password
-          </h2>
-          <p className="mb-6 text-center text-sm text-gray-500">
-            Masukkan email Anda untuk menerima link reset password.
-          </p>
+      <div className="rounded-2xl border border-border bg-card p-8 shadow-xl shadow-primary/5">
+        {isSubmitted ? (
+            <div className="text-center py-4">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <MailCheck className="h-8 w-8" />
+              </div>
+              <h2 className="text-2xl font-bold text-foreground">Email Terkirim</h2>
+              <p className="mt-3 text-sm text-foreground/50 leading-relaxed">
+                Link reset password telah dikirim ke <strong className="text-foreground">{email}</strong>.
+              </p>
+              <Link href="/login" className="mt-8 inline-flex items-center gap-2 font-bold text-primary hover:underline">
+                <ArrowLeft className="h-4 w-4" />
+                Kembali ke Login
+              </Link>
+            </div>
+        ) : (
+            <>
+              <h2 className="mb-2 text-center text-2xl font-bold text-foreground">Lupa Password</h2>
+              <p className="mb-8 text-center text-sm text-foreground/50">
+                Kami akan mengirimkan instruksi ke email Anda.
+              </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              id="email"
-              label="Email"
-              type="email"
-              placeholder="nama@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <Input id="email" label="Email Terdaftar" type="email" placeholder="nama@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <Button type="submit" className="w-full font-bold py-6" isLoading={isLoading}>
+                  Kirim Link Reset
+                </Button>
+              </form>
 
-            <Button type="submit" className="w-full" isLoading={isLoading}>
-              Kirim Link Reset
-            </Button>
-          </form>
-
-          <Link
-            href="/login"
-            className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-gray-700"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Kembali ke login
-          </Link>
-        </>
-      )}
-    </div>
+              <Link href="/login" className="mt-8 flex items-center justify-center gap-2 text-sm font-semibold text-foreground/40 hover:text-primary transition-colors">
+                <ArrowLeft className="h-4 w-4" />
+                Kembali ke login
+              </Link>
+            </>
+        )}
+      </div>
   );
 }

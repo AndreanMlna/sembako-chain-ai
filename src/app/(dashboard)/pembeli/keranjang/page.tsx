@@ -1,63 +1,140 @@
 "use client";
 
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import Button from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import EmptyState from "@/components/shared/EmptyState";
+import Badge from "@/components/ui/Badge"; // <--- INI YANG TADI KURANG LER!
 import { useCartStore } from "@/store/cart-store";
-import { formatRupiah } from "@/lib/utils";
+import { formatRupiah, cn } from "@/lib/utils";
+import Link from "next/link";
 
 export default function KeranjangPage() {
-  const { items, getTotalHarga, getTotalItems } = useCartStore();
+    const { items, getTotalHarga, getTotalItems, updateQuantity, removeItem } = useCartStore();
 
-  return (
-    <div>
-      <PageHeader
-        title="Keranjang Belanja"
-        description={`${getTotalItems()} item di keranjang`}
-      />
+    return (
+        <div className="space-y-6 animate-in">
+            <PageHeader
+                title="Keranjang Belanja"
+                description={`${getTotalItems()} item siap untuk diproses`}
+            />
 
-      {items.length === 0 ? (
-        <EmptyState
-          icon="ShoppingCart"
-          title="Keranjang kosong"
-          description="Tambahkan produk dari katalog untuk mulai belanja."
-          actionLabel="Lihat Katalog"
-          onAction={() => console.log("Go to katalog")}
-        />
-      ) : (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            {/* TODO: Implement cart items list */}
-          </div>
-          <div>
-            <Card>
-              <CardContent>
-                <h3 className="mb-4 text-lg font-semibold text-gray-900">
-                  Ringkasan Belanja
-                </h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Subtotal</span>
-                    <span>{formatRupiah(getTotalHarga())}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Ongkos Kirim</span>
-                    <span className="text-green-600">Dihitung saat checkout</span>
-                  </div>
-                  <div className="border-t pt-2">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>Total</span>
-                      <span>{formatRupiah(getTotalHarga())}</span>
+            {items.length === 0 ? (
+                <EmptyState
+                    icon="ShoppingCart"
+                    title="Keranjang masih kosong"
+                    description="Sepertinya Anda belum memilih bahan pangan segar. Ayo jelajahi katalog kami!"
+                    actionLabel="Mulai Belanja"
+                    onAction={() => window.location.href = "/pembeli/katalog"}
+                />
+            ) : (
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                    {/* LEFT: ITEMS LIST */}
+                    <div className="lg:col-span-2 space-y-4">
+                        {items.map((item) => (
+                            <Card key={item.id} className="border-border bg-card group overflow-hidden">
+                                <CardContent className="p-4 sm:p-6">
+                                    <div className="flex flex-col sm:flex-row gap-4">
+                                        <div className="h-20 w-20 shrink-0 rounded-xl bg-primary/5 flex items-center justify-center text-primary/20">
+                                            <ShoppingCart className="h-10 w-10" />
+                                        </div>
+
+                                        <div className="flex-1 space-y-1">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h4 className="text-base font-bold text-foreground leading-tight">{item.name}</h4>
+                                                    <p className="text-xs text-foreground/40 font-medium">Satuan: {item.unit || 'kg'}</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => removeItem(item.id)}
+                                                    className="text-foreground/20 hover:text-red-500 transition-colors p-1"
+                                                >
+                                                    <Trash2 className="h-5 w-5" />
+                                                </button>
+                                            </div>
+
+                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+                                                <p className="text-lg font-black text-primary">
+                                                    {formatRupiah(item.price * item.qty)}
+                                                </p>
+
+                                                <div className="flex items-center gap-3 bg-foreground/5 w-fit rounded-lg p-1 border border-border">
+                                                    <button
+                                                        onClick={() => updateQuantity(item.id, item.qty - 1)}
+                                                        className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-background text-foreground transition-all active:scale-90"
+                                                        disabled={item.qty <= 1}
+                                                    >
+                                                        <Minus className="h-4 w-4" />
+                                                    </button>
+                                                    <span className="text-sm font-black w-6 text-center">{item.qty}</span>
+                                                    <button
+                                                        onClick={() => updateQuantity(item.id, item.qty + 1)}
+                                                        className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-background text-foreground transition-all active:scale-90"
+                                                    >
+                                                        <Plus className="h-4 w-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+
+                        <div className="rounded-2xl bg-primary/5 border border-primary/10 p-4 flex gap-3 items-start">
+                            <Truck className="h-5 w-5 text-primary shrink-0" />
+                            <p className="text-xs text-foreground/60 leading-relaxed font-medium">
+                                Sistem AI kami sedang mencari <span className="text-primary font-bold">Kurir Terdekat</span> untuk memastikan barang sampai dalam kondisi segar hari ini.
+                            </p>
+                        </div>
                     </div>
-                  </div>
+
+                    {/* RIGHT: SUMMARY CARD */}
+                    <div className="relative">
+                        <Card className="sticky top-24 border-primary/20 shadow-xl shadow-primary/5 bg-card">
+                            <CardContent className="p-6">
+                                <h3 className="mb-6 text-lg font-black text-foreground tracking-tight uppercase">
+                                    Ringkasan Belanja
+                                </h3>
+
+                                <div className="space-y-4">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-foreground/50 font-medium">Total Harga ({getTotalItems()} item)</span>
+                                        <span className="font-bold text-foreground">{formatRupiah(getTotalHarga())}</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm border-b border-border pb-4">
+                                        <span className="text-foreground/50 font-medium">Ongkos Kirim</span>
+                                        {/* Sekarang Badge sudah aman karena sudah di-import */}
+                                        <Badge variant="info" className="text-[10px] h-5 bg-primary/10 text-primary border-none">
+                                            FREE SUBSIDI
+                                        </Badge>
+                                    </div>
+
+                                    <div className="pt-2">
+                                        <div className="flex justify-between items-baseline mb-6">
+                                            <span className="text-base font-bold text-foreground">Total Bayar</span>
+                                            <span className="text-2xl font-black text-primary tracking-tighter">
+                        {formatRupiah(getTotalHarga())}
+                      </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Button className="w-full py-7 text-base font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95 group">
+                                    LANJUT CHECKOUT
+                                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+
+                                <div className="mt-6 flex items-center justify-center gap-2 text-[10px] font-bold text-foreground/30 uppercase tracking-widest">
+                                    <ShieldCheck className="h-4 w-4" />
+                                    Transaksi Aman & Terenkripsi
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
-                <Button className="mt-4 w-full">Checkout</Button>
-              </CardContent>
-            </Card>
-          </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 }

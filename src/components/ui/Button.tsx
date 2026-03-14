@@ -22,14 +22,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const variants = {
-      primary: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
-      secondary: "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500",
-      outline:
-        "border border-green-600 text-green-600 hover:bg-green-50 focus:ring-green-500",
-      ghost: "text-gray-600 hover:bg-gray-100 focus:ring-gray-500",
-      danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-    };
+      const variants = {
+          primary: "bg-primary text-white hover:opacity-90 focus:ring-primary/50",
+          secondary: "bg-sembako-dark text-accent hover:bg-sembako-darker focus:ring-sembako-dark/50",
+          outline: "border border-primary text-primary hover:bg-primary/5 focus:ring-primary/50",
+          ghost: "text-foreground hover:bg-foreground/5 focus:ring-foreground/20",
+          danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500/50",
+      };
 
     const sizes = {
       sm: "px-3 py-1.5 text-sm",

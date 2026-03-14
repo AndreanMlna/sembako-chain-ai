@@ -1,59 +1,60 @@
 import { create } from "zustand";
-import { Produk } from "@/types";
+import { persist } from "zustand/middleware";
 
-interface CartItem {
-  produk: Produk;
-  jumlah: number;
+// Samakan interface ini dengan apa yang kita panggil di UI
+export interface CartItem {
+    id: string;
+    name: string;
+    price: number;
+    qty: number;
+    unit: string;
+    image?: string;
 }
 
 interface CartState {
-  items: CartItem[];
-  addItem: (produk: Produk, jumlah: number) => void;
-  removeItem: (produkId: string) => void;
-  updateQuantity: (produkId: string, jumlah: number) => void;
-  clearCart: () => void;
-  getTotalItems: () => number;
-  getTotalHarga: () => number;
+    items: CartItem[];
+    addItem: (item: CartItem) => void;
+    removeItem: (id: string) => void;
+    updateQuantity: (id: string, qty: number) => void;
+    clearCart: () => void;
+    getTotalItems: () => number;
+    getTotalHarga: () => number;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
-  items: [],
+export const useCartStore = create<CartState>()(
+    persist(
+        (set, get) => ({
+            items: [],
 
-  addItem: (produk, jumlah) =>
-    set((state) => {
-      const existingIndex = state.items.findIndex(
-        (item) => item.produk.id === produk.id
-      );
-      if (existingIndex >= 0) {
-        const newItems = [...state.items];
-        newItems[existingIndex].jumlah += jumlah;
-        return { items: newItems };
-      }
-      return { items: [...state.items, { produk, jumlah }] };
-    }),
+            addItem: (newItem) =>
+                set((state) => {
+                    const existingIndex = state.items.findIndex((item) => item.id === newItem.id);
+                    if (existingIndex >= 0) {
+                        const newItems = [...state.items];
+                        newItems[existingIndex].qty += newItem.qty;
+                        return { items: newItems };
+                    }
+                    return { items: [...state.items, newItem] };
+                }),
 
-  removeItem: (produkId) =>
-    set((state) => ({
-      items: state.items.filter((item) => item.produk.id !== produkId),
-    })),
+            removeItem: (id) =>
+                set((state) => ({
+                    items: state.items.filter((item) => item.id !== id),
+                })),
 
-  updateQuantity: (produkId, jumlah) =>
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.produk.id === produkId ? { ...item, jumlah } : item
-      ),
-    })),
+            updateQuantity: (id, qty) =>
+                set((state) => ({
+                    items: state.items.map((item) =>
+                        item.id === id ? { ...item, qty: Math.max(1, qty) } : item
+                    ),
+                })),
 
-  clearCart: () => set({ items: [] }),
+            clearCart: () => set({ items: [] }),
 
-  getTotalItems: () => {
-    return get().items.reduce((total, item) => total + item.jumlah, 0);
-  },
+            getTotalItems: () => get().items.reduce((total, item) => total + item.qty, 0),
 
-  getTotalHarga: () => {
-    return get().items.reduce(
-      (total, item) => total + item.produk.hargaPerSatuan * item.jumlah,
-      0
-    );
-  },
-}));
+            getTotalHarga: () => get().items.reduce((total, item) => total + item.price * item.qty, 0),
+        }),
+        { name: "sembako-cart-storage" } // Simpan di LocalStorage otomatis
+    )
+);

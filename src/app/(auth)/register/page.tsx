@@ -11,6 +11,7 @@ import { ROLE_LABELS } from "@/constants";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,17 +19,13 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterInput>({
+  const { register, handleSubmit, formState: { errors } } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
   });
 
   const roleOptions = Object.entries(ROLE_LABELS)
-    .filter(([key]) => key !== UserRole.REGULATOR) // Regulator tidak bisa self-register
-    .map(([value, label]) => ({ value, label }));
+      .filter(([key]) => key !== UserRole.REGULATOR)
+      .map(([value, label]) => ({ value, label }));
 
   const onSubmit = async (data: RegisterInput) => {
     setIsLoading(true);
@@ -41,106 +38,66 @@ export default function RegisterPage() {
       });
 
       const result = await res.json();
-
       if (!res.ok) {
         setError(result.error || "Registrasi gagal");
         return;
       }
 
       setSuccess(true);
-      setTimeout(() => {
-        router.push("/login");
-      }, 2000);
+      setTimeout(() => router.push("/login"), 2000);
     } catch (err) {
-      setError("Terjadi kesalahan, silakan coba lagi");
+      setError("Terjadi kesalahan jaringan");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="rounded-xl border bg-white p-8 shadow-sm">
-      <h2 className="mb-6 text-center text-xl font-semibold text-gray-900">
-        Buat Akun Baru
-      </h2>
+      <div className="rounded-2xl border border-border bg-card p-8 shadow-xl shadow-primary/5">
+        <h2 className="mb-6 text-center text-2xl font-bold text-foreground tracking-tight">
+          Buat Akun Baru
+        </h2>
 
-      {error && (
-        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-          {error}
-        </div>
-      )}
+        {error && (
+            <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-500/10 p-3 text-sm font-medium text-red-500">
+              <AlertCircle className="h-4 w-4" />
+              {error}
+            </div>
+        )}
 
-      {success && (
-        <div className="mb-4 rounded-lg bg-green-50 p-3 text-sm text-green-600">
-          Registrasi berhasil! Mengalihkan ke halaman login...
-        </div>
-      )}
+        {success && (
+            <div className="mb-4 flex items-center gap-2 rounded-lg bg-primary/10 p-3 text-sm font-medium text-primary">
+              <CheckCircle2 className="h-4 w-4" />
+              Registrasi berhasil! Mengalihkan...
+            </div>
+        )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Input
-          id="nama"
-          label="Nama Lengkap"
-          placeholder="Masukkan nama lengkap"
-          error={errors.nama?.message}
-          {...register("nama")}
-        />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Input id="nama" label="Nama Lengkap" placeholder="Nama Anda" error={errors.nama?.message} {...register("nama")} />
+            <Input id="telepon" label="Telepon" type="tel" placeholder="08xxx" error={errors.telepon?.message} {...register("telepon")} />
+          </div>
 
-        <Input
-          id="email"
-          label="Email"
-          type="email"
-          placeholder="nama@email.com"
-          error={errors.email?.message}
-          {...register("email")}
-        />
+          <Input id="email" label="Email" type="email" placeholder="nama@email.com" error={errors.email?.message} {...register("email")} />
 
-        <Input
-          id="telepon"
-          label="Nomor Telepon"
-          type="tel"
-          placeholder="08xxxxxxxxxx"
-          error={errors.telepon?.message}
-          {...register("telepon")}
-        />
+          <Select id="role" label="Daftar Sebagai" options={roleOptions} placeholder="Pilih peran" error={errors.role?.message} {...register("role")} />
 
-        <Select
-          id="role"
-          label="Daftar Sebagai"
-          options={roleOptions}
-          placeholder="Pilih peran Anda"
-          error={errors.role?.message}
-          {...register("role")}
-        />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Input id="password" label="Password" type="password" placeholder="••••••••" error={errors.password?.message} {...register("password")} />
+            <Input id="konfirmasiPassword" label="Konfirmasi" type="password" placeholder="••••••••" error={errors.konfirmasiPassword?.message} {...register("konfirmasiPassword")} />
+          </div>
 
-        <Input
-          id="password"
-          label="Password"
-          type="password"
-          placeholder="Minimal 8 karakter"
-          error={errors.password?.message}
-          {...register("password")}
-        />
+          <Button type="submit" className="w-full font-bold py-6 mt-4" isLoading={isLoading}>
+            Daftar Sekarang
+          </Button>
+        </form>
 
-        <Input
-          id="konfirmasiPassword"
-          label="Konfirmasi Password"
-          type="password"
-          placeholder="Ulangi password"
-          error={errors.konfirmasiPassword?.message}
-          {...register("konfirmasiPassword")}
-        />
-
-        <Button type="submit" className="w-full" isLoading={isLoading}>
-          Daftar
-        </Button>
-      </form>
-
-      <p className="mt-6 text-center text-sm text-gray-500">
-        Sudah punya akun?{" "}
-        <Link href="/login" className="text-green-600 hover:underline">
-          Masuk di sini
-        </Link>
-      </p>
-    </div>
+        <p className="mt-8 text-center text-sm text-foreground/50">
+          Sudah punya akun?{" "}
+          <Link href="/login" className="font-bold text-primary hover:underline">
+            Masuk di sini
+          </Link>
+        </p>
+      </div>
   );
 }
