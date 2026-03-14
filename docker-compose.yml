@@ -1,0 +1,81 @@
+# ============================================================
+# Docker Compose — Sembako-Chain AI
+#
+# Services:
+#   db   — PostgreSQL 16 (persisted volume)
+#   app  — Next.js application
+#
+# Usage:
+#   docker compose up --build        # first time / after code changes
+#   docker compose up -d             # subsequent starts (detached)
+#   docker compose down -v           # stop and remove volumes
+# ============================================================
+
+services:
+
+  # ----------------------------------------------------------
+  # PostgreSQL database
+  # ⚠️  Credentials below are for local development only.
+  #     For production, use Docker secrets or environment files.
+  # ----------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: sembako_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sembako
+      POSTGRES_PASSWORD: sembako_pass
+      POSTGRES_DB: sembako_chain_ai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sembako -d sembako_chain_ai"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ----------------------------------------------------------
+  # Next.js application
+  # ----------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* vars are baked into the JS bundle at build time.
+        # If you expose the app on a different hostname/port, change this.
+        NEXT_PUBLIC_API_URL: http://localhost:3000/api
+    container_name: sembako_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # ---- Database ----
+      # ⚠️  Development credentials — change for production!
+      DATABASE_URL: postgresql://sembako:sembako_pass@db:5432/sembako_chain_ai
+      # ---- NextAuth ----
+      NEXTAUTH_URL: http://localhost:3000
+      # ⚠️  REQUIRED: Generate a strong secret before deploying to production:
+      #     openssl rand -base64 32
+      NEXTAUTH_SECRET: docker-sembako-secret-change-in-production
+      # ---- API ----
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api
+      # ---- Seed (set to "false" after first successful start) ----
+      SEED_DB: "true"
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:3000/ > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+volumes:
+  postgres_data:
+    driver: local
