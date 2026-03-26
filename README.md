@@ -21,7 +21,7 @@ Cara paling mudah untuk menjalankan seluruh proyek tanpa perlu menginstal Node.j
 #### 1. Clone & Install dependensi di host
 
 ```bash
-git clone https://github.com/FarrelGhozy/sembako-chain-ai.git
+git https://github.com/AndreanMlna/sembako-chain-ai.git
 cd sembako-chain-ai
 npm install
 ```
