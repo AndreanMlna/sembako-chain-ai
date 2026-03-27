@@ -1,28 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { StatusPanen } from "@prisma/client";
 
-/**
- * API Route untuk Dashboard Petani
- *
- * GET /api/petani/dashboard - Get dashboard statistics
- */
-
 export async function GET() {
   try {
-    // Memastikan user sudah login
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized. Silakan login terlebih dahulu." },
-        { status: 401 }
+          { success: false, message: "Unauthorized. Silakan login terlebih dahulu." },
+          { status: 401 }
       );
     }
 
-    // Mengambil statistik dashboard petani
+    console.log("📊 Dashboard API - Petani ID:", session.user.id);
+
     const [
       totalLahan,
       totalTanamanAktif,
@@ -31,56 +25,49 @@ export async function GET() {
       upcomingHarvests,
       recentActivities
     ] = await Promise.all([
-      // Total lahan
       prisma.lahan.count({
-        where: { userId: session.user.id }
+        where: { petaniId: session.user.id }
       }),
 
-      // Total tanaman aktif (TANAM, TUMBUH, SIAP_PANEN)
       prisma.tanaman.count({
         where: {
-          lahan: { userId: session.user.id },
+          lahan: { petaniId: session.user.id },
           statusPanen: {
             in: [StatusPanen.TANAM, StatusPanen.TUMBUH, StatusPanen.SIAP_PANEN]
           }
         }
       }),
 
-      // Total siap panen
       prisma.tanaman.count({
         where: {
-          lahan: { userId: session.user.id },
+          lahan: { petaniId: session.user.id },
           statusPanen: StatusPanen.SIAP_PANEN
         }
       }),
 
-      // Wallet data
       prisma.eWallet.findUnique({
         where: { userId: session.user.id }
       }),
 
-      // Upcoming harvests (next 7 days)
       prisma.tanaman.findMany({
         where: {
-          lahan: { userId: session.user.id },
-          statusPanen: StatusPanen.SIAP_PANEN,
-          estimasiPanen: {
-            gte: new Date(),
-            lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-          }
+          lahan: { petaniId: session.user.id },
+          statusPanen: StatusPanen.SIAP_PANEN
         },
         include: {
-          lahan: {
-            select: { nama: true, lokasi: true }
-          }
+          lahan: true // Mengambil seluruh field lahan untuk menghindari error select
         },
         orderBy: { estimasiPanen: 'asc' },
         take: 5
       }),
 
-      // Recent activities (last 10 transactions)
       prisma.transaksi.findMany({
-        where: { userId: session.user.id },
+        where: {
+          OR: [
+            { pengirimId: session.user.id },
+            { penerimaId: session.user.id }
+          ]
+        },
         orderBy: { createdAt: 'desc' },
         take: 10
       })
@@ -93,20 +80,44 @@ export async function GET() {
         totalSiapPanen,
         saldoWallet: walletData?.saldo || 0
       },
-      upcomingHarvests: upcomingHarvests.map(harvest => ({
+      upcomingHarvests: upcomingHarvests.map((harvest) => ({
         id: harvest.id,
         nama: harvest.nama,
         estimasiPanen: harvest.estimasiPanen,
-        lahan: harvest.lahan.nama,
-        lokasi: `${harvest.lahan.lokasi?.kecamatan}, ${harvest.lahan.lokasi?.kabupaten}`
+        // Akses langsung field dari tabel lahan sesuai log Prisma Anda
+        lahan: harvest.lahan?.nama || "Tanpa Nama",
+        lokasi: harvest.lahan ? `${harvest.lahan.kecamatan}, ${harvest.lahan.kabupaten}` : "Lokasi N/A"
       })),
-      recentActivities: recentActivities.map(activity => ({
-        id: activity.id,
-        type: activity.type,
-        amount: activity.amount,
-        description: activity.description,
-        createdAt: activity.createdAt
-      }))
+      recentActivities: recentActivities.map((activity) => {
+        const isSender = activity.pengirimId === session.user.id;
+        const amount = isSender ? -Number(activity.jumlah) : Number(activity.jumlah);
+
+        let description;
+        switch (activity.tipe) {
+          case 'PEMBAYARAN':
+            description = isSender ? 'Pembayaran pesanan' : 'Penerimaan pembayaran';
+            break;
+          case 'PENARIKAN':
+            description = 'Penarikan dana';
+            break;
+          case 'TOP_UP':
+            description = 'Top up wallet';
+            break;
+          case 'REFUND':
+            description = 'Refund pembayaran';
+            break;
+          default:
+            description = 'Transaksi';
+        }
+
+        return {
+          id: activity.id,
+          type: activity.tipe,
+          amount,
+          description,
+          createdAt: activity.createdAt
+        };
+      })
     };
 
     return NextResponse.json({
@@ -117,8 +128,8 @@ export async function GET() {
   } catch (error) {
     console.error("GET Dashboard Error:", error);
     return NextResponse.json(
-      { success: false, message: "Gagal mengambil data dashboard", error: String(error) },
-      { status: 500 }
+        { success: false, message: "Gagal mengambil data dashboard", error: String(error) },
+        { status: 500 }
     );
   }
 }

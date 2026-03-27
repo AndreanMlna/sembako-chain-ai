@@ -8,7 +8,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ---- Enums ----
@@ -32,6 +31,15 @@ enum OrderStatus {
 enum MetodeJual {
   DISTRIBUSI
   LANGSUNG
+  FLEKSIBEL // UPDATE: Mendukung alokasi otomatis oleh AI
+}
+
+// Logika Status Produk untuk profesionalitas supply chain
+enum StatusProduk {
+  TERSEDIA // Barang siap di etalase/gudang
+  TERPESAN // Stok dikunci karena ada pesanan masuk (Anti-PHP)
+  DIKIRIM // Barang sedang dibawa kurir
+  HABIS // Stok sudah 0
 }
 
 enum StatusPanen {
@@ -75,23 +83,23 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Alamat
-  jalan      String?
-  kelurahan  String?
-  kecamatan  String?
-  kabupaten  String?
-  provinsi   String?
-  kodePos    String?
-  latitude   Float?
-  longitude  Float?
+  jalan     String?
+  kelurahan String?
+  kecamatan String?
+  kabupaten String?
+  provinsi  String?
+  kodePos   String?
+  latitude  Float?
+  longitude Float?
 
   // Relations
   lahan           Lahan[]
   mitraToko       MitraToko?
   kurirProfile    KurirProfile?
-  orders          Order[]         @relation("PembeliOrders")
-  deliveries      Job[]           @relation("KurirJobs")
-  transaksiKirim  Transaksi[]     @relation("TransaksiPengirim")
-  transaksiTerima Transaksi[]     @relation("TransaksiPenerima")
+  orders          Order[]          @relation("PembeliOrders")
+  deliveries      Job[]            @relation("KurirJobs")
+  transaksiKirim  Transaksi[]      @relation("TransaksiPengirim")
+  transaksiTerima Transaksi[]      @relation("TransaksiPenerima")
   notifikasi      Notifikasi[]
   wallet          EWallet?
   produk          Produk[]
@@ -113,20 +121,20 @@ model EWallet {
 }
 
 model Lahan {
-  id          String   @id @default(cuid())
-  petaniId    String
-  nama        String
-  luasHektar  Float
-  jalan       String?
-  kelurahan   String?
-  kecamatan   String?
-  kabupaten   String?
-  provinsi    String?
-  kodePos     String?
-  latitude    Float?
-  longitude   Float?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  petaniId   String
+  nama       String
+  luasHektar Float
+  jalan      String?
+  kelurahan  String?
+  kecamatan  String?
+  kabupaten  String?
+  provinsi   String?
+  kodePos    String?
+  latitude   Float?
+  longitude  Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   petani  User      @relation(fields: [petaniId], references: [id])
   tanaman Tanaman[]
@@ -135,17 +143,17 @@ model Lahan {
 }
 
 model Tanaman {
-  id               String          @id @default(cuid())
-  lahanId          String
-  nama             String
-  varietasNama     String
-  tanggalTanam     DateTime
-  estimasiPanen    DateTime
-  statusPanen      StatusPanen     @default(TANAM)
-  statusKesehatan  StatusKesehatan @default(SEHAT)
-  jumlahKg         Float?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  id              String          @id @default(cuid())
+  lahanId         String
+  nama            String
+  varietasNama    String
+  tanggalTanam    DateTime
+  estimasiPanen   DateTime
+  statusPanen     StatusPanen     @default(TANAM)
+  statusKesehatan StatusKesehatan @default(SEHAT)
+  jumlahKg        Float?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 
   lahan      Lahan            @relation(fields: [lahanId], references: [id])
   cropChecks HasilCropCheck[]
@@ -159,7 +167,7 @@ model HasilCropCheck {
   userId           String
   fotoUrl          String
   hasilDiagnosa    String
-  tingkatKeparahan Int             // 0-100
+  tingkatKeparahan Int // 0-100
   solusi           String[]
   statusKesehatan  StatusKesehatan
   createdAt        DateTime        @default(now())
@@ -171,12 +179,12 @@ model HasilCropCheck {
 }
 
 model MitraToko {
-  id         String @id @default(cuid())
-  userId     String @unique
-  namaToko   String
-  jenisToko  String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  namaToko  String
+  jenisToko String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user      User            @relation(fields: [userId], references: [id])
   inventori InventoryItem[]
@@ -185,14 +193,14 @@ model MitraToko {
 }
 
 model InventoryItem {
-  id         String @id @default(cuid())
-  tokoId     String
-  produkId   String
-  stok       Int
-  minStok    Int    @default(10)
-  hargaJual  Float
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  tokoId    String
+  produkId  String
+  stok      Int
+  minStok   Int      @default(10)
+  hargaJual Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   toko   MitraToko @relation(fields: [tokoId], references: [id])
   produk Produk    @relation(fields: [produkId], references: [id])
@@ -201,14 +209,14 @@ model InventoryItem {
 }
 
 model KurirProfile {
-  id              String  @id @default(cuid())
-  userId          String  @unique
-  jenisKendaraan  String
-  platNomor       String
-  isAvailable     Boolean @default(true)
-  rating          Float   @default(5.0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  jenisKendaraan String
+  platNomor      String
+  isAvailable    Boolean  @default(true)
+  rating         Float    @default(5.0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id])
 
@@ -216,7 +224,7 @@ model KurirProfile {
 }
 
 model Produk {
-  id             String   @id @default(cuid())
+  id             String  @id @default(cuid())
   petaniId       String
   nama           String
   kategori       String
@@ -225,13 +233,20 @@ model Produk {
   fotoUrl        String?
   hargaPerSatuan Float
   stokTersedia   Float
-  metodeJual     MetodeJual @default(LANGSUNG)
-  latitude       Float?
-  longitude      Float?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
 
-  petani    User            @relation(fields: [petaniId], references: [id])
+  // Logika stok alokasi
+  stokTerkunci Float        @default(0)
+  status       StatusProduk @default(TERSEDIA)
+
+  // UPDATE: Default diubah ke FLEKSIBEL agar profesional
+  metodeJual MetodeJual @default(FLEKSIBEL)
+
+  latitude  Float?
+  longitude Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  petani     User            @relation(fields: [petaniId], references: [id])
   orderItems OrderItem[]
   inventori  InventoryItem[]
 
@@ -239,23 +254,23 @@ model Produk {
 }
 
 model Order {
-  id                String      @id @default(cuid())
-  pembeliId         String
-  metodeJual        MetodeJual
-  status            OrderStatus @default(PENDING)
-  totalHarga        Float
-  ongkosKirim       Float       @default(0)
-  qrCode            String?
-  alamatPengiriman  String?
-  latitude          Float?
-  longitude         Float?
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  id               String      @id @default(cuid())
+  pembeliId        String
+  metodeJual       MetodeJual
+  status           OrderStatus @default(PENDING)
+  totalHarga       Float
+  ongkosKirim      Float       @default(0)
+  qrCode           String?
+  alamatPengiriman String?
+  latitude         Float?
+  longitude        Float?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 
-  pembeli    User        @relation("PembeliOrders", fields: [pembeliId], references: [id])
-  items      OrderItem[]
-  job        Job?
-  transaksi  Transaksi[]
+  pembeli   User        @relation("PembeliOrders", fields: [pembeliId], references: [id])
+  items     OrderItem[]
+  job       Job?
+  transaksi Transaksi[]
 
   @@map("orders")
 }
@@ -285,23 +300,23 @@ model Job {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
-  kurir User?  @relation("KurirJobs", fields: [kurirId], references: [id])
-  order Order  @relation(fields: [orderId], references: [id])
+  kurir User? @relation("KurirJobs", fields: [kurirId], references: [id])
+  order Order @relation(fields: [orderId], references: [id])
 
   @@map("jobs")
 }
 
 model Transaksi {
-  id          String          @id @default(cuid())
-  orderId     String?
-  pengirimId  String
-  penerimaId  String
-  jumlah      Float
-  tipe        TipeTransaksi
-  status      StatusTransaksi @default(PENDING)
-  referensi   String?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id         String          @id @default(cuid())
+  orderId    String?
+  pengirimId String
+  penerimaId String
+  jumlah     Float
+  tipe       TipeTransaksi
+  status     StatusTransaksi @default(PENDING)
+  referensi  String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
 
   order    Order? @relation(fields: [orderId], references: [id])
   pengirim User   @relation("TransaksiPengirim", fields: [pengirimId], references: [id])

@@ -3,14 +3,21 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterInput } from "@/lib/validators";
 import { UserRole } from "@/types";
 import { ROLE_LABELS } from "@/constants";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import Select from "@/components/ui/Select";
+// Impor sub-komponen Select untuk pola komposisi
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/Select";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function RegisterPage() {
@@ -19,8 +26,11 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<RegisterInput>({
+  const { register, handleSubmit, control, formState: { errors } } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      role: undefined, // Pastikan initial value sinkron dengan Select
+    }
   });
 
   const roleOptions = Object.entries(ROLE_LABELS)
@@ -80,7 +90,36 @@ export default function RegisterPage() {
 
           <Input id="email" label="Email" type="email" placeholder="nama@email.com" error={errors.email?.message} {...register("email")} />
 
-          <Select id="role" label="Daftar Sebagai" options={roleOptions} placeholder="Pilih peran" error={errors.role?.message} {...register("role")} />
+          {/* Perbaikan Fitur Daftar Sebagai */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium">Daftar Sebagai</label>
+            <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                    <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className={errors.role ? "border-red-500" : ""}>
+                        <SelectValue placeholder="Pilih peran">
+                          {roleOptions.find(opt => opt.value === field.value)?.label}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {roleOptions.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                )}
+            />
+            {errors.role && (
+                <p className="text-xs font-medium text-red-500">{errors.role.message}</p>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input id="password" label="Password" type="password" placeholder="••••••••" error={errors.password?.message} {...register("password")} />

@@ -3,7 +3,13 @@
 import { FileText, Download } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import Button from "@/components/ui/Button";
-import Select from "@/components/ui/Select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
 import Input from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 
@@ -21,26 +27,28 @@ export default function LaporanPage() {
             Generate Laporan Baru
           </h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Select
-              label="Tipe Laporan"
-              options={[
-                { value: "INFLASI", label: "Inflasi & Harga" },
-                { value: "STOK", label: "Stok Pangan" },
-                { value: "LAPANGAN_KERJA", label: "Lapangan Kerja" },
-                { value: "TRANSAKSI", label: "Transaksi" },
-              ]}
-              placeholder="Pilih tipe"
-            />
-            <Select
-              label="Wilayah"
-              options={[
-                { value: "NASIONAL", label: "Nasional" },
-                { value: "JAWA_BARAT", label: "Jawa Barat" },
-                { value: "JAWA_TENGAH", label: "Jawa Tengah" },
-                { value: "JAWA_TIMUR", label: "Jawa Timur" },
-              ]}
-              placeholder="Pilih wilayah"
-            />
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Pilih tipe" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="INFLASI">Inflasi & Harga</SelectItem>
+                <SelectItem value="STOK">Stok Pangan</SelectItem>
+                <SelectItem value="LAPANGAN_KERJA">Lapangan Kerja</SelectItem>
+                <SelectItem value="TRANSAKSI">Transaksi</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Pilih wilayah" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="NASIONAL">Nasional</SelectItem>
+                <SelectItem value="JAWA_BARAT">Jawa Barat</SelectItem>
+                <SelectItem value="JAWA_TENGAH">Jawa Tengah</SelectItem>
+                <SelectItem value="JAWA_TIMUR">Jawa Timur</SelectItem>
+              </SelectContent>
+            </Select>
             <Input label="Tanggal Mulai" type="date" />
             <Input label="Tanggal Selesai" type="date" />
           </div>
@@ -57,7 +65,9 @@ export default function LaporanPage() {
           <h3 className="mb-4 text-lg font-semibold text-gray-900">
             Riwayat Laporan
           </h3>
-          <p className="text-sm text-gray-500">Belum ada laporan yang di-generate.</p>
+          <p className="text-sm text-gray-500">
+            Belum ada laporan yang di-generate.
+          </p>
           {/* TODO: Implement report history with download links */}
         </CardContent>
       </Card>

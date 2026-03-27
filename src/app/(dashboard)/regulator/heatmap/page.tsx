@@ -2,15 +2,10 @@
 
 import PageHeader from "@/components/shared/PageHeader";
 import { Card, CardContent } from "@/components/ui/Card";
-import Select from "@/components/ui/Select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select";
 import { KATEGORI_KOMODITAS } from "@/constants";
 
 export default function HeatmapPage() {
-  const komoditasOptions = KATEGORI_KOMODITAS.map((k) => ({
-    value: k,
-    label: k,
-  }));
-
   return (
     <div>
       <PageHeader
@@ -20,11 +15,18 @@ export default function HeatmapPage() {
 
       {/* Filters */}
       <div className="mb-6">
-        <Select
-          options={komoditasOptions}
-          placeholder="Pilih Komoditas"
-          className="w-full sm:w-48"
-        />
+        <Select>
+          <SelectTrigger className="w-full sm:w-48">
+            <SelectValue placeholder="Pilih Komoditas" />
+          </SelectTrigger>
+          <SelectContent>
+            {KATEGORI_KOMODITAS.map((komoditas) => (
+              <SelectItem key={komoditas} value={komoditas}>
+                {komoditas}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Map */}
