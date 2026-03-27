@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
       <html lang="id" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+      <body suppressHydrationWarning>
       {/* Attribute="class" penting supaya Tailwind v4 tahu kapan pakai mode gelap */}
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         {children}
