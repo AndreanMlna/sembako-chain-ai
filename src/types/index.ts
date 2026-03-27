@@ -23,6 +23,15 @@ export enum OrderStatus {
 export enum MetodeJual {
   DISTRIBUSI = "DISTRIBUSI", // B2B - ke Toko/Pasar
   LANGSUNG = "LANGSUNG", // B2C - langsung ke konsumen
+  FLEKSIBEL = "FLEKSIBEL", // UPDATE: Alokasi otomatis oleh AI
+}
+
+// UPDATE: Menambahkan StatusProduk sesuai Prisma untuk manajemen stok profesional
+export enum StatusProduk {
+  TERSEDIA = "TERSEDIA",
+  TERPESAN = "TERPESAN",
+  DIKIRIM = "DIKIRIM",
+  HABIS = "HABIS",
 }
 
 export enum StatusPanen {
@@ -102,6 +111,28 @@ export interface HasilCropCheck extends BaseEntity {
   statusKesehatan: StatusKesehatan;
 }
 
+export type Pesanan = Order;
+
+// Tipe untuk output prediksi AI LSTM (Panen)
+export interface PrediksiPanen {
+  lahanId: string;
+  tanamanId: string;
+  estimasiTanggal: Date;
+  estimasiVolumeKg: number;
+  tingkatAkurasi: number; // 0-100
+  rekomendasiTindakan: string;
+}
+
+// Tipe untuk output prediksi AI LSTM (Harga)
+export interface PrediksiHarga {
+  komoditas: string;
+  tanggal: Date;
+  prediksiHargaRp: number;
+  trend: "NAIK" | "TURUN" | "STABIL";
+  batasBawahRp: number;
+  batasAtasRp: number;
+}
+
 // ---- Mitra Toko Types ----
 export interface MitraToko extends User {
   role: UserRole.MITRA_TOKO;
@@ -163,6 +194,10 @@ export interface Produk extends BaseEntity {
   petaniId: string;
   hargaPerSatuan: number;
   stokTersedia: number;
+  // UPDATE: Tambahan field untuk sinkronisasi dengan Prisma
+  stokTerkunci: number;
+  status: StatusProduk;
+  metodeJual: MetodeJual;
   lokasiAsal: Alamat;
 }
 

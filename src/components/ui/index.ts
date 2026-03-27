@@ -3,4 +3,4 @@ export { Card, CardHeader, CardTitle, CardContent, CardFooter } from "./Card";
 export { default as Input } from "./Input";
 export { default as Badge } from "./Badge";
 export { default as Modal } from "./Modal";
-export { default as Select } from "./Select";
+export { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, default as SelectDefault } from "./Select";

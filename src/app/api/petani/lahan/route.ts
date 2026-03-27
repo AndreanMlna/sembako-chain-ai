@@ -1,25 +1,20 @@
+// src/app/api/petani/lahan/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth"; // Sesuaikan jika export auth config Anda berbeda
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { Lahan, Tanaman } from "@prisma/client";
 
-/**
- * API Routes untuk Petani
- *
- * GET /api/petani - Get petani dashboard data
- * POST /api/petani - Create/update petani profile
- *
- * Sub-routes:
- * /api/petani/lahan - CRUD lahan
- * /api/petani/tanaman - CRUD tanaman
- * /api/petani/crop-check - AI crop check
- * /api/petani/produk - CRUD produk penjualan
- * /api/petani/wallet - E-wallet operations
- */
+// Memperluas tipe Lahan bawaan Prisma untuk menyertakan relasi tanaman
+interface LahanWithRelations extends Lahan {
+  tanaman: Tanaman[];
+}
 
+// ==========================================
+// GET: Mengambil daftar semua lahan milik petani yang sedang login
+// ==========================================
 export async function GET() {
   try {
-    // Memastikan user sudah login
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
@@ -29,44 +24,62 @@ export async function GET() {
       );
     }
 
-    // Mengambil profil petani dari database berdasarkan ID session
-    const profilPetani = await prisma.user.findUnique({
+    const dataLahanRaw = await prisma.lahan.findMany({
       where: {
-        id: session.user.id,
-        role: "PETANI", // Memastikan user yang mengakses benar-benar memiliki role Petani
+        petaniId: session.user.id,
       },
       include: {
-        wallet: true, // Mengambil relasi e-wallet
-        _count: {
-          select: { lahan: true }, // Menghitung total lahan yang dimiliki
-        },
+        tanaman: true,
       },
-    });
+      orderBy: {
+        createdAt: 'desc'
+      }
+    }) as LahanWithRelations[]; // Casting ke interface yang sudah didefinisikan
 
-    if (!profilPetani) {
-      return NextResponse.json(
-          { success: false, message: "Profil petani tidak ditemukan." },
-          { status: 404 }
-      );
-    }
+    // Mapping data tanpa menggunakan 'any'
+    const dataLahanFormatted = dataLahanRaw.map((lahan) => ({
+      id: lahan.id,
+      petaniId: lahan.petaniId,
+      nama: lahan.nama,
+      luasHektar: lahan.luasHektar,
+      createdAt: lahan.createdAt,
+      updatedAt: lahan.updatedAt,
+      lokasi: {
+        jalan: lahan.jalan || "",
+        kelurahan: lahan.kelurahan || "",
+        kecamatan: lahan.kecamatan || "",
+        kabupaten: lahan.kabupaten || "",
+        provinsi: lahan.provinsi || "",
+        kodePos: lahan.kodePos || "",
+        latitude: lahan.latitude || 0,
+        longitude: lahan.longitude || 0,
+      },
+      tanaman: lahan.tanaman
+    }));
 
     return NextResponse.json({
       success: true,
-      data: profilPetani,
-      message: "Data profil petani berhasil diambil",
+      data: dataLahanFormatted,
+      message: `Berhasil mengambil ${dataLahanFormatted.length} data lahan`,
     });
-  } catch (error) {
-    console.error("GET Petani Error:", error);
+  } catch (error: unknown) {
+    console.error("GET Lahan Error:", error);
     return NextResponse.json(
-        { success: false, message: "Gagal mengambil data profil", error: String(error) },
+        {
+          success: false,
+          message: "Gagal mengambil data lahan",
+          error: error instanceof Error ? error.message : String(error)
+        },
         { status: 500 }
     );
   }
 }
 
+// ==========================================
+// POST: Menambahkan lahan baru dari form UI
+// ==========================================
 export async function POST(request: NextRequest) {
   try {
-    // Memastikan user sudah login sebelum melakukan update
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
@@ -77,38 +90,40 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+    const { nama, luasHektar, lokasi } = body;
 
-    // Destrukturisasi data yang dikirim dari form frontend
-    const {
-      nama, telepon, avatar,
-      jalan, kelurahan, kecamatan, kabupaten, provinsi, kodePos
-    } = body;
-
-    // Update profil petani di database
-    const updatedProfil = await prisma.user.update({
-      where: { id: session.user.id },
+    const lahanBaru = await prisma.lahan.create({
       data: {
+        petaniId: session.user.id,
         nama,
-        telepon,
-        avatar,
-        jalan,
-        kelurahan,
-        kecamatan,
-        kabupaten,
-        provinsi,
-        kodePos,
+        luasHektar: Number(luasHektar),
+        jalan: lokasi?.jalan || "",
+        kelurahan: lokasi?.kelurahan || "",
+        kecamatan: lokasi?.kecamatan || "",
+        kabupaten: lokasi?.kabupaten || "",
+        provinsi: lokasi?.provinsi || "",
+        kodePos: lokasi?.kodePos || "",
+        latitude: lokasi?.latitude ? Number(lokasi.latitude) : 0,
+        longitude: lokasi?.longitude ? Number(lokasi.longitude) : 0,
       },
+      include: {
+        tanaman: true
+      }
     });
 
     return NextResponse.json({
       success: true,
-      data: updatedProfil,
-      message: "Profil petani berhasil diperbarui",
+      data: lahanBaru,
+      message: "Lahan berhasil ditambahkan",
     });
-  } catch (error) {
-    console.error("POST Petani Error:", error);
+  } catch (error: unknown) {
+    console.error("POST Lahan Error:", error);
     return NextResponse.json(
-        { success: false, message: "Gagal memperbarui profil", error: String(error) },
+        {
+          success: false,
+          message: "Gagal menambah lahan",
+          error: error instanceof Error ? error.message : String(error)
+        },
         { status: 500 }
     );
   }

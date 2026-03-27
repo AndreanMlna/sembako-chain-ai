@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Filter, MapPin, Star, ShoppingCart, Info } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import SearchBar from "@/components/shared/SearchBar";
-import Select from "@/components/ui/Select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select";
 import { KATEGORI_KOMODITAS } from "@/constants";
 import { Card, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -44,7 +44,19 @@ export default function KatalogPage() {
                 </div>
                 <div className="flex gap-2">
                     <div className="w-40 sm:w-48">
-                        <Select options={kategoriOptions} placeholder="Kategori" />
+                        <Select>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Kategori" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="">Semua Kategori</SelectItem>
+                                {KATEGORI_KOMODITAS.map((kategori) => (
+                                    <SelectItem key={kategori} value={kategori}>
+                                        {kategori}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                     <Button variant="outline" className="border-border bg-card shadow-sm h-11 px-3">
                         <Filter className="h-4 w-4" />

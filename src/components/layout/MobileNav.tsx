@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react"; // Tambahkan useEffect & useState
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type LucideIcon, Circle } from "lucide-react";
@@ -16,13 +17,25 @@ interface MobileNavProps {
 
 export default function MobileNav({ role }: MobileNavProps) {
     const pathname = usePathname();
+    const [mounted, setMounted] = useState(false); // State untuk handle hydration
+
+    // Pastikan komponen hanya me-render konten dinamis setelah mounted di client
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const navItems = NAV_ITEMS[role] || [];
     const visibleItems = navItems.slice(0, 5);
 
+    // Mencegah mismatch antara Server HTML dan Client HTML
+    if (!mounted) {
+        return <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background md:hidden h-16" />;
+    }
+
     return (
-        /* GANTI: bg-white jadi bg-background, border-t otomatis ikut variabel */
         <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background md:hidden transition-colors duration-300">
-            <div className="flex items-center justify-around">
+            {/* suppressHydrationWarning tetap dipertahankan untuk menangkal gangguan ekstensi browser */}
+            <div className="flex items-center justify-around" suppressHydrationWarning>
                 {visibleItems.map((item) => {
                     const isActive = pathname === item.href;
                     const IconComponent = icons[item.icon] || Circle;
@@ -33,7 +46,6 @@ export default function MobileNav({ role }: MobileNavProps) {
                             href={item.href}
                             className={cn(
                                 "flex flex-col items-center gap-1 px-2 py-2 text-[10px] transition-colors",
-                                /* GANTI: text-green-700 jadi text-primary, text-gray-500 jadi text-foreground/50 */
                                 isActive ? "text-primary font-bold" : "text-foreground/50"
                             )}
                         >

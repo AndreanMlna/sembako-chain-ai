@@ -1,18 +1,43 @@
-import { NextRequest, NextResponse } from "next/server";
+// src/app/api/petani/tanaman/update-status/route.ts
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { StatusPanen } from "@prisma/client";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
     try {
         const now = new Date();
 
-        // Update status dari TANAM ke TUMBUH jika tanggalTanam sudah lewat
+        // Reset semua status berdasarkan kondisi waktu saat ini
+        // 1. TANAM: jika tanggalTanam > sekarang
         await prisma.tanaman.updateMany({
             where: {
-                statusPanen: StatusPanen.TANAM,
                 tanggalTanam: {
-                    lt: now,
+                    gt: now,
                 },
+                // Tambahan: Abaikan tanaman yang sudah dipanen manual
+                statusPanen: {
+                    not: StatusPanen.DIPANEN,
+                }
+            },
+            data: {
+                statusPanen: StatusPanen.TANAM,
+                updatedAt: now,
+            },
+        });
+
+        // 2. TUMBUH: jika tanggalTanam <= sekarang dan estimasiPanen > sekarang
+        await prisma.tanaman.updateMany({
+            where: {
+                tanggalTanam: {
+                    lte: now,
+                },
+                estimasiPanen: {
+                    gt: now,
+                },
+                // Tambahan: Abaikan tanaman yang sudah dipanen manual lebih awal
+                statusPanen: {
+                    not: StatusPanen.DIPANEN,
+                }
             },
             data: {
                 statusPanen: StatusPanen.TUMBUH,
@@ -20,13 +45,17 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        // Update status dari TUMBUH ke SIAP_PANEN jika estimasiPanen sudah tercapai
+        // 3. SIAP_PANEN: jika estimasiPanen <= sekarang dan estimasiPanen > (sekarang - 7 hari)
         await prisma.tanaman.updateMany({
             where: {
-                statusPanen: StatusPanen.TUMBUH,
                 estimasiPanen: {
                     lte: now,
+                    gt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
                 },
+                // Tambahan: Jangan kembalikan status menjadi SIAP_PANEN jika sudah di-klik panen
+                statusPanen: {
+                    not: StatusPanen.DIPANEN,
+                }
             },
             data: {
                 statusPanen: StatusPanen.SIAP_PANEN,
@@ -34,14 +63,17 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        // Update status dari SIAP_PANEN ke DIPANEN jika sudah 7 hari lewat estimasiPanen
+        // 4. DIPANEN: jika estimasiPanen + 7 hari <= sekarang (Otomatis panen jika dibiarkan)
         const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         await prisma.tanaman.updateMany({
             where: {
-                statusPanen: StatusPanen.SIAP_PANEN,
                 estimasiPanen: {
-                    lt: sevenDaysAgo,
+                    lte: sevenDaysAgo,
                 },
+                // Tambahan: Hindari database melakukan update berulang pada data yang sudah DIPANEN
+                statusPanen: {
+                    not: StatusPanen.DIPANEN,
+                }
             },
             data: {
                 statusPanen: StatusPanen.DIPANEN,
@@ -60,5 +92,4 @@ export async function POST(request: NextRequest) {
             { status: 500 }
         );
     }
-}</content>
-<parameter name="filePath">D:\ATURSENDIRI\hackathon\sembako-chain-ai\src\app\api\petani\tanaman\update-status\route.ts
+}
