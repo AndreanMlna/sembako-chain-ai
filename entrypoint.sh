@@ -40,14 +40,38 @@ if [ "$SEED_DB" = "true" ]; then
 
   # Count users via a small inline Node.js snippet.
   # Using a heredoc with quoted marker so the shell never expands $disconnect.
-  USER_COUNT=$(node - << 'JSEOF' 2>/dev/null
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
+  USER_COUNT=$(node - << 'JSEOF' 2>/dev/null || echo "1"
+let PrismaClient, PrismaPg, Pool
+
+try {
+  ;({ PrismaClient } = require('@prisma/client'))
+  ;({ PrismaPg } = require('@prisma/adapter-pg'))
+  ;({ Pool } = require('pg'))
+} catch {
+  console.log(1)
+  process.exit(0)
+}
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+const adapter = new PrismaPg(pool)
+const prisma = new PrismaClient({ adapter })
+
 prisma.user.count()
-  .then(n => { console.log(n); return prisma.$disconnect() })
-  .catch(err => { process.stderr.write('seed-check error: ' + err.message + '\n'); console.log(0); process.exit(0) })
+  .then((n) => {
+    console.log(n)
+    return prisma.$disconnect().then(() => pool.end())
+  })
+  .catch((err) => {
+    process.stderr.write('seed-check error: ' + err.message + '\n')
+    console.log(1)
+    process.exit(0)
+  })
 JSEOF
 )
+
+  if [ -z "$USER_COUNT" ]; then
+    USER_COUNT="1"
+  fi
 
   if [ "$USER_COUNT" = "0" ]; then
     echo "   No users found — seeding demo data..."

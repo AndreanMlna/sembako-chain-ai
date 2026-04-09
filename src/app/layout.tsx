@@ -1,29 +1,36 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "next-themes"; // Import ini
+import { ThemeProvider } from "next-themes";
+import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
   title: "Sembako-Chain AI",
   description:
-      "Ekosistem Distribusi Pangan Hybrid Berbasis AI untuk Stabilisasi Inflasi dan Inklusi Ekonomi",
+    "Ekosistem Distribusi Pangan Hybrid Berbasis AI untuk Stabilisasi Inflasi dan Inklusi Ekonomi",
   keywords: [
-    "sembako", "pangan", "AI", "distribusi", "supply chain", "inflasi", "petani", "Indonesia",
+    "sembako",
+    "pangan",
+    "AI",
+    "distribusi",
+    "supply chain",
+    "inflasi",
+    "petani",
+    "Indonesia",
   ],
 };
 
 export default function RootLayout({
-                                     children,
-                                   }: Readonly<{
+  children,
+}: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="id" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <body suppressHydrationWarning>
-      {/* Attribute="class" penting supaya Tailwind v4 tahu kapan pakai mode gelap */}
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        {children}
-      </ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Providers>{children}</Providers>
+        </ThemeProvider>
       </body>
-      </html>
+    </html>
   );
 }

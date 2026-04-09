@@ -1,10 +1,12 @@
-import { type NextAuthOptions } from "next-auth";
+import { type NextAuthOptions, type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
-import { getDefaultRedirect } from "@/lib/auth";
 import { UserRole } from "@/types";
 
+// ==========================================
+// 1. MODULE AUGMENTATION (Sinkron dengan auth.ts)
+// ==========================================
 declare module "next-auth" {
   interface Session {
     user: {
@@ -13,7 +15,7 @@ declare module "next-auth" {
       email: string;
       role: UserRole;
       avatar?: string;
-    };
+    } & DefaultSession["user"];
   }
 
   interface User {
@@ -31,10 +33,12 @@ declare module "next-auth/jwt" {
     nama: string;
     role: UserRole;
     avatar?: string;
+    email?: string;
   }
 }
 
 export const authOptions: NextAuthOptions = {
+  // ... providers (sama seperti kode Anda sebelumnya)
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -51,22 +55,11 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
         });
 
-        if (!user) {
-          throw new Error("Email atau password salah");
-        }
+        if (!user) throw new Error("Email atau password salah");
+        if (!user.isActive) throw new Error("Akun Anda telah dinonaktifkan");
 
-        if (!user.isActive) {
-          throw new Error("Akun Anda telah dinonaktifkan");
-        }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isPasswordValid) {
-          throw new Error("Email atau password salah");
-        }
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isPasswordValid) throw new Error("Email atau password salah");
 
         return {
           id: user.id,
@@ -85,6 +78,7 @@ export const authOptions: NextAuthOptions = {
         token.nama = user.nama;
         token.role = user.role;
         token.avatar = user.avatar;
+        token.email = user.email;
       }
       return token;
     },
@@ -99,28 +93,17 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // If sign in, redirect to role-based dashboard
-      if (url === baseUrl || url === `${baseUrl}/login`) {
+      if (url === baseUrl || url === `${baseUrl}/login`) return baseUrl;
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      try {
+        if (new URL(url).origin === baseUrl) return url;
+      } catch {
         return baseUrl;
-      }
-      // Allow relative URLs
-      if (url.startsWith("/")) {
-        return `${baseUrl}${url}`;
-      }
-      // Allow same origin URLs
-      if (new URL(url).origin === baseUrl) {
-        return url;
       }
       return baseUrl;
     },
   },
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
+  pages: { signIn: "/login", error: "/login" },
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   secret: process.env.NEXTAUTH_SECRET,
 };

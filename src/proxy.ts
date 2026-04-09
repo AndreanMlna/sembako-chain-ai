@@ -1,9 +1,10 @@
+// src/proxy.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 /**
- * Middleware untuk proteksi route berdasarkan role
+ * Proxy untuk proteksi route berdasarkan role
  */
 
 const protectedRoutes = [
@@ -26,15 +27,16 @@ const roleRouteMap: Record<string, string> = {
   REGULATOR: "/regulator",
 };
 
-export async function middleware(request: NextRequest) {
+// PERBAIKAN: Ubah nama fungsi dari middleware() menjadi proxy()
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
+      pathname.startsWith(route)
   );
 
   const isPublicRoute = publicRoutes.some((route) =>
-    pathname.startsWith(route)
+      pathname.startsWith(route)
   );
 
   const token = await getToken({
@@ -62,7 +64,7 @@ export async function middleware(request: NextRequest) {
     const allowedPath = roleRouteMap[role];
 
     const isSharedRoute =
-      pathname.startsWith("/profil") || pathname.startsWith("/notifikasi");
+        pathname.startsWith("/profil") || pathname.startsWith("/notifikasi");
 
     if (!isSharedRoute && allowedPath && !pathname.startsWith(allowedPath)) {
       return NextResponse.redirect(new URL(allowedPath, request.url));

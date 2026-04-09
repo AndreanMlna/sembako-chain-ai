@@ -22,7 +22,7 @@ export default function CropCheckPage() {
             <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-3xl" />
 
             <div className="relative z-10">
-              <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
                 <Camera className="h-12 w-12" />
               </div>
 
@@ -49,12 +49,12 @@ export default function CropCheckPage() {
 
           {/* Feature Info */}
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex items-center gap-3 rounded-xl bg-primary/5 p-4 border border-primary/10">
-              <ShieldCheck className="h-5 w-5 text-primary" />
+            <div className="flex items-center gap-3 rounded-xl bg-blue-500/5 p-4 border border-blue-500/10">
+              <ShieldCheck className="h-5 w-5 text-blue-500" />
               <span className="text-xs font-medium text-foreground/80">Akurasi deteksi hingga 98%</span>
             </div>
-            <div className="flex items-center gap-3 rounded-xl bg-primary/5 p-4 border border-primary/10">
-              <Zap className="h-5 w-5 text-primary" />
+            <div className="flex items-center gap-3 rounded-xl bg-blue-500/5 p-4 border border-blue-500/10">
+              <Zap className="h-5 w-5 text-blue-500" />
               <span className="text-xs font-medium text-foreground/80">Hasil diagnosis kurang dari 5 detik</span>
             </div>
           </div>
@@ -65,7 +65,7 @@ export default function CropCheckPage() {
               <h4 className="flex items-center gap-2 font-semibold text-foreground">
                 <History className="h-4 w-4" /> Riwayat Diagnosa
               </h4>
-              <Button variant="ghost" size="sm" className="text-primary text-xs">Lihat Semua</Button>
+              <Button variant="ghost" size="sm" className="text-blue-500 text-xs">Lihat Semua</Button>
             </div>
 
             <Card>

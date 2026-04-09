@@ -1,29 +1,28 @@
 # ==============================================================================
 # Stage 1: Build the Next.js application
 # ==============================================================================
-# node:20-slim (Debian bookworm) is used so the pre-installed node_modules
-# (which contain debian-openssl-3.0.x Prisma binaries) are ABI-compatible.
 FROM node:20-slim AS builder
 WORKDIR /app
 
-# Copy pre-installed node_modules and all source files.
-# node_modules are installed on the host before the image is built
-# (see README – Docker section) to work around restricted outbound network
-# access inside the build container.
+# Install dependencies in image for reproducible builds.
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy source code after dependencies to maximize layer cache reuse.
 COPY . .
+
+# Dummy DATABASE_URL prevents Prisma config env validation from failing at build time;
+# the real value is injected at runtime via docker-compose.
+ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV DATABASE_URL=$DATABASE_URL
 
 # Re-generate the Prisma client for this exact environment.
 # prisma generate is pure-JS and does not need a live database.
-RUN node_modules/.bin/prisma generate
+RUN npx prisma generate
 
 # Build-time public env var (baked into the JS bundle at build time)
 ARG NEXT_PUBLIC_API_URL=http://localhost:3000/api
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-
-# Dummy DATABASE_URL prevents any build-time env-check from failing;
-# the real value is injected at runtime via docker-compose.
-ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
-ENV DATABASE_URL=$DATABASE_URL
 
 RUN npm run build
 
@@ -49,6 +48,7 @@ COPY --from=builder /app/.next            ./.next
 COPY --from=builder /app/node_modules     ./node_modules
 COPY --from=builder /app/package.json     ./package.json
 COPY --from=builder /app/prisma           ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
 # Copy the entrypoint script and fix ownership before dropping privileges
 COPY entrypoint.sh ./

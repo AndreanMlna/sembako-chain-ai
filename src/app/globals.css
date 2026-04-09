@@ -4,51 +4,44 @@
 
 @layer base {
   :root {
-    --sembako-darkest: #051f20;
-    --sembako-darker: #0b2b26;
-    --sembako-dark: #163832;
-    --sembako-primary: #235347;
-    --sembako-light: #8eb69b;
-    --sembako-accent: #daf1de;
+    /* Spektrum Biru & Slate Modern */
+    --sembako-darkest: #020617; /* Slate 950 */
+    --sembako-darker: #0f172a;  /* Slate 900 */
+    --sembako-dark: #1e293b;    /* Slate 800 */
+    --sembako-primary: #3b82f6; /* Blue 500 */
+    --sembako-light: #64748b;   /* Slate 500 */
+    --sembako-accent: #e2e8f0;  /* Slate 200 */
 
-    --background: #f1f8f3;
+    --background: #f8fafc;
     --foreground: var(--sembako-darkest);
     --card-bg: #ffffff;
     --nav-bg: var(--sembako-darkest);
-    --border-color: rgba(5, 31, 32, 0.1);
+    --border-color: rgba(15, 23, 42, 0.1);
   }
 
   .dark {
     --background: var(--sembako-darkest);
     --foreground: var(--sembako-accent);
-    --card-bg: var(--sembako-dark);
-    --nav-bg: #031415;
-    --border-color: rgba(218, 241, 222, 0.1);
+    --card-bg: var(--sembako-darker);
+    --nav-bg: #010409;
+    --border-color: rgba(226, 232, 240, 0.05);
   }
 }
 
 /* --- THE BOUNCE FIX --- */
 html {
-  /* Jangan kunci height di 100% atau h-screen */
-  height: -webkit-fill-available;
-  /* Biarkan browser handle bounce secara native */
-  overscroll-behavior-y: bounce;
+  min-height: 100%;
+  overscroll-behavior-y: auto;
 }
 
 body {
   min-height: 100vh;
-  /* Pakai auto agar scroll-nya 'lepas' ke window */
-  height: auto !important;
+  height: auto;
   overflow-y: auto;
   overflow-x: hidden;
-
-  /* Support untuk momentum scrolling di iOS */
   -webkit-overflow-scrolling: touch;
-
   background-color: var(--background);
   color: var(--foreground);
-
-  /* Hilangkan highlight biru saat tap */
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -63,7 +56,6 @@ body {
   --color-accent: var(--sembako-accent);
 }
 
-/* Animasi simpel biar transisi halaman smooth */
 .animate-in {
   animation: fadeIn 0.4s ease-out forwards;
 }

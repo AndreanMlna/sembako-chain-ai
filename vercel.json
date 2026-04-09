@@ -5,5 +5,4 @@
       "schedule": "0 0 * * *"
     }
   ]
-}</content>
-<parameter name="filePath">D:\ATURSENDIRI\hackathon\sembako-chain-ai\vercel.json
+}

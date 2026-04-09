@@ -8,21 +8,21 @@ export const loginSchema = z.object({
 });
 
 export const registerSchema = z
-  .object({
-    nama: z.string().min(3, "Nama minimal 3 karakter"),
-    email: z.string().email("Email tidak valid"),
-    telepon: z
-      .string()
-      .min(10, "Nomor telepon minimal 10 digit")
-      .regex(/^(\+62|62|0)8[1-9][0-9]{6,10}$/, "Format nomor telepon tidak valid"),
-    password: z.string().min(8, "Password minimal 8 karakter"),
-    konfirmasiPassword: z.string(),
-    role: z.nativeEnum(UserRole),
-  })
-  .refine((data) => data.password === data.konfirmasiPassword, {
-    message: "Konfirmasi password tidak cocok",
-    path: ["konfirmasiPassword"],
-  });
+    .object({
+      nama: z.string().min(3, "Nama minimal 3 karakter"),
+      email: z.string().email("Email tidak valid"),
+      telepon: z
+          .string()
+          .min(10, "Nomor telepon minimal 10 digit")
+          .regex(/^(\+62|62|0)8[1-9][0-9]{6,10}$/, "Format nomor telepon tidak valid"),
+      password: z.string().min(8, "Password minimal 8 karakter"),
+      konfirmasiPassword: z.string(),
+      role: z.nativeEnum(UserRole),
+    })
+    .refine((data) => data.password === data.konfirmasiPassword, {
+      message: "Konfirmasi password tidak cocok",
+      path: ["konfirmasiPassword"],
+    });
 
 // ---- Lahan Validators ----
 export const lahanSchema = z.object({
@@ -62,13 +62,13 @@ export const produkSchema = z.object({
 // ---- Order Validators ----
 export const orderSchema = z.object({
   items: z
-    .array(
-      z.object({
-        produkId: z.string(),
-        jumlah: z.number().positive("Jumlah harus lebih dari 0"),
-      })
-    )
-    .min(1, "Minimal 1 item"),
+      .array(
+          z.object({
+            produkId: z.string(),
+            jumlah: z.number().positive("Jumlah harus lebih dari 0"),
+          })
+      )
+      .min(1, "Minimal 1 item"),
   alamatPengiriman: z.object({
     jalan: z.string().min(1, "Alamat wajib diisi"),
     kelurahan: z.string().min(1, "Kelurahan wajib diisi"),
@@ -93,7 +93,13 @@ export const inventorySchema = z.object({
 export const intervensiSchema = z.object({
   wilayah: z.string().min(1, "Wilayah wajib diisi"),
   komoditas: z.string().min(1, "Komoditas wajib dipilih"),
-  jenisIntervensi: z.enum(["SUBSIDI_ONGKIR", "SUBSIDI_HARGA", "DISTRIBUSI_LANGSUNG"]),
+  // UPDATE: Menyesuaikan enum agar sinkron dengan metode jual yang ada di sistem Sembako-Chain
+  jenisIntervensi: z.enum([
+    "SUBSIDI_ONGKIR",
+    "SUBSIDI_HARGA",
+    "DISTRIBUSI_LANGSUNG",
+    "OPTIMASI_AI_FLEKSIBEL"
+  ]),
   nilaiSubsidi: z.number().positive("Nilai subsidi harus lebih dari 0"),
   tanggalMulai: z.string().min(1, "Tanggal mulai wajib diisi"),
   tanggalSelesai: z.string().min(1, "Tanggal selesai wajib diisi"),
