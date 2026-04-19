@@ -6,8 +6,6 @@ import { Providers } from "@/components/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
   title: "Sembako-Chain AI",
   description:
@@ -31,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <body suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Providers>{children}</Providers>
         </ThemeProvider>

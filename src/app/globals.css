@@ -28,17 +28,9 @@
   }
 }
 
-<<<<<<< HEAD
-/* --- THE BOUNCE FIX --- */
 html {
   min-height: 100%;
   overscroll-behavior-y: auto;
-=======
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
->>>>>>> ba046db (feat: add Docker containerization with Compose, healthchecks, and entrypoint)
 }
 
 body {
@@ -49,6 +41,7 @@ body {
   -webkit-overflow-scrolling: touch;
   background-color: var(--background);
   color: var(--foreground);
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
