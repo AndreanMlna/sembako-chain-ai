@@ -109,7 +109,7 @@ export default function LahanPage() {
                 description="Pantau koordinat geospasial dan ekosistem lahan Anda secara real-time."
                 action={
                     <Button
-                        className="gap-2 bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20 rounded-xl border-none"
+                        className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 rounded-xl border-none"
                         onClick={() => router.push("/petani/lahan/tambah")}
                     >
                         <Plus className="h-4 w-4" />
@@ -121,10 +121,10 @@ export default function LahanPage() {
             {isLoading ? (
                 <div className="flex flex-col justify-center items-center py-40 space-y-4">
                     <div className="relative">
-                        <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
-                        <div className="absolute inset-0 blur-xl bg-blue-500/20 animate-pulse"></div>
+                        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                        <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse"></div>
                     </div>
-                    <p className="text-slate-500 animate-pulse font-medium tracking-tight">Sinkronisasi data satelit...</p>
+                    <p className="text-foreground/60 animate-pulse font-medium tracking-tight">Sinkronisasi data satelit...</p>
                 </div>
             ) : !dataLahan || dataLahan.length === 0 ? (
                 <EmptyState
@@ -143,33 +143,33 @@ export default function LahanPage() {
                         return (
                             <Link key={lahan.id} href={`/petani/lahan/${lahan.id}`} className="group block">
                                 {/* Ganti bg-slate-900 dengan bg-card agar sinkron dengan tema CSS */}
-                                <Card className={`relative overflow-hidden transition-all duration-500 bg-card border border-border/50 shadow-xl ${isThisConfirming ? 'ring-2 ring-red-500/50 ring-offset-4 ring-offset-background scale-[0.98]' : 'hover:-translate-y-2 hover:border-blue-500/30'}`}>
+                                <Card className={`relative overflow-hidden transition-all duration-500 bg-card border border-border/50 shadow-xl ${isThisConfirming ? 'ring-2 ring-red-500/50 ring-offset-4 ring-offset-background scale-[0.98]' : 'hover:-translate-y-2 hover:border-primary/30'}`}>
                                     {/* Efek Gradasi Halus */}
-                                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors duration-500"></div>
+                                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors duration-500"></div>
 
                                     <CardContent className="p-6 relative z-10">
                                         <div className="flex justify-between items-start mb-6">
-                                            {/* Ikon dengan warna biru aksen */}
-                                            <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-3 text-blue-400 shadow-inner group-hover:border-blue-400/50 transition-colors">
+                                            {/* Ikon dengan warna primary aksen */}
+                                            <div className="rounded-2xl bg-secondary/50 border border-border/50 p-3 text-primary shadow-inner group-hover:border-primary/50 transition-colors">
                                                 <MapPin className="h-6 w-6" />
                                             </div>
 
                                             <div className="flex items-center gap-2">
                                                 {!isThisConfirming ? (
                                                     <>
-                                                        <Badge className={`uppercase text-[9px] tracking-widest font-bold px-2 py-0.5 rounded-full border-none ${hasPlants ? 'bg-blue-500/10 text-blue-400' : 'bg-slate-800 text-slate-400'}`}>
+                                                        <Badge className={`uppercase text-[9px] tracking-widest font-bold px-2 py-0.5 rounded-full border-none ${hasPlants ? 'bg-primary/10 text-primary' : 'bg-secondary text-secondary-foreground'}`}>
                                                             {hasPlants ? "Aktif" : "Idle"}
                                                         </Badge>
                                                         <div className="flex items-center bg-background/50 rounded-lg p-1 border border-border/50">
                                                             <button
                                                                 onClick={(e) => handleEdit(e, lahan.id)}
-                                                                className="p-1.5 text-slate-400 hover:text-blue-400 transition-colors"
+                                                                className="p-1.5 text-foreground/60 hover:text-primary transition-colors"
                                                             >
                                                                 <Edit3 className="h-4 w-4" />
                                                             </button>
                                                             <button
                                                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setConfirmDelete(lahan.id); }}
-                                                                className="p-1.5 text-slate-400 hover:text-red-400 transition-colors"
+                                                                className="p-1.5 text-foreground/60 hover:text-red-400 transition-colors"
                                                             >
                                                                 <Trash2 className="h-4 w-4" />
                                                             </button>
@@ -180,14 +180,14 @@ export default function LahanPage() {
                                                         <button
                                                             onClick={(e) => handleDelete(e, lahan.id)}
                                                             disabled={isDeleting === lahan.id}
-                                                            className="flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white text-[10px] font-black rounded-lg hover:bg-red-500"
+                                                            className="flex items-center gap-1 px-3 py-1.5 bg-destructive text-destructive-foreground text-[10px] font-black rounded-lg hover:bg-destructive/90"
                                                         >
                                                             {isDeleting === lahan.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
                                                             HAPUS
                                                         </button>
                                                         <button
                                                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setConfirmDelete(null); }}
-                                                            className="p-1.5 bg-slate-800 text-slate-300 rounded-lg"
+                                                            className="p-1.5 bg-secondary text-secondary-foreground rounded-lg"
                                                         >
                                                             <X className="h-3.5 w-3.5" />
                                                         </button>
@@ -197,32 +197,32 @@ export default function LahanPage() {
                                         </div>
 
                                         <div className="space-y-1 mb-6">
-                                            <h3 className="text-xl font-bold text-foreground group-hover:text-blue-400 transition-colors line-clamp-1">
+                                            <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
                                                 {lahan.nama || "Lahan Tanpa Nama"}
                                             </h3>
-                                            <p className="text-xs text-slate-500 flex items-center gap-1 font-medium">
+                                            <p className="text-xs text-foreground/60 flex items-center gap-1 font-medium">
                                                 {lahan.kecamatan || lahan.lokasi?.kecamatan || "N/A"}, {lahan.kabupaten || lahan.lokasi?.kabupaten || "Koordinat Terdaftar"}
                                             </p>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-3 pt-5 border-t border-border/30">
                                             <div className="bg-background/40 p-3 rounded-xl border border-border/20">
-                                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-tighter mb-1">Luas Hamparan</p>
+                                                <p className="text-[9px] font-black text-foreground/60 uppercase tracking-tighter mb-1">Luas Hamparan</p>
                                                 <div className="flex items-center gap-2 text-foreground font-mono font-bold">
-                                                    <Ruler className="h-4 w-4 text-blue-500 opacity-70" />
-                                                    <span>{lahan.luasHektar ?? 0} <span className="text-[10px] text-slate-500">Ha</span></span>
+                                                    <Ruler className="h-4 w-4 text-primary opacity-70" />
+                                                    <span>{lahan.luasHektar ?? 0} <span className="text-[10px] text-foreground/60">Ha</span></span>
                                                 </div>
                                             </div>
                                             <div className="bg-background/40 p-3 rounded-xl border border-border/20">
-                                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-tighter mb-1">Populasi</p>
+                                                <p className="text-[9px] font-black text-foreground/60 uppercase tracking-tighter mb-1">Populasi</p>
                                                 <div className="flex items-center gap-2 text-foreground font-mono font-bold">
                                                     <Sprout className="h-4 w-4 text-cyan-500 opacity-70" />
-                                                    <span>{Array.isArray(lahan.tanaman) ? lahan.tanaman.length : 0} <span className="text-[10px] text-slate-500">Unit</span></span>
+                                                    <span>{Array.isArray(lahan.tanaman) ? lahan.tanaman.length : 0} <span className="text-[10px] text-foreground/60">Unit</span></span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="mt-4 flex items-center justify-end text-[10px] font-bold text-blue-400 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 tracking-widest">
+                                        <div className="mt-4 flex items-center justify-end text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 tracking-widest">
                                             DETAIL LAHAN <ArrowRight className="h-3 w-3 ml-1" />
                                         </div>
                                     </CardContent>

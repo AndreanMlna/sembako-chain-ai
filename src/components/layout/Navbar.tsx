@@ -45,8 +45,9 @@ export default function Navbar() {
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
 
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-xl font-bold text-accent tracking-tighter">{APP_NAME}</span>
+            <Link href="/" className="flex flex-col items-start gap-0.5">
+              <span className="text-xl font-bold text-accent tracking-tighter leading-none">{APP_NAME}</span>
+              <div className="h-1 w-10 bg-primary rounded-full opacity-60 hidden md:block"></div>
             </Link>
           </div>
 

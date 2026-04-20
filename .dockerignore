@@ -30,7 +30,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# NOTE: node_modules is intentionally NOT excluded here.
-# Packages are pre-installed on the host before running `docker compose build`
-# because the Docker build container does not have outbound internet access
-# to reach the npm registry. See README — Docker section for setup steps.
+node_modules/

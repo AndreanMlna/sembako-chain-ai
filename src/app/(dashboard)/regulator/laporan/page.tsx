@@ -15,20 +15,20 @@ import { Card, CardContent } from "@/components/ui/Card";
 
 export default function LaporanPage() {
   return (
-    <div>
+    <div className="space-y-6 animate-in pb-20">
       <PageHeader
         title="Laporan"
         description="Generate dan unduh laporan analitik"
       />
 
       <Card>
-        <CardContent>
-          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+        <CardContent className="p-6">
+          <h3 className="mb-4 text-lg font-bold text-foreground">
             Generate Laporan Baru
           </h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Select>
-              <SelectTrigger>
+              <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Pilih tipe" />
               </SelectTrigger>
               <SelectContent>
@@ -39,7 +39,7 @@ export default function LaporanPage() {
               </SelectContent>
             </Select>
             <Select>
-              <SelectTrigger>
+              <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Pilih wilayah" />
               </SelectTrigger>
               <SelectContent>
@@ -49,11 +49,11 @@ export default function LaporanPage() {
                 <SelectItem value="JAWA_TIMUR">Jawa Timur</SelectItem>
               </SelectContent>
             </Select>
-            <Input label="Tanggal Mulai" type="date" />
-            <Input label="Tanggal Selesai" type="date" />
+            <Input label="Tanggal Mulai" type="date" className="bg-background border-border" />
+            <Input label="Tanggal Selesai" type="date" className="bg-background border-border" />
           </div>
-          <Button className="mt-4">
-            <FileText className="h-4 w-4" />
+          <Button className="mt-6 font-bold">
+            <FileText className="h-4 w-4 mr-2" />
             Generate Laporan
           </Button>
         </CardContent>
@@ -61,11 +61,11 @@ export default function LaporanPage() {
 
       {/* Report History */}
       <Card className="mt-6">
-        <CardContent>
-          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+        <CardContent className="p-6">
+          <h3 className="mb-4 text-lg font-bold text-foreground">
             Riwayat Laporan
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-foreground/60 italic">
             Belum ada laporan yang di-generate.
           </p>
           {/* TODO: Implement report history with download links */}

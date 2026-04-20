@@ -1,30 +1,25 @@
-// src/app/api/petani/lahan/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Lahan, Tanaman } from "@prisma/client";
 
-// Memperluas tipe Lahan bawaan Prisma untuk menyertakan relasi tanaman
 interface LahanWithRelations extends Lahan {
   tanaman: Tanaman[];
 }
 
-// ==========================================
-// GET: Mengambil daftar semua lahan milik petani yang sedang login
-// ==========================================
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
       return NextResponse.json(
-          { success: false, message: "Unauthorized. Silakan login terlebih dahulu." },
-          { status: 401 }
+        { success: false, message: "Unauthorized. Silakan login terlebih dahulu." },
+        { status: 401 }
       );
     }
 
-    const dataLahanRaw = await prisma.lahan.findMany({
+    const dataLahanRaw = (await prisma.lahan.findMany({
       where: {
         petaniId: session.user.id,
       },
@@ -32,11 +27,10 @@ export async function GET() {
         tanaman: true,
       },
       orderBy: {
-        createdAt: 'desc'
-      }
-    }) as LahanWithRelations[]; // Casting ke interface yang sudah didefinisikan
+        createdAt: "desc",
+      },
+    })) as LahanWithRelations[];
 
-    // Mapping data tanpa menggunakan 'any'
     const dataLahanFormatted = dataLahanRaw.map((lahan) => ({
       id: lahan.id,
       petaniId: lahan.petaniId,
@@ -54,7 +48,7 @@ export async function GET() {
         latitude: lahan.latitude || 0,
         longitude: lahan.longitude || 0,
       },
-      tanaman: lahan.tanaman
+      tanaman: lahan.tanaman,
     }));
 
     return NextResponse.json({
@@ -65,28 +59,22 @@ export async function GET() {
   } catch (error: unknown) {
     console.error("GET Lahan Error:", error);
     return NextResponse.json(
-        {
-          success: false,
-          message: "Gagal mengambil data lahan",
-          error: error instanceof Error ? error.message : String(error)
-        },
-        { status: 500 }
+      {
+        success: false,
+        message: "Gagal mengambil data lahan",
+        error: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
     );
   }
 }
 
-// ==========================================
-// POST: Menambahkan lahan baru dari form UI
-// ==========================================
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-          { success: false, message: "Unauthorized." },
-          { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: "Unauthorized." }, { status: 401 });
     }
 
     const body = await request.json();
@@ -107,8 +95,8 @@ export async function POST(request: NextRequest) {
         longitude: lokasi?.longitude ? Number(lokasi.longitude) : 0,
       },
       include: {
-        tanaman: true
-      }
+        tanaman: true,
+      },
     });
 
     return NextResponse.json({
@@ -119,12 +107,12 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     console.error("POST Lahan Error:", error);
     return NextResponse.json(
-        {
-          success: false,
-          message: "Gagal menambah lahan",
-          error: error instanceof Error ? error.message : String(error)
-        },
-        { status: 500 }
+      {
+        success: false,
+        message: "Gagal menambah lahan",
+        error: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
     );
   }
 }

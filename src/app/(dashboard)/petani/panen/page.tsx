@@ -157,30 +157,30 @@ export default function ManajemenPanenPage() {
     });
 
     return (
-        <div className="space-y-6 min-h-screen pb-10" suppressHydrationWarning>
+        <div className="space-y-6 pb-10" suppressHydrationWarning>
             <PageHeader
                 title="Manajemen Panen"
                 description="Monitor siklus hidup tanaman, filter status, dan catat hasil panen ke etalase."
             />
 
-            {/* Filter UI - Tetap Sama */}
+            {/* Filter UI */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
                     <input
                         type="text"
                         placeholder="Cari tanaman atau lahan..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-card border border-border/50 rounded-xl text-sm text-foreground focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 outline-none transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary/50 outline-none transition-all"
                     />
                 </div>
                 <div className="relative min-w-[180px]">
-                    <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                    <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="w-full pl-10 pr-8 py-2.5 bg-card border border-border/50 rounded-xl text-sm text-foreground appearance-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 outline-none cursor-pointer transition-all"
+                        className="w-full pl-10 pr-8 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground appearance-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 outline-none cursor-pointer transition-all"
                     >
                         <option value="ALL">Semua Status</option>
                         <option value={StatusPanen.SIAP_PANEN}>Siap Panen</option>
@@ -192,8 +192,8 @@ export default function ManajemenPanenPage() {
 
             {isLoading ? (
                 <div className="flex flex-col justify-center items-center py-40 space-y-4">
-                    <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
-                    <p className="text-slate-500 animate-pulse font-medium">Menganalisis siklus vegetasi...</p>
+                    <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                    <p className="text-foreground/60 animate-pulse font-medium">Menganalisis siklus vegetasi...</p>
                 </div>
             ) : filteredTanaman.length === 0 ? (
                 <EmptyState
@@ -227,20 +227,20 @@ export default function ManajemenPanenPage() {
                         }
 
                         return (
-                            <Card key={item.id} className="relative overflow-hidden bg-card border border-border/40 shadow-xl group hover:border-blue-500/20 transition-all">
-                                <div className={`absolute top-0 left-0 w-1 h-full ${isReady ? 'bg-blue-500' : 'bg-slate-700'}`} />
+                            <Card key={item.id} className="relative overflow-hidden group hover:border-primary/30 transition-all">
+                                <div className={`absolute top-0 left-0 w-1 h-full ${isReady ? 'bg-primary' : 'bg-foreground/20'}`} />
                                 <CardContent className="p-6">
                                     <div className="flex justify-between items-start mb-6">
                                         <div className="space-y-1.5">
-                                            <h3 className="text-xl font-bold text-foreground group-hover:text-blue-400 transition-colors">
-                                                {item.nama} <span className="text-sm font-normal text-slate-500">({item.varietasNama})</span>
+                                            <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                                                {item.nama} <span className="text-sm font-normal text-foreground/50">({item.varietasNama})</span>
                                             </h3>
-                                            <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
-                                                <MapPin className="h-3.5 w-3.5 text-blue-500/70" /> {item.namaLahan}
+                                            <p className="text-xs text-foreground/60 flex items-center gap-1.5 font-medium">
+                                                <MapPin className="h-3.5 w-3.5 text-primary/70" /> {item.namaLahan}
                                             </p>
                                         </div>
                                         <Badge className={`uppercase text-[10px] tracking-widest font-black px-2.5 py-1 rounded-lg border-none ${
-                                            isReady ? "bg-blue-500/20 text-blue-400" : "bg-slate-800 text-slate-400"
+                                            isReady ? "bg-primary/20 text-primary" : "bg-foreground/10 text-foreground/60"
                                         }`}>
                                             {item.statusPanen.replace("_", " ")}
                                         </Badge>
@@ -248,25 +248,25 @@ export default function ManajemenPanenPage() {
 
                                     <div className="space-y-3 mb-8">
                                         <div className="flex justify-between items-end">
-                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Fase Siklus</span>
-                                            <span className="text-sm font-mono font-bold text-blue-400">{visualProgress}%</span>
+                                            <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">Fase Siklus</span>
+                                            <span className="text-sm font-mono font-bold text-primary">{visualProgress}%</span>
                                         </div>
-                                        <div className="h-2 w-full rounded-full bg-slate-800 border border-slate-700/50 p-[1px]">
+                                        <div className="h-2 w-full rounded-full bg-foreground/5 border border-border/50 p-[1px]">
                                             <div
-                                                className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-1000"
+                                                className="h-full rounded-full bg-gradient-to-r from-primary to-blue-400 transition-all duration-1000"
                                                 style={{ width: `${visualProgress}%` }}
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center justify-between border-t border-slate-800/60 pt-5">
-                                        <div className="flex items-center gap-2.5 text-xs text-slate-400 font-medium">
-                                            <div className="p-1.5 rounded-lg bg-slate-800/50 text-blue-400">
+                                    <div className="flex items-center justify-between border-t border-border pt-5">
+                                        <div className="flex items-center gap-2.5 text-xs text-foreground/60 font-medium">
+                                            <div className="p-1.5 rounded-lg bg-foreground/5 text-primary">
                                                 <Calendar className="h-4 w-4" />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] text-slate-500 uppercase leading-none mb-1">Estimasi Panen</span>
-                                                <strong className="text-slate-200">
+                                                <span className="text-[10px] text-foreground/40 uppercase leading-none mb-1">Estimasi Panen</span>
+                                                <strong className="text-foreground">
                                                     {item.estimasiPanen ? new Date(item.estimasiPanen).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
                                                 </strong>
                                             </div>
@@ -275,12 +275,12 @@ export default function ManajemenPanenPage() {
                                             <button
                                                 onClick={() => openHarvestModal(item)}
                                                 disabled={isProcessingThis}
-                                                className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all shadow-lg"
+                                                className="flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-primary/20"
                                             >
                                                 <CheckCircle2 className="h-4 w-4" /> Eksekusi Panen
                                             </button>
                                         ) : (
-                                            <div className="text-[10px] font-bold text-slate-500 flex items-center gap-1.5 uppercase tracking-tighter bg-slate-800/30 px-3 py-1.5 rounded-lg border border-slate-800">
+                                            <div className="text-[10px] font-bold text-foreground/40 flex items-center gap-1.5 uppercase tracking-tighter bg-foreground/5 px-3 py-1.5 rounded-lg border border-border">
                                                 <Timer className="h-3.5 w-3.5 animate-pulse" /> Monitoring
                                             </div>
                                         )}
@@ -295,12 +295,12 @@ export default function ManajemenPanenPage() {
             {/* --- MODAL EKSEKUSI PANEN PINTAR --- */}
             {isModalOpen && selectedTanaman && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-                    <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col my-auto">
-                        <div className="flex justify-between items-center p-5 border-b border-slate-800/60 bg-slate-950/30">
-                            <h3 className="font-bold text-lg flex items-center gap-2 text-white">
-                                <Package className="h-5 w-5 text-blue-500" /> Konfirmasi & Listing Panen
+                    <div className="bg-card border border-border rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col my-auto">
+                        <div className="flex justify-between items-center p-5 border-b border-border bg-foreground/5">
+                            <h3 className="font-bold text-lg flex items-center gap-2 text-foreground">
+                                <Package className="h-5 w-5 text-primary" /> Konfirmasi & Listing Panen
                             </h3>
-                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white transition-colors">
+                            <button onClick={() => setIsModalOpen(false)} className="text-foreground/40 hover:text-foreground transition-colors">
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
@@ -308,24 +308,24 @@ export default function ManajemenPanenPage() {
                         <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh] custom-scrollbar">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Hasil Panen (Kg)</label>
+                                    <label className="text-[10px] text-foreground/40 font-bold uppercase tracking-wider">Hasil Panen (Kg)</label>
                                     <div className="relative">
                                         <input
                                             type="number"
                                             value={harvestKg}
                                             onChange={(e) => setHarvestKg(e.target.value)}
                                             placeholder="500"
-                                            className="w-full pl-4 pr-12 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-blue-500/50"
+                                            className="w-full pl-4 pr-12 py-2.5 bg-background border border-border rounded-xl text-foreground outline-none focus:border-primary/50"
                                         />
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">Kg</span>
+                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/40 font-bold text-xs">Kg</span>
                                     </div>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Kategori Produk</label>
+                                    <label className="text-[10px] text-foreground/40 font-bold uppercase tracking-wider">Kategori Produk</label>
                                     <select
                                         value={listingKategori}
                                         onChange={(e) => setListingKategori(e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm outline-none focus:border-blue-500/50"
+                                        className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-foreground text-sm outline-none focus:border-primary/50"
                                     >
                                         <option value="Sayuran">Sayuran</option>
                                         <option value="Bumbu">Bumbu</option>
@@ -335,38 +335,38 @@ export default function ManajemenPanenPage() {
                                 </div>
                             </div>
 
-                            <div className="p-4 bg-blue-950/20 border border-blue-900/30 rounded-xl space-y-4">
+                            <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl space-y-4">
                                 <div className="flex items-start gap-3">
                                     <input
                                         type="checkbox"
                                         id="autoSell"
                                         checked={autoSell}
                                         onChange={(e) => setAutoSell(e.target.checked)}
-                                        className="mt-1 w-4 h-4 rounded bg-slate-950 border-slate-800 text-blue-500"
+                                        className="mt-1 w-4 h-4 rounded bg-background border-border text-primary"
                                     />
                                     <div className="space-y-1">
-                                        <label htmlFor="autoSell" className="text-sm font-bold text-white cursor-pointer">Posting ke Etalase Jual</label>
-                                        <p className="text-[10px] text-slate-400 leading-relaxed">Otomatis membuat produk di pasar digital agar bisa dibeli mitra.</p>
+                                        <label htmlFor="autoSell" className="text-sm font-bold text-foreground cursor-pointer">Posting ke Etalase Jual</label>
+                                        <p className="text-[10px] text-foreground/40 leading-relaxed">Otomatis membuat produk di pasar digital agar bisa dibeli mitra.</p>
                                     </div>
                                 </div>
 
                                 {autoSell && (
                                     <div className="pl-7 space-y-4 animate-in slide-in-from-top-2 duration-200">
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] text-blue-400 font-bold uppercase flex items-center gap-1.5">
+                                            <label className="text-[10px] text-primary font-bold uppercase flex items-center gap-1.5">
                                                 <Tag className="h-3 w-3" /> Nama Produk Etalase
                                             </label>
                                             <input
                                                 type="text"
                                                 value={listingNama}
                                                 onChange={(e) => setListingNama(e.target.value)}
-                                                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white outline-none focus:border-blue-500/50"
+                                                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground outline-none focus:border-primary/50"
                                             />
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="space-y-1.5">
-                                                <label className="text-[10px] text-blue-400 font-bold uppercase flex items-center gap-1.5">
+                                                <label className="text-[10px] text-primary font-bold uppercase flex items-center gap-1.5">
                                                     <TrendingUp className="h-3 w-3" /> Harga (Rp/Kg)
                                                 </label>
                                                 <div className="relative">
@@ -374,28 +374,27 @@ export default function ManajemenPanenPage() {
                                                         type="number"
                                                         value={sellingPrice}
                                                         onChange={(e) => setSellingPrice(e.target.value)}
-                                                        className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white outline-none focus:border-blue-500/50"
+                                                        className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground outline-none focus:border-primary/50"
                                                     />
-                                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs font-bold">Rp</span>
-                                                    {isFetchingPrice && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-blue-500 animate-spin" />}
+                                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 text-xs font-bold">Rp</span>
+                                                    {isFetchingPrice && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-primary animate-spin" />}
                                                 </div>
                                             </div>
                                             <div className="space-y-1.5">
-                                                <label className="text-[10px] text-blue-400 font-bold uppercase flex items-center gap-1.5">
+                                                <label className="text-[10px] text-primary font-bold uppercase flex items-center gap-1.5">
                                                     <Truck className="h-3 w-3" /> Metode Jual
                                                 </label>
                                                 <select
                                                     value={metodeJual}
                                                     onChange={(e: ChangeEvent<HTMLSelectElement>) => setMetodeJual(e.target.value as MetodeJual)}
-                                                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white outline-none focus:border-blue-500/50"
+                                                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground outline-none focus:border-primary/50"
                                                 >
-                                                    {/* UPDATE: Menambahkan opsi FLEKSIBEL dengan label Optimasi AI */}
                                                     <option value={MetodeJual.FLEKSIBEL}>FLEKSIBEL (Optimasi AI)</option>
                                                     <option value={MetodeJual.DISTRIBUSI}>DISTRIBUSI (B2B)</option>
                                                     <option value={MetodeJual.LANGSUNG}>LANGSUNG (B2C)</option>
                                                 </select>
                                                 {metodeJual === MetodeJual.FLEKSIBEL && (
-                                                    <p className="text-[9px] text-blue-300 italic flex items-center gap-1 mt-1">
+                                                    <p className="text-[9px] text-primary/70 italic flex items-center gap-1 mt-1">
                                                         <Zap className="h-2 w-2" /> AI akan menentukan alokasi terbaik.
                                                     </p>
                                                 )}
@@ -403,14 +402,14 @@ export default function ManajemenPanenPage() {
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] text-blue-400 font-bold uppercase flex items-center gap-1.5">
+                                            <label className="text-[10px] text-primary font-bold uppercase flex items-center gap-1.5">
                                                 <FileText className="h-3 w-3" /> Deskripsi Produk
                                             </label>
                                             <textarea
                                                 value={listingDeskripsi}
                                                 onChange={(e) => setListingDeskripsi(e.target.value)}
                                                 rows={2}
-                                                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white outline-none focus:border-blue-500/50 resize-none"
+                                                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground outline-none focus:border-primary/50 resize-none"
                                             />
                                         </div>
                                     </div>
@@ -418,12 +417,12 @@ export default function ManajemenPanenPage() {
                             </div>
                         </div>
 
-                        <div className="p-5 border-t border-slate-800/60 bg-slate-950/30 flex justify-end gap-3">
-                            <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-bold text-slate-400 hover:text-white transition-colors">Batal</button>
+                        <div className="p-5 border-t border-border bg-foreground/5 flex justify-end gap-3">
+                            <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-bold text-foreground/40 hover:text-foreground transition-colors">Batal</button>
                             <button
                                 onClick={submitHarvest}
                                 disabled={isProcessingId !== null || !harvestKg}
-                                className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-blue-900/20"
+                                className="flex items-center gap-2 px-6 py-2 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-primary/20"
                             >
                                 {isProcessingId !== null ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
                                 Simpan & Panen
