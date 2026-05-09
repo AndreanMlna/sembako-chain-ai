@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
     ArrowLeft, Save, Loader2, Sprout,
@@ -13,7 +13,7 @@ import { getLahanList, addTanaman } from "@/services/petani.service";
 import { toast } from "react-hot-toast";
 import type { Lahan } from "@/types";
 
-export default function TambahTanamanPage() {
+function TambahTanamanContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lahanIdFromUrl = searchParams.get("lahanId");
@@ -295,5 +295,13 @@ export default function TambahTanamanPage() {
                 </Card>
             </div>
         </div>
+    );
+}
+
+export default function TambahTanamanPage() {
+    return (
+        <Suspense fallback={<div className="py-10 text-sm text-slate-400">Memuat halaman...</div>}>
+            <TambahTanamanContent />
+        </Suspense>
     );
 }

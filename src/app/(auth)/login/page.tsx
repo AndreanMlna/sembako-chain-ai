@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "@/lib/validators";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +34,7 @@ export default function LoginPage() {
         setError("Email atau password salah");
       } else {
         const session = await getSession();
-        const userRole = (session?.user as any)?.role;
+        const userRole = (session?.user as { role?: string } | undefined)?.role;
 
         let redirectPath = "/";
         if (userRole === "PETANI") redirectPath = "/petani";
@@ -46,7 +46,7 @@ export default function LoginPage() {
         router.push(redirectPath);
         router.refresh();
       }
-    } catch (err) {
+    } catch {
       setError("Terjadi kesalahan sistem");
     } finally {
       setIsLoading(false);

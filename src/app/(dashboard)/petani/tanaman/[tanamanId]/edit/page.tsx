@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, Save, Leaf, Tag, Calendar, ChevronRight, Sprout } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
@@ -16,7 +16,7 @@ interface TanamanData {
     estimasiPanen: string;
 }
 
-export default function EditTanamanPage() {
+function EditTanamanContent() {
     const params = useParams();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -247,5 +247,13 @@ export default function EditTanamanPage() {
                 </Card>
             </div>
         </div>
+    );
+}
+
+export default function EditTanamanPage() {
+    return (
+        <Suspense fallback={<div className="py-10 text-sm text-slate-400">Memuat halaman...</div>}>
+            <EditTanamanContent />
+        </Suspense>
     );
 }

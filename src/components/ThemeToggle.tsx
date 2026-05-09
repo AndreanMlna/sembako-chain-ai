@@ -1,15 +1,19 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-// Kamu bisa pakai icon dari library seperti lucide-react jika sudah install
-// npm install lucide-react
+import { useSyncExternalStore } from "react";
+
+function useIsMounted(): boolean {
+    return useSyncExternalStore(
+        () => () => {},
+        () => true,
+        () => false
+    );
+}
 
 export function ThemeToggle() {
     const { theme, setTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => setMounted(true), []);
+    const mounted = useIsMounted();
 
     if (!mounted) return <div className="w-9 h-9" />;
 
@@ -20,9 +24,9 @@ export function ThemeToggle() {
             aria-label="Toggle Theme"
         >
             {theme === "dark" ? (
-                <span>🌙</span> // Atau <Moon size={20} />
+                <span>🌙</span>
             ) : (
-                <span>☀️</span> // Atau <Sun size={20} />
+                <span>☀️</span>
             )}
         </button>
     );

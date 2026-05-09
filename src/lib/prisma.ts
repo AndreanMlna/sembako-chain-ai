@@ -9,9 +9,6 @@ const connectionString = `${process.env.DATABASE_URL}`;
 // Inisialisasi pool koneksi database
 const pool = new Pool({ connectionString });
 
-// PERBAIKAN: Gunakan @ts-expect-error alih-alih 'as any'
-// untuk melewati konflik versi @types/pg tanpa memicu error ESLint
-// @ts-expect-error: Konflik definisi tipe bawaan antara library pg dan adapter prisma
 const adapter = new PrismaPg(pool);
 
 const globalForPrisma = globalThis as unknown as {

@@ -1,4 +1,3 @@
-// src/app/api/petani/tanaman/update-status/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { StatusPanen } from "@prisma/client";
@@ -7,14 +6,11 @@ export async function POST() {
     try {
         const now = new Date();
 
-        // Reset semua status berdasarkan kondisi waktu saat ini
-        // 1. TANAM: jika tanggalTanam > sekarang
         await prisma.tanaman.updateMany({
             where: {
                 tanggalTanam: {
                     gt: now,
                 },
-                // Tambahan: Abaikan tanaman yang sudah dipanen manual
                 statusPanen: {
                     not: StatusPanen.DIPANEN,
                 }
@@ -25,7 +21,6 @@ export async function POST() {
             },
         });
 
-        // 2. TUMBUH: jika tanggalTanam <= sekarang dan estimasiPanen > sekarang
         await prisma.tanaman.updateMany({
             where: {
                 tanggalTanam: {
@@ -34,7 +29,6 @@ export async function POST() {
                 estimasiPanen: {
                     gt: now,
                 },
-                // Tambahan: Abaikan tanaman yang sudah dipanen manual lebih awal
                 statusPanen: {
                     not: StatusPanen.DIPANEN,
                 }
@@ -45,14 +39,12 @@ export async function POST() {
             },
         });
 
-        // 3. SIAP_PANEN: jika estimasiPanen <= sekarang dan estimasiPanen > (sekarang - 7 hari)
         await prisma.tanaman.updateMany({
             where: {
                 estimasiPanen: {
                     lte: now,
                     gt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
                 },
-                // Tambahan: Jangan kembalikan status menjadi SIAP_PANEN jika sudah di-klik panen
                 statusPanen: {
                     not: StatusPanen.DIPANEN,
                 }
@@ -63,14 +55,12 @@ export async function POST() {
             },
         });
 
-        // 4. DIPANEN: jika estimasiPanen + 7 hari <= sekarang (Otomatis panen jika dibiarkan)
         const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         await prisma.tanaman.updateMany({
             where: {
                 estimasiPanen: {
                     lte: sevenDaysAgo,
                 },
-                // Tambahan: Hindari database melakukan update berulang pada data yang sudah DIPANEN
                 statusPanen: {
                     not: StatusPanen.DIPANEN,
                 }

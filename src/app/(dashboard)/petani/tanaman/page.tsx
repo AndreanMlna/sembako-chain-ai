@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Search, Filter, Eye, Edit, Trash2, Wheat, Calendar, MapPin } from "lucide-react";
+import { Plus, Search, Filter, Eye, Edit, Trash2, Wheat, Calendar, MapPin, Loader2 } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
@@ -84,130 +84,141 @@ export default function TanamanPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+            <div className="flex items-center justify-center py-20">
                 <div className="text-center space-y-4">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-                    <p className="text-slate-400">Memuat data tanaman...</p>
+                    <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+                    <p className="text-foreground/60">Memuat data tanaman...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div className="mb-8">
-                    <PageHeader
-                        title="Kelola Tanaman"
-                        description="Pantau dan kelola semua tanaman Anda"
-                        action={
-                            <Button
-                                onClick={() => router.push("/petani/tanaman/tambah")}
-                                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                            >
-                                <Plus className="h-4 w-4 mr-2" />
-                                Tambah Tanaman
-                            </Button>
-                        }
-                    />
+        <div className="space-y-8 animate-in pb-20">
+            <PageHeader
+                title="Kelola Tanaman"
+                description="Pantau dan kelola semua tanaman Anda"
+                action={
+                    <Button
+                        onClick={() => router.push("/petani/tanaman/tambah")}
+                        className="bg-primary hover:bg-primary/90 text-white font-bold"
+                    >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Tambah Tanaman
+                    </Button>
+                }
+            />
+
+            <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground/40 h-4 w-4" />
+                        <Input
+                            placeholder="Cari tanaman atau lahan..."
+                            value={searchTerm}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                            className="pl-10 bg-card border-border rounded-xl"
+                        />
+                    </div>
                 </div>
-
-                <div className="mb-6 flex flex-col sm:flex-row gap-4">
-                    <div className="flex-1">
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                            <Input
-                                placeholder="Cari tanaman atau lahan..."
-                                value={searchTerm}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-                                className="pl-10 bg-slate-800/50 border-slate-600"
-                            />
-                        </div>
-                    </div>
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="w-full sm:w-48 bg-slate-800/50 border-slate-600">
-                            <Filter className="h-4 w-4 mr-2" />
-                            <SelectValue placeholder="Filter Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Semua Status</SelectItem>
-                            <SelectItem value="SEHAT">Sehat</SelectItem>
-                            <SelectItem value="SIAP_PANEN">Siap Panen</SelectItem>
-                            <SelectItem value="PANEN">Panen</SelectItem>
-                            <SelectItem value="MATI">Mati</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {filteredTanaman.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredTanaman.map((item) => (
-                            <Card key={item.id} className="bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 hover:border-blue-500/50 transition-all duration-300 group">
-                                <CardHeader className="pb-4">
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="p-2 bg-blue-500/10 rounded-lg">
-                                                <Wheat className="h-5 w-5 text-blue-500" />
-                                            </div>
-                                            <div>
-                                                <CardTitle className="text-lg text-white group-hover:text-blue-500 transition-colors">
-                                                    {item.nama}
-                                                </CardTitle>
-                                                <p className="text-sm text-slate-400">
-                                                    {item.lahan?.nama || "Lahan tidak ditemukan"}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        {getStatusBadge(item)}
-                                    </div>
-                                </CardHeader>
-
-                                <CardContent className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <div className="flex items-center gap-2">
-                                            <Calendar className="h-4 w-4 text-slate-400" />
-                                            <span className="text-slate-300">
-                                                {formatDate(item.tanggalTanam)}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <MapPin className="h-4 w-4 text-slate-400" />
-                                            <span className="text-slate-300">
-                                                {item.lahan?.lokasi || "Lokasi tidak tersedia"}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex gap-2 pt-2">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => router.push(`/petani/tanaman/${item.id}`)}
-                                            className="flex-1 border-slate-600 hover:border-blue-500 hover:text-blue-500"
-                                        >
-                                            <Eye className="h-4 w-4 mr-1" />
-                                            Lihat
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => router.push(`/petani/tanaman/${item.id}/edit`)}
-                                            className="flex-1 border-slate-600 hover:border-blue-500 hover:text-blue-400"
-                                        >
-                                            <Edit className="h-4 w-4 mr-1" />
-                                            Edit
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-12">
-                        {/* Empty state content tetap sama */}
-                    </div>
-                )}
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full sm:w-48 bg-card border-border rounded-xl">
+                        <Filter className="h-4 w-4 mr-2" />
+                        <SelectValue placeholder="Filter Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Semua Status</SelectItem>
+                        <SelectItem value="SEHAT">Sehat</SelectItem>
+                        <SelectItem value="SIAP_PANEN">Siap Panen</SelectItem>
+                        <SelectItem value="PANEN">Panen</SelectItem>
+                        <SelectItem value="MATI">Mati</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
+
+            {filteredTanaman.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredTanaman.map((item) => (
+                        <Card key={item.id} className="group hover:border-primary/30 transition-all duration-300">
+                            <CardHeader className="pb-4">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-primary/10 rounded-lg">
+                                            <Wheat className="h-5 w-5 text-primary" />
+                                        </div>
+                                        <div>
+                                            <CardTitle className="text-lg text-foreground group-hover:text-primary transition-colors">
+                                                {item.nama}
+                                            </CardTitle>
+                                            <p className="text-sm text-foreground/50">
+                                                {item.lahan?.nama || "Lahan tidak ditemukan"}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {getStatusBadge(item)}
+                                </div>
+                            </CardHeader>
+
+                            <CardContent className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div className="flex items-center gap-2">
+                                        <Calendar className="h-4 w-4 text-foreground/40" />
+                                        <span className="text-foreground/70">
+                                            {formatDate(item.tanggalTanam)}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <MapPin className="h-4 w-4 text-foreground/40" />
+                                        <span className="text-foreground/70 truncate">
+                                            {item.lahan?.lokasi || "Lokasi tidak tersedia"}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-2 pt-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => router.push(`/petani/tanaman/${item.id}`)}
+                                        className="flex-1 border-border hover:border-primary hover:text-primary rounded-xl"
+                                    >
+                                        <Eye className="h-4 w-4 mr-1" />
+                                        Lihat
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => router.push(`/petani/tanaman/${item.id}/edit`)}
+                                        className="flex-1 border-border hover:border-primary hover:text-primary rounded-xl"
+                                    >
+                                        <Edit className="h-4 w-4 mr-1" />
+                                        Edit
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-20 bg-card/50 rounded-3xl border border-dashed border-border">
+                    <Wheat className="h-12 w-12 text-foreground/20 mx-auto mb-4" />
+                    <h3 className="text-lg font-bold text-foreground">Tidak Ada Tanaman</h3>
+                    <p className="text-foreground/60 max-w-xs mx-auto mt-2">
+                        {searchTerm || statusFilter !== "all" 
+                            ? "Tidak ada tanaman yang sesuai dengan kriteria pencarian Anda."
+                            : "Mulai dengan menambahkan tanaman pertama Anda ke sistem."}
+                    </p>
+                    {(searchTerm || statusFilter !== "all") && (
+                        <Button 
+                            variant="ghost" 
+                            onClick={() => {setSearchTerm(""); setStatusFilter("all");}}
+                            className="mt-4 text-primary"
+                        >
+                            Reset Filter
+                        </Button>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
