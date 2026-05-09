@@ -16,11 +16,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
+                                        children,
+                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
-<<<<<<< HEAD
     return (
         <html lang="id" suppressHydrationWarning>
         <body className={inter.className} suppressHydrationWarning>
@@ -34,11 +33,3 @@ export default function RootLayout({
         </html>
     );
 }
-=======
-  return (
-    <html lang="id">
-      <body suppressHydrationWarning>{children}</body>
-    </html>
-  );
-}
->>>>>>> ba046db (feat: add Docker containerization with Compose, healthchecks, and entrypoint)
