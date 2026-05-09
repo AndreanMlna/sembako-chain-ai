@@ -36,6 +36,7 @@ html {
 }
 
 body {
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   min-height: 100vh;
   height: auto;
   overflow-y: auto;
