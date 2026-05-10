@@ -18,6 +18,13 @@ export async function GET() {
         { status: 401 }
       );
     }
+    if (session.user.role !== "PETANI") {
+        return NextResponse.json(
+            { success: false, message: "Forbidden — hanya Petani" },
+            { status: 403 }
+        );
+    }
+
 
     const dataLahanRaw = (await prisma.lahan.findMany({
       where: {

@@ -13,6 +13,13 @@ export async function GET() {
             );
         }
 
+        if (session.user.role !== "MITRA_TOKO") {
+            return NextResponse.json(
+                { success: false, message: "Forbidden — hanya Mitra Toko" },
+                { status: 403 }
+            );
+        }
+
         const toko = await prisma.mitraToko.findUnique({
             where: { userId: session.user.id },
         });

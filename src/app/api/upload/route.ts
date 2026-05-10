@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 /**
  * API Route untuk File Upload
@@ -9,6 +11,12 @@ import { NextRequest, NextResponse } from "next/server";
  */
 
 export async function POST(request: NextRequest) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+        return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
+
   const formData = await request.formData();
   const file = formData.get("file");
 

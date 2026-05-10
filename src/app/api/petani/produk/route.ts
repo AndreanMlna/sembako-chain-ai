@@ -11,6 +11,13 @@ export async function GET(request: NextRequest) {
         if (!session?.user?.id) {
             return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
         }
+        if (session.user.role !== "PETANI") {
+            return NextResponse.json(
+                { success: false, message: "Forbidden — hanya Petani" },
+                { status: 403 }
+            );
+        }
+
 
         const products = await prisma.produk.findMany({
             where: { petaniId: session.user.id },

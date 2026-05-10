@@ -16,6 +16,13 @@ export async function PATCH(
             );
         }
 
+        if (session.user.role !== "MITRA_TOKO") {
+            return NextResponse.json(
+                { success: false, message: "Forbidden — hanya Mitra Toko" },
+                { status: 403 }
+            );
+        }
+
         const toko = await prisma.mitraToko.findUnique({
             where: { userId: session.user.id },
         });
@@ -94,6 +101,13 @@ export async function DELETE(
             return NextResponse.json(
                 { success: false, message: "Unauthorized" },
                 { status: 401 }
+            );
+        }
+
+        if (session.user.role !== "MITRA_TOKO") {
+            return NextResponse.json(
+                { success: false, message: "Forbidden — hanya Mitra Toko" },
+                { status: 403 }
             );
         }
 
