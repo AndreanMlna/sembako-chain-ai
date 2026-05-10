@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Providers } from "@/components/providers"; // Import Providers Anda
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Sembako-Chain AI",
@@ -22,7 +19,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="id" suppressHydrationWarning>
-        <body className={inter.className} suppressHydrationWarning>
+        <body suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {/* Bungkus dengan SessionProvider melalui komponen Providers */}
             <Providers>

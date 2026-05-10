@@ -1,5 +1,4 @@
-# Build artifacts — re-generated inside Docker
-.next/
+# Build artifacts
 /build
 /out
 
