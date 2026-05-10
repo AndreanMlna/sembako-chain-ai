@@ -1,0 +1,10 @@
+-- CreateEnum
+CREATE TYPE "StatusProduk" AS ENUM ('TERSEDIA', 'TERPESAN', 'DIKIRIM', 'HABIS');
+
+-- AlterEnum
+ALTER TYPE "MetodeJual" ADD VALUE 'FLEKSIBEL';
+
+-- AlterTable
+ALTER TABLE "produk" ADD COLUMN     "status" "StatusProduk" NOT NULL DEFAULT 'TERSEDIA',
+ADD COLUMN     "stokTerkunci" DOUBLE PRECISION NOT NULL DEFAULT 0,
+ALTER COLUMN "metodeJual" SET DEFAULT 'FLEKSIBEL';
