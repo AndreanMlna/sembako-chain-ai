@@ -1,6 +1,7 @@
 import { NextAuthOptions, DefaultSession, DefaultUser } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import { UserRole } from "@/types";
 import prisma from "@/lib/prisma";
 
@@ -56,7 +57,14 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email }
         });
 
-        if (!user) return null;
+        if (!user || !user.password) return null;
+
+        const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+        );
+
+        if (!isPasswordValid) return null;
 
         // Logika kembalikan data (Tanpa mengubah logika asli Anda)
         return {

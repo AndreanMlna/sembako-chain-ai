@@ -21,7 +21,7 @@ Cara paling mudah untuk menjalankan seluruh proyek tanpa perlu menginstal Node.j
 #### 1. Clone & Install dependensi di host
 
 ```bash
-git clone https://github.com/AndreanMlna/sembako-chain-ai.git
+git clone https://github.com/FarrelGhozy/sembako-chain-ai.git
 cd sembako-chain-ai
 npm install
 ```
@@ -36,34 +36,29 @@ docker compose up --build
 
 Docker Compose akan otomatis:
 - Menjalankan PostgreSQL 16
-- Menerapkan migrasi database via `prisma migrate deploy`
+- Menerapkan migrasi database (`prisma migrate deploy`)
 - Mengisi data demo (`npm run db:seed`) — hanya jika database masih kosong
 - Menjalankan server Next.js di port 3000
 
 Secara default, aplikasi bisa dibuka di **http://localhost:3000** dan PostgreSQL Docker diekspos ke host di **localhost:5433** agar tidak bentrok dengan PostgreSQL lokal yang sering memakai port 5432.
 
-Tunggu hingga muncul pesan di log:
-```
-✓ Ready in ...ms
-```
+Tunggu hingga muncul pesan: **`✓ Ready in ...ms`**
 
-**Aplikasi siap diakses di: http://localhost:3000**
+Buka browser: **http://localhost:3000**
 
 #### 3. Menjalankan ulang (tanpa rebuild)
 
 ```bash
-docker compose up -d
+docker compose up
 ```
-
-> Gunakan `-d` flag untuk menjalankan di background. Tanpa flag ini, log akan ditampilkan di terminal.
 
 #### 4. Menghentikan semua service
 
 ```bash
-# Hentikan tanpa menghapus data (volume persisten tetap ada)
+# Hentikan tanpa menghapus data
 docker compose down
 
-# Hentikan dan hapus SEMUA data termasuk database (reset total)
+# Hentikan dan hapus semua data (database akan direset)
 docker compose down -v
 ```
 
@@ -90,18 +85,17 @@ Variabel environment di `docker-compose.yml` yang bisa disesuaikan:
 
 ### Troubleshooting Docker
 
-**Port 3000 atau 5433 sudah terpakai:**
+**Port 3000 atau 5432 sudah terpakai:**
 ```bash
 # Ganti port di docker-compose.yml, misalnya:
 # ports: - "3001:3000"  # untuk app
-DB_PORT=5434 docker compose up --build  # untuk db (gunakan port 5434)
+# DB_PORT=5434 docker compose up --build  # untuk db
 ```
 
 **Perlu melihat log secara real-time:**
 ```bash
-docker compose logs -f app   # log aplikasi (Next.js)
-docker compose logs -f db    # log database (PostgreSQL)
-docker compose logs -f       # log semua service
+docker compose logs -f app   # log aplikasi
+docker compose logs -f db    # log database
 ```
 
 **Reset total (mulai dari awal):**
@@ -149,7 +143,7 @@ sudo systemctl enable postgresql
 ### 2. Clone Repository
 
 ```bash
-git clone https://github.com/AndreanMlna/sembako-chain-ai.git
+git clone https://github.com/FarrelGhozy/sembako-chain-ai.git
 cd sembako-chain-ai
 ```
 
