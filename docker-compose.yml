@@ -68,6 +68,8 @@ services:
       # ---- Seed (set to "false" after first successful start) ----
       SEED_DB: "true"
       PORT: "3000"
+    volumes:
+      - ./public/uploads:/app/public/uploads
     ports:
       - "3000:3000"
     healthcheck:
