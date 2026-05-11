@@ -1,130 +1,103 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bell, CheckCheck, Trash2, Info, AlertTriangle, BadgeCheck } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import Button from "@/components/ui/Button";
 import EmptyState from "@/components/shared/EmptyState";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import { Card, CardContent } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
+import { apiGet, apiPatch } from "@/lib/api";
 
-const INITIAL_NOTIFICATIONS = [
-    {
-        id: 1,
-        title: "Panen Berhasil",
-        description: "Tanaman Padi di Lahan A telah berhasil dicatat panennya.",
-        time: "2 jam yang lalu",
-        type: "success",
-        isRead: false,
-    },
-    {
-        id: 2,
-        title: "Peringatan Cuaca",
-        description: "Prakiraan hujan lebat di wilayah Tegal sore ini. Cek saluran irigasi Anda.",
-        time: "5 jam yang lalu",
-        type: "warning",
-        isRead: false,
-    },
-    {
-        id: 3,
-        title: "Dana Wallet Masuk",
-        description: "Saldo sebesar Rp 500.000 telah ditambahkan ke wallet Anda.",
-        time: "1 hari yang lalu",
-        type: "info",
-        isRead: true,
-    },
-];
+interface Notif {
+    id: string; judul: string; pesan: string; tipe: string;
+    dibaca: boolean; createdAt: string; link?: string;
+}
 
 export default function NotifikasiPage() {
-    const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
+    const [notifs, setNotifs] = useState<Notif[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const markAllRead = () => {
-        // Pakai 'n' secara konsisten
-        setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+    const fetchNotifs = async () => {
+        try {
+            const res = await apiGet<Notif[]>("/notifikasi");
+            if (res.success && res.data) setNotifs(res.data);
+        } catch { /* silent */ } finally { setLoading(false); }
     };
 
-    const deleteNotif = (id: number) => {
-        // Pakai 'n' secara konsisten
-        setNotifications(notifications.filter(n => n.id !== id));
+    useEffect(() => { fetchNotifs(); }, []);
+
+    const markAllRead = async () => {
+        await apiPatch("/notifikasi", { readAll: true });
+        setNotifs((prev) => prev.map((n) => ({ ...n, dibaca: true })));
     };
 
-    const getIcon = (type: string) => {
-        switch (type) {
-            case "success": return <BadgeCheck className="h-5 w-5 text-primary" />;
-            case "warning": return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+    const markRead = async (id: string) => {
+        await apiPatch("/notifikasi", { id });
+        setNotifs((prev) => prev.map((n) => (n.id === id ? { ...n, dibaca: true } : n)));
+    };
+
+    const getIcon = (tipe: string) => {
+        switch (tipe) {
+            case "SUKSES": return <BadgeCheck className="h-5 w-5 text-green-500" />;
+            case "PERINGATAN": return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+            case "ERROR": return <AlertTriangle className="h-5 w-5 text-red-500" />;
             default: return <Info className="h-5 w-5 text-blue-500" />;
         }
     };
 
+    const unreadCount = notifs.filter((n) => !n.dibaca).length;
+
+    if (loading) return <LoadingSpinner />;
+
     return (
         <div className="space-y-6 animate-in">
             <PageHeader
-                title="Notifikasi"
+                title={`Notifikasi${unreadCount > 0 ? ` (${unreadCount})` : ""}`}
                 description="Semua pemberitahuan aktivitas Anda"
                 action={
-                    notifications.length > 0 && (
-                        <Button variant="ghost" size="sm" onClick={markAllRead} className="text-primary hover:text-primary/80">
-                            <CheckCheck className="mr-2 h-4 w-4" />
-                            Tandai Semua Dibaca
+                    notifs.length > 0 && (
+                        <Button variant="ghost" size="sm" onClick={markAllRead} className="text-primary">
+                            <CheckCheck className="mr-2 h-4 w-4" /> Tandai Semua Dibaca
                         </Button>
                     )
                 }
             />
 
-            {notifications.length > 0 ? (
+            {notifs.length > 0 ? (
                 <div className="mx-auto max-w-3xl space-y-3">
-                    {notifications.map((notif) => (
-                        <Card
-                            key={notif.id}
-                            className={cn(
-                                "transition-all duration-300 border-l-4 shadow-sm",
-                                notif.isRead ? "border-l-border bg-card/50" : "border-l-primary bg-primary/5"
+                    {notifs.map((notif) => (
+                        <div key={notif.id} onClick={() => !notif.dibaca && markRead(notif.id)} className="cursor-pointer">
+                        <Card className={cn(
+                                "transition-all duration-300 border-l-4 shadow-sm cursor-pointer",
+                                notif.dibaca ? "border-l-border bg-card/50" : "border-l-primary bg-primary/5"
                             )}
                         >
                             <CardContent className="flex items-start gap-4 p-4">
-                                <div className={cn(
-                                    "mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
-                                    notif.isRead ? "bg-foreground/10" : "bg-primary/20"
-                                )}>
-                                    {getIcon(notif.type)}
+                                <div className={cn("mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full", notif.dibaca ? "bg-foreground/10" : "bg-primary/20")}>
+                                    {getIcon(notif.tipe)}
                                 </div>
-
                                 <div className="flex-1 space-y-1">
                                     <div className="flex items-center justify-between">
-                                        <h4 className={cn(
-                                            "text-sm font-bold",
-                                            notif.isRead ? "text-foreground/70" : "text-foreground"
-                                        )}>
-                                            {notif.title}
+                                        <h4 className={cn("text-sm font-bold", notif.dibaca ? "text-foreground/70" : "text-foreground")}>
+                                            {notif.judul}
                                         </h4>
-                                        <span className="text-[10px] font-medium text-foreground/40 uppercase tracking-wider">
-                      {notif.time}
-                    </span>
+                                        <span className="text-[10px] font-medium text-foreground/40 uppercase">
+                                            {new Date(notif.createdAt).toLocaleDateString("id-ID")}
+                                        </span>
                                     </div>
-                                    <p className={cn(
-                                        "text-sm leading-relaxed",
-                                        notif.isRead ? "text-foreground/50" : "text-foreground/80"
-                                    )}>
-                                        {notif.description}
+                                    <p className={cn("text-sm", notif.dibaca ? "text-foreground/50" : "text-foreground/80")}>
+                                        {notif.pesan}
                                     </p>
                                 </div>
-
-                                <button
-                                    onClick={() => deleteNotif(notif.id)}
-                                    className="rounded-lg p-2 text-foreground/20 hover:bg-red-500/10 hover:text-red-500 transition-all"
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </button>
                             </CardContent>
                         </Card>
+                        </div>
                     ))}
                 </div>
             ) : (
-                <EmptyState
-                    icon="Bell"
-                    title="Tidak ada notifikasi"
-                    description="Semua pemberitahuan aktivitas terbaru akan muncul di sini."
-                />
+                <EmptyState icon="Bell" title="Tidak ada notifikasi" description="Semua pemberitahuan aktivitas terbaru akan muncul di sini." />
             )}
         </div>
     );
