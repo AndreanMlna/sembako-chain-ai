@@ -6,25 +6,22 @@
 FROM node:20-slim AS builder
 WORKDIR /app
 
-# Copy pre-installed node_modules and all source files.
-# node_modules are installed on the host before the image is built
-# (see README – Docker section) to work around restricted outbound network
-# access inside the build container.
+# Install OpenSSL so Prisma 7 engine can detect libssl at build time
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 COPY . .
 
-# Re-generate the Prisma client for this exact environment.
-# prisma generate is pure-JS and does not need a live database.
-RUN node_modules/.bin/prisma generate
-
-# Build-time public env var (baked into the JS bundle at build time)
+# Dummy env vars for build-time only.
+# Real values are injected at runtime via docker-compose.
+ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV DATABASE_URL=$DATABASE_URL
 ARG NEXT_PUBLIC_API_URL=http://localhost:3000/api
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
-# Dummy DATABASE_URL prevents any build-time env-check from failing;
-# the real value is injected at runtime via docker-compose.
-ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
-ENV DATABASE_URL=$DATABASE_URL
+# Re-generate the Prisma client for this exact environment.
+RUN node_modules/.bin/prisma generate
 
+# Build the Next.js app
 RUN npm run build
 
 # ==============================================================================
@@ -49,6 +46,8 @@ COPY --from=builder /app/.next            ./.next
 COPY --from=builder /app/node_modules     ./node_modules
 COPY --from=builder /app/package.json     ./package.json
 COPY --from=builder /app/prisma           ./prisma
+COPY --from=builder /app/prisma.config.ts ./
+COPY --from=builder /app/next.config.ts   ./
 
 # Copy the entrypoint script and fix ownership before dropping privileges
 COPY entrypoint.sh ./

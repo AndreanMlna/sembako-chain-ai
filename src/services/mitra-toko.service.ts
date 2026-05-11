@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPut, apiGetPaginated } from "@/lib/api";
+import { apiGet, apiPost, apiPatch, apiDelete, apiGetPaginated } from "@/lib/api";
 import type {
   InventoryItem,
   Order,
@@ -14,17 +14,23 @@ export async function getInventory(): Promise<ApiResponse<InventoryItem[]>> {
   return apiGet<InventoryItem[]>(`${BASE}/inventory`);
 }
 
-export async function updateInventoryItem(
-  id: string,
-  data: InventoryInput
-): Promise<ApiResponse<InventoryItem>> {
-  return apiPut<InventoryItem>(`${BASE}/inventory/${id}`, data);
-}
-
 export async function addInventoryItem(
   data: InventoryInput
 ): Promise<ApiResponse<InventoryItem>> {
   return apiPost<InventoryItem>(`${BASE}/inventory`, data);
+}
+
+export async function updateInventoryItem(
+  id: string,
+  data: Partial<InventoryInput>
+): Promise<ApiResponse<InventoryItem>> {
+  return apiPatch<InventoryItem>(`${BASE}/inventory/${id}`, data);
+}
+
+export async function deleteInventoryItem(
+  id: string
+): Promise<ApiResponse<null>> {
+  return apiDelete<null>(`${BASE}/inventory/${id}`);
 }
 
 // ---- Restock Alerts ----

@@ -77,6 +77,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
+    if (session.user.role !== "PETANI") {
+      return NextResponse.json({ success: false, message: "Forbidden — hanya Petani" }, { status: 403 });
+    }
+
     // 2. Ambil Body & Validasi menggunakan Zod
     const body = await request.json();
 

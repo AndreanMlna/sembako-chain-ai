@@ -44,6 +44,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: host
       args:
         # NEXT_PUBLIC_* vars are baked into the JS bundle at build time.
         # If you expose the app on a different hostname/port, change this.

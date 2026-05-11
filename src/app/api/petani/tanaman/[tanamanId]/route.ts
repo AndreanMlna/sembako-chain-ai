@@ -91,6 +91,10 @@ export async function DELETE(
         if (!existing || existing.lahan.petaniId !== session.user.id) {
             return NextResponse.json({ success: false, message: "Akses ditolak" }, { status: 403 });
         }
+        if (session.user.role !== "PETANI") {
+            return NextResponse.json({ success: false, message: "Forbidden — hanya Petani" }, { status: 403 });
+        }
+
 
         await prisma.tanaman.delete({ where: { id: tanamanId } });
         return NextResponse.json({ success: true, message: "Terhapus" });
