@@ -1,17 +1,56 @@
 "use client";
 
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck } from "lucide-react";
+import { useState } from "react";
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck, CheckCircle2, Receipt } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import Button from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import EmptyState from "@/components/shared/EmptyState";
-import Badge from "@/components/ui/Badge"; // <--- INI YANG TADI KURANG LER!
+import Badge from "@/components/ui/Badge";
+import Modal from "@/components/ui/Modal";
 import { useCartStore } from "@/store/cart-store";
 import { formatRupiah, cn } from "@/lib/utils";
-import Link from "next/link";
+import { apiPost } from "@/lib/api";
+
+interface OrderResult {
+    orderId: string;
+    totalHarga: number;
+    status: string;
+    items: { nama: string; jumlah: number; harga: number; subtotal: number }[];
+    createdAt: string;
+}
 
 export default function KeranjangPage() {
-    const { items, getTotalHarga, getTotalItems, updateQuantity, removeItem } = useCartStore();
+    const { items, getTotalHarga, getTotalItems, updateQuantity, removeItem, clearCart } = useCartStore();
+    const [checkingOut, setCheckingOut] = useState(false);
+    const [error, setError] = useState("");
+    const [orderResult, setOrderResult] = useState<OrderResult | null>(null);
+
+    const handleCheckout = async () => {
+        if (items.length === 0 || checkingOut) return;
+        setCheckingOut(true);
+        setError("");
+
+        try {
+            const res = await apiPost<OrderResult>("/pembeli/orders", {
+                items: items.map((item) => ({
+                    produkId: item.id,
+                    quantity: item.qty,
+                })),
+            });
+
+            if (res.success && res.data) {
+                setOrderResult(res.data);
+                clearCart();
+            } else {
+                setError(res.message || "Gagal membuat pesanan");
+            }
+        } catch {
+            setError("Gagal terhubung ke server");
+        } finally {
+            setCheckingOut(false);
+        }
+    };
 
     return (
         <div className="space-y-6 animate-in">
@@ -20,7 +59,7 @@ export default function KeranjangPage() {
                 description={`${getTotalItems()} item siap untuk diproses`}
             />
 
-            {items.length === 0 ? (
+            {items.length === 0 && !orderResult ? (
                 <EmptyState
                     icon="ShoppingCart"
                     title="Keranjang masih kosong"
@@ -28,7 +67,7 @@ export default function KeranjangPage() {
                     actionLabel="Mulai Belanja"
                     onAction={() => window.location.href = "/pembeli/katalog"}
                 />
-            ) : (
+            ) : items.length > 0 ? (
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     {/* LEFT: ITEMS LIST */}
                     <div className="lg:col-span-2 space-y-4">
@@ -82,6 +121,10 @@ export default function KeranjangPage() {
                             </Card>
                         ))}
 
+                        {error && (
+                            <div className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-500">{error}</div>
+                        )}
+
                         <div className="rounded-2xl bg-primary/5 border border-primary/10 p-4 flex gap-3 items-start">
                             <Truck className="h-5 w-5 text-primary shrink-0" />
                             <p className="text-xs text-foreground/60 leading-relaxed font-medium">
@@ -105,7 +148,6 @@ export default function KeranjangPage() {
                                     </div>
                                     <div className="flex justify-between text-sm border-b border-border pb-4">
                                         <span className="text-foreground/50 font-medium">Ongkos Kirim</span>
-                                        {/* Sekarang Badge sudah aman karena sudah di-import */}
                                         <Badge variant="info" className="text-[10px] h-5 bg-primary/10 text-primary border-none">
                                             FREE SUBSIDI
                                         </Badge>
@@ -115,14 +157,18 @@ export default function KeranjangPage() {
                                         <div className="flex justify-between items-baseline mb-6">
                                             <span className="text-base font-bold text-foreground">Total Bayar</span>
                                             <span className="text-2xl font-black text-primary tracking-tighter">
-                        {formatRupiah(getTotalHarga())}
-                      </span>
+                                                {formatRupiah(getTotalHarga())}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <Button className="w-full py-7 text-base font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95 group">
-                                    LANJUT CHECKOUT
+                                <Button
+                                    className="w-full py-7 text-base font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95 group"
+                                    onClick={handleCheckout}
+                                    disabled={checkingOut}
+                                >
+                                    {checkingOut ? "MEMPROSES..." : "BAYAR SEKARANG"}
                                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                                 </Button>
 
@@ -134,7 +180,62 @@ export default function KeranjangPage() {
                         </Card>
                     </div>
                 </div>
-            )}
+            ) : null}
+
+            {/* SUCCESS MODAL */}
+            <Modal
+                isOpen={!!orderResult}
+                onClose={() => setOrderResult(null)}
+                title="Pesanan Berhasil Dibuat!"
+            >
+                {orderResult && (
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3 rounded-lg bg-green-500/10 p-4">
+                            <CheckCircle2 className="h-8 w-8 text-green-500" />
+                            <div>
+                                <p className="font-bold text-foreground">Pembayaran Berhasil</p>
+                                <p className="text-xs text-foreground/50">Order ID: {orderResult.orderId}</p>
+                            </div>
+                        </div>
+
+                        <div className="border-y border-border py-3 space-y-2">
+                            {orderResult.items.map((item, idx) => (
+                                <div key={idx} className="flex justify-between text-sm">
+                                    <span className="text-foreground/70">
+                                        {item.nama} x{item.jumlah}
+                                    </span>
+                                    <span className="font-semibold">{formatRupiah(item.subtotal)}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="flex justify-between text-lg font-black">
+                            <span>Total</span>
+                            <span className="text-primary">{formatRupiah(orderResult.totalHarga)}</span>
+                        </div>
+
+                        <div className="flex gap-3 pt-2">
+                            <Button
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() => setOrderResult(null)}
+                            >
+                                Tutup
+                            </Button>
+                            <Button
+                                className="flex-1"
+                                onClick={() => {
+                                    setOrderResult(null);
+                                    window.location.href = "/pembeli/pesanan";
+                                }}
+                            >
+                                <Receipt className="mr-2 h-4 w-4" />
+                                Lihat Pesanan
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 }
