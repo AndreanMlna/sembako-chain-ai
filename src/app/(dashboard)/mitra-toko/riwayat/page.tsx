@@ -9,9 +9,13 @@ import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import { formatRupiah } from "@/lib/utils";
 import { apiGet } from "@/lib/api";
 
+interface RiwayatItem {
+    id: string; jumlah?: number; totalHarga?: number; tipe?: string; status: string; createdAt: string; items?: string; referensi?: string | null;
+}
+
 interface RiwayatData {
-    transaksi: { id: string; jumlah: number; tipe: string; status: string; createdAt: string; referensi: string | null }[];
-    orders: { id: string; status: string; totalHarga: number; createdAt: string; items: string }[];
+    transaksi: RiwayatItem[];
+    orders: RiwayatItem[];
 }
 
 export default function MitraTokoRiwayatPage() {
@@ -41,7 +45,7 @@ export default function MitraTokoRiwayatPage() {
             </div>
 
             <div className="space-y-3">
-                {items.map((item: any) => (
+                {items.map((item) => (
                     <Card key={item.id} className="border-border">
                         <CardContent className="p-4 flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -54,7 +58,7 @@ export default function MitraTokoRiwayatPage() {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-black text-primary">{formatRupiah(tab === "orders" ? item.totalHarga : item.jumlah)}</p>
+                                <p className="text-sm font-black text-primary">{formatRupiah((tab === "orders" ? item.totalHarga : item.jumlah) ?? 0)}</p>
                                 <Badge variant={item.status === "DELIVERED" || item.status === "BERHASIL" ? "success" : "info"}>{item.status}</Badge>
                             </div>
                         </CardContent>
