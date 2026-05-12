@@ -1,18 +1,13 @@
 # ============================================================
-# Docker Compose — Server Deployment
+# Docker Compose — Server Override
 # ============================================================
-# Usage:
-#   DOMAIN=example.com PORT=3300 docker compose -f docker-compose.yml -f docker-compose.server.yml up --build -d
-#
-# Atau set di .env:
-#   DOMAIN=example.com
-#   PORT=3300
+# Menimpa URL ke domain production.
+# Pakai bersama docker-compose.yml:
+#   docker compose -f docker-compose.yml -f docker-compose.server.yml up --build -d
 # ============================================================
 
 services:
   app:
     environment:
-      NEXTAUTH_URL: "https://${DOMAIN:-localhost}:${PORT:-3300}"
-      NEXT_PUBLIC_API_URL: "https://${DOMAIN:-localhost}:${PORT:-3300}/api"
-    ports:
-      - "${PORT:-3300}:3300"
+      NEXTAUTH_URL: ${APP_URL}
+      NEXT_PUBLIC_API_URL: ${APP_URL}/api

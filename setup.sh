@@ -2,42 +2,46 @@
 # ============================================================
 # Sembako-Chain AI — Setup Script
 # ============================================================
-# Menyiapkan environment untuk pertama kali.
-# Bisa dijalankan di local (development) maupun server (deployment).
+# DEVELOPMENT:  ./setup.sh
+# SERVER:       ./setup.sh server
 # ============================================================
 set -e
 
+MODE="${1:-local}"
+
 echo "=========================================="
 echo "  Sembako-Chain AI — Setup"
+echo "  Mode: ${MODE}"
 echo "=========================================="
 
-# ---- 1. Cek environment ----
-MODE="${1:-local}"
-DOMAIN="${DOMAIN:-localhost}"
-PORT="${PORT:-3300}"
-
-echo ""
-echo "▶ Mode: $MODE"
-echo "▶ Domain: $DOMAIN"
-echo "▶ Port: $PORT"
-
-# ---- 2. Buat .env jika belum ada ----
+# ---- .env ----
 if [ ! -f ".env" ]; then
     echo ""
     echo "▶ Membuat .env dari .env.example..."
     cp .env.example .env
-
-    if [ "$MODE" = "server" ]; then
-        # Update URLs di .env untuk server
-        sed -i "s|http://localhost:3300|https://${DOMAIN}:${PORT}|g" .env
-    fi
-
     echo "✓ .env berhasil dibuat"
+    echo "⚠️  Edit .env untuk menyesuaikan konfigurasi (terutama NEXTAUTH_SECRET)"
 else
-    echo "✓ .env sudah ada, skip"
+    echo "✓ .env sudah ada"
 fi
 
-# ---- 3. Build & Jalankan ----
+# Set production URLs if server mode
+if [ "$MODE" = "server" ]; then
+    if [ -z "$APP_URL" ]; then
+        echo ""
+        echo "⚠️  APP_URL belum di-set."
+        echo "   Contoh: APP_URL=https://domain-anda.com ./setup.sh server"
+        echo ""
+        read -p "Masukkan APP_URL (contoh: https://kedai-pangan.my.id): " APP_URL
+    fi
+    # Update .env with server URL
+    sed -i "s|^APP_URL=.*|APP_URL=${APP_URL}|" .env
+    sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=${APP_URL}|" .env
+    sed -i "s|^NEXT_PUBLIC_API_URL=.*|NEXT_PUBLIC_API_URL=${APP_URL}/api|" .env
+    echo "✓ APP_URL di-set ke ${APP_URL}"
+fi
+
+# ---- Build & Run ----
 echo ""
 echo "▶ Membangun & menjalankan Docker..."
 
@@ -47,20 +51,18 @@ else
     docker compose up --build -d
 fi
 
-# ---- 4. Cek status ----
+# ---- Wait for ready ----
+APP_PORT="${APP_PORT:-3300}"
 echo ""
-echo "▶ Menunggu aplikasi siap..."
-until curl -sf "http://localhost:${PORT}" > /dev/null 2>&1; do
+echo "▶ Menunggu aplikasi siap di port ${APP_PORT}..."
+until curl -sf "http://localhost:${APP_PORT}" > /dev/null 2>&1; do
     sleep 2
 done
 
 echo ""
 echo "=========================================="
-echo "  ✓ Setup selesai!"
-echo "  Akses: http://localhost:${PORT}"
-if [ "$MODE" = "server" ]; then
-echo "  Domain: https://${DOMAIN}:${PORT}"
-fi
+echo "  ✓ Aplikasi siap!"
+echo "  URL: http://localhost:${APP_PORT}"
 echo "=========================================="
 echo ""
 echo "Akun demo:"
