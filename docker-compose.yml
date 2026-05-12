@@ -48,7 +48,7 @@ services:
       args:
         # NEXT_PUBLIC_* vars are baked into the JS bundle at build time.
         # If you expose the app on a different hostname/port, change this.
-        NEXT_PUBLIC_API_URL: http://localhost:3000/api
+        NEXT_PUBLIC_API_URL: http://localhost:3300/api
     container_name: sembako_app
     restart: unless-stopped
     depends_on:
@@ -59,21 +59,21 @@ services:
       # ⚠️  Development credentials — change for production!
       DATABASE_URL: postgresql://sembako:sembako_pass@db:5432/sembako_chain_ai
       # ---- NextAuth ----
-      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_URL: http://localhost:3300
       # ⚠️  REQUIRED: Generate a strong secret before deploying to production:
       #     openssl rand -base64 32
       NEXTAUTH_SECRET: docker-sembako-secret-change-in-production
       # ---- API ----
-      NEXT_PUBLIC_API_URL: http://localhost:3000/api
+      NEXT_PUBLIC_API_URL: http://localhost:3300/api
       # ---- Seed (set to "false" after first successful start) ----
       SEED_DB: "true"
-      PORT: "3000"
+      PORT: "3300"
     volumes:
       - ./public/uploads:/app/public/uploads
     ports:
-      - "3000:3000"
+      - "3300:3300"
     healthcheck:
-      test: ["CMD-SHELL", "curl -fs http://localhost:3000/ > /dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fs http://localhost:3300/ > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5

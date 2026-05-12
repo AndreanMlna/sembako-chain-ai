@@ -15,7 +15,7 @@ COPY . .
 # Real values are injected at runtime via docker-compose.
 ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 ENV DATABASE_URL=$DATABASE_URL
-ARG NEXT_PUBLIC_API_URL=http://localhost:3000/api
+ARG NEXT_PUBLIC_API_URL=http://localhost:3300/api
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 # Re-generate the Prisma client for this exact environment.
@@ -56,7 +56,7 @@ RUN chmod +x entrypoint.sh \
 
 USER nextjs
 
-EXPOSE 3000
-ENV PORT=3000
+EXPOSE 3300
+ENV PORT=3300
 
 ENTRYPOINT ["sh", "entrypoint.sh"]
