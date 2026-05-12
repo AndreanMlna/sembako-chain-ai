@@ -124,9 +124,13 @@ export default function KatalogPage() {
                                 className="group overflow-hidden border-border bg-card hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-md"
                             >
                                 <div className="aspect-square relative bg-foreground/5 flex items-center justify-center overflow-hidden">
-                                    <div className="text-foreground/10 group-hover:scale-110 transition-transform duration-500">
-                                        <ShoppingCart className="h-16 w-16" />
-                                    </div>
+                                    {product.fotoUrl ? (
+                                        <img src={product.fotoUrl} alt={product.nama} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    ) : (
+                                        <div className="text-foreground/10 group-hover:scale-110 transition-transform duration-500">
+                                            <ShoppingCart className="h-16 w-16" />
+                                        </div>
+                                    )}
                                     <div className="absolute top-2 left-2">
                                         <Badge className="bg-background/80 backdrop-blur-md text-[9px] font-black uppercase tracking-tighter border-none text-foreground">
                                             {product.kategori}
