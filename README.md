@@ -24,49 +24,103 @@ Platform rantai pasok komoditas sembako berbasis AI — menghubungkan **Petani**
 |---|---|---|
 | **PETANI** | `/petani` | Kelola lahan, tanaman, panen, produk, crop-check AI, e-wallet |
 | **MITRA_TOKO** | `/mitra-toko` | Inventory, restock alerts, POS kasir |
-| **KURIR** | `/kurir` | Job marketplace, route optimizer AI, scan QR delivery |
+| **KURIR** | `/kurir` | Job marketplace, route optimizer, scan QR delivery |
 | **PEMBELI** | `/pembeli` | Katalog produk, keranjang, pre-order, tracking |
 | **REGULATOR** | `/regulator` | Monitoring inflasi, heatmap stok, intervensi pasar, laporan |
 
 ---
 
-## Menjalankan dengan Docker (Cara Termudah)
+## Menjalankan di Local (Development)
 
 ### Prasyarat
+- **Docker** 24+ & **Docker Compose** 2+
 
-- **Docker** 24+ (`docker --version`)
-- **Docker Compose** 2+ (`docker compose version`)
-- **Node.js** 18+ (`node -v`) — hanya untuk `npm install` di host
-
-### 1. Clone & Install dependensi di host
+### Cepat — Docker
 
 ```bash
 git clone https://github.com/AndreanMlna/sembako-chain-ai.git
 cd sembako-chain-ai
-npm install
-```
-
-> `node_modules` diinstall di host terlebih dahulu lalu dicopy ke container saat build. Container build **tidak punya akses ke npm registry** sehingga tidak bisa `npm install` dari dalam Docker.
-
-### 2. Build & Jalankan
-
-```bash
 docker compose up --build -d
 ```
 
-Ini akan otomatis:
-- Start **PostgreSQL 16** di container `sembako_db` (port **5433**)
-- Build & start **Next.js** di container `sembako_app` (port **3000**)
-- Jalankan `prisma migrate deploy` (tunggu DB siap, max 30 retry)
-- Jalankan `prisma db:seed` (hanya jika DB masih kosong)
+Buka **http://localhost:3300**
 
-### 3. Buka browser
+### Hot Reload — Manual
 
+```bash
+npm install
+cp .env.example .env
+# Edit .env — sesuaikan DATABASE_URL ke PostgreSQL lokal
+npx prisma migrate deploy
+npx tsx prisma/seed.ts
+npm run dev
 ```
-http://localhost:3000
+
+---
+
+## Deploy ke Server
+
+### 1. Clone di server
+
+```bash
+git clone https://github.com/AndreanMlna/sembako-chain-ai.git
+cd sembako-chain-ai
 ```
 
-### 4. Akun Demo
+### 2. Buat `.env` untuk server
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` — isi dengan domain server:
+
+```env
+APP_URL=https://kedai-pangan.my.id
+APP_PORT=3300
+NEXTAUTH_URL=https://kedai-pangan.my.id
+NEXTAUTH_SECRET=(generate dengan openssl rand -base64 32)
+NEXT_PUBLIC_API_URL=https://kedai-pangan.my.id/api
+DATABASE_URL=postgresql://sembako:sembako_pass@localhost:5432/sembako_chain_ai
+DB_PORT=5433
+SEED_DB=true
+```
+
+### 3. Jalankan
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.server.yml up --build -d
+```
+
+Atau pakai script:
+
+```bash
+chmod +x setup.sh
+APP_URL=https://kedai-pangan.my.id ./setup.sh server
+```
+
+Akses: **https://kedai-pangan.my.id:3300**
+
+---
+
+## Konfigurasi `.env`
+
+Semua konfigurasi dipusatkan di file `.env`. Salin dari `.env.example`:
+
+| Variable | Default (Local) | Server | Keterangan |
+|---|---|---|---|
+| `APP_URL` | `http://localhost:3300` | `https://domain.com` | URL utama aplikasi |
+| `APP_PORT` | `3300` | `3300` | Port aplikasi |
+| `DATABASE_URL` | `postgresql://...:5432/...` | (sama) | Koneksi PostgreSQL |
+| `DB_PORT` | `5433` | `5433` | Port DB di host |
+| `NEXTAUTH_URL` | `http://localhost:3300` | `https://domain.com` | URL untuk NextAuth |
+| `NEXTAUTH_SECRET` | (wajib diganti) | (wajib diganti) | Secret enkripsi session |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:3300/api` | `https://domain.com/api` | API base URL |
+| `SEED_DB` | `true` | `true` | Auto-seed database |
+
+---
+
+## Akun Demo
 
 | Role | Email | Password |
 |---|---|---|
@@ -76,106 +130,6 @@ http://localhost:3000
 | Pembeli | `pembeli@demo.com` | `password123` |
 | Regulator | `regulator@demo.com` | `password123` |
 
-### Perintah Docker Sehari-hari
-
-```bash
-# Lihat log
-docker compose logs -f app
-
-# Restart setelah code change
-docker compose up --build -d
-
-# Stop (data tetap ada)
-docker compose down
-
-# Stop + hapus semua data
-docker compose down -v
-```
-
-### Troubleshooting Docker
-
-| Masalah | Solusi |
-|---|---|
-| Port 3000 sudah dipakai | Ganti port di `docker-compose.yml`: `"3001:3000"` |
-| Port 5433 sudah dipakai | `DB_PORT=5434 docker compose up --build -d` |
-| Container restart terus-menerus | `docker compose down -v && docker compose up --build -d` |
-| Seed gagal | Cek log: `docker logs sembako_app`. Set `SEED_DB=false` jika sudah ada data |
-
----
-
-## Menjalankan Tanpa Docker (Manual)
-
-### Prasyarat
-
-- **Node.js** 18+  
-- **PostgreSQL** 14+ (running di port 5432)
-
-### 1. Clone & Install
-
-```bash
-git clone https://github.com/AndreanMlna/sembako-chain-ai.git
-cd sembako-chain-ai
-npm install
-```
-
-### 2. Setup Environment
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env`, sesuaikan `DATABASE_URL` dengan koneksi PostgreSQL lokalmu:
-
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/sembako_chain_ai"
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="isi-dengan-random-string"
-```
-
-Generate `NEXTAUTH_SECRET`:
-```bash
-openssl rand -base64 32
-```
-
-### 3. Setup Database
-
-```bash
-# Buat database (via psql)
-psql -U postgres -c "CREATE DATABASE sembako_chain_ai;"
-
-# Jalankan migrasi
-npx prisma migrate deploy
-
-# Isi data demo
-npx tsx prisma/seed.ts
-```
-
-### 4. Jalankan
-
-```bash
-# Development (hot reload)
-npm run dev
-
-# Production
-npm run build && npm run start
-```
-
-Buka: **http://localhost:3000**
-
-### Perintah Berguna
-
-| Perintah | Kegunaan |
-|---|---|
-| `npm run dev` | Development server (hot reload) |
-| `npm run build` | Build production |
-| `npm run start` | Jalankan production server |
-| `npx prisma migrate dev` | Generate & apply migration dari schema |
-| `npx prisma migrate deploy` | Apply migration (production-safe) |
-| `npx prisma migrate reset` | Reset database (hapus semua data) |
-| `npx tsx prisma/seed.ts` | Isi data demo |
-| `npx prisma studio` | GUI database di browser |
-| `npm run lint` | ESLint check |
-
 ---
 
 ## Struktur Proyek
@@ -184,22 +138,15 @@ Buka: **http://localhost:3000**
 src/
 ├── app/                    # Next.js App Router
 │   ├── (auth)/             # Login, register, forgot-password
-│   ├── (dashboard)/        # Dashboard per role
-│   │   ├── petani/         # 14 halaman (lahan, tanaman, panen, dll)
-│   │   ├── mitra-toko/     # 5 halaman (inventory, POS, restock)
-│   │   ├── kurir/          # 5 halaman (jobs, route, scan-QR)
-│   │   ├── pembeli/        # 6 halaman (katalog, keranjang, tracking)
-│   │   ├── regulator/      # 6 halaman (inflasi, heatmap, laporan)
-│   │   ├── notifikasi/     # Pusat notifikasi
-│   │   └── profil/         # Profil user
-│   └── api/                # 23 API route
-├── components/             # UI components (ui/, layout/, cards/, charts/, dll)
-├── lib/                    # prisma.ts, auth.ts, validators.ts, utils.ts, api.ts
+│   ├── (dashboard)/        # Dashboard per role (petani, mitra-toko, etc)
+│   └── api/                # API routes
+├── components/             # UI components (ui/, layout/, cards/, charts/)
+├── lib/                    # auth.ts, prisma.ts, validators.ts, utils.ts
 ├── services/               # Service layer per role + AI service
 ├── store/                  # Zustand stores (auth, cart, notifications)
 ├── hooks/                  # Custom hooks
-├── constants/              # Role labels, nav items, komoditas
-└── types/                  # TypeScript types & enums
+├── constants/              # Role labels, nav items
+└── types/                  # TypeScript types
 prisma/
 ├── schema.prisma           # Database schema (14 tabel)
 ├── seed.ts                 # Data seeder
@@ -208,21 +155,32 @@ prisma/
 
 ---
 
-## Database
+## Perintah Berguna
 
-14 tabel: `users`, `e_wallets`, `lahan`, `tanaman`, `hasil_crop_checks`, `mitra_toko`, `inventory_items`, `kurir_profiles`, `produk`, `orders`, `order_items`, `jobs`, `transaksi`, `notifikasi`
+```bash
+# Docker
+docker compose up --build -d      # Build & jalankan
+docker compose logs -f app        # Lihat log real-time
+docker compose down               # Stop (data tetap ada)
+docker compose down -v            # Stop + hapus semua data
 
-Lihat `prisma/schema.prisma` untuk detail lengkap.
+# Manual
+npm run dev                       # Development server
+npx prisma migrate dev            # Generate & apply migration
+npx prisma migrate deploy         # Apply migration (production-safe)
+npx prisma migrate reset          # Reset database
+npx tsx prisma/seed.ts            # Isi data demo
+npx prisma studio                 # GUI database
+```
 
 ---
 
-## Konfigurasi Environment
+## Troubleshooting
 
-| Variable | Default (Docker) | Keterangan |
-|---|---|---|
-| `DATABASE_URL` | `postgresql://sembako:...@db:5432/...` | Koneksi PostgreSQL |
-| `NEXTAUTH_URL` | `http://localhost:3000` | URL aplikasi |
-| `NEXTAUTH_SECRET` | — | Secret NextAuth (wajib diganti) |
-| `NEXT_PUBLIC_API_URL` | `http://localhost:3000/api` | API base URL |
-| `SEED_DB` | `true` | Auto-seed di Docker. Set `false` setelah run pertama |
-| `DB_PORT` | `5433` | Port PostgreSQL di host |
+| Masalah | Solusi |
+|---|---|
+| Port sudah dipakai | Edit `APP_PORT` dan `DB_PORT` di `.env` |
+| Container restart terus | `docker compose down -v && docker compose up --build -d` |
+| `prisma: not found` | Docker build akan otomatis `npm ci` — pastikan koneksi internet ada |
+| Login gagal | Cek `NEXTAUTH_SECRET` sudah di-set di `.env` |
+| Database tidak konek | Cek `DATABASE_URL` di `.env` — untuk Docker pakai `@db:5432` |
