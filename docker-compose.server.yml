@@ -1,0 +1,18 @@
+# ============================================================
+# Docker Compose — Server Deployment
+# ============================================================
+# Usage:
+#   DOMAIN=example.com PORT=3300 docker compose -f docker-compose.yml -f docker-compose.server.yml up --build -d
+#
+# Atau set di .env:
+#   DOMAIN=example.com
+#   PORT=3300
+# ============================================================
+
+services:
+  app:
+    environment:
+      NEXTAUTH_URL: "https://${DOMAIN:-localhost}:${PORT:-3300}"
+      NEXT_PUBLIC_API_URL: "https://${DOMAIN:-localhost}:${PORT:-3300}/api"
+    ports:
+      - "${PORT:-3300}:3300"

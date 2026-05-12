@@ -36,34 +36,43 @@ Platform rantai pasok komoditas sembako berbasis AI — menghubungkan **Petani**
 
 - **Docker** 24+ (`docker --version`)
 - **Docker Compose** 2+ (`docker compose version`)
-- **Node.js** 18+ (`node -v`) — hanya untuk `npm install` di host
 
-### 1. Clone & Install dependensi di host
+### 1. Clone
 
 ```bash
 git clone https://github.com/AndreanMlna/sembako-chain-ai.git
 cd sembako-chain-ai
-npm install
 ```
 
-> `node_modules` diinstall di host terlebih dahulu lalu dicopy ke container saat build. Container build **tidak punya akses ke npm registry** sehingga tidak bisa `npm install` dari dalam Docker.
-
-### 2. Build & Jalankan
+### 2. Jalankan (Development Lokal)
 
 ```bash
 docker compose up --build -d
 ```
 
-Ini akan otomatis:
-- Start **PostgreSQL 16** di container `sembako_db` (port **5433**)
-- Build & start **Next.js** di container `sembako_app` (port **3000**)
-- Jalankan `prisma migrate deploy` (tunggu DB siap, max 30 retry)
-- Jalankan `prisma db:seed` (hanya jika DB masih kosong)
+Atau pakai script setup:
 
-### 3. Buka browser
-
+```bash
+chmod +x setup.sh && ./setup.sh local
 ```
-http://localhost:3000
+
+Aplikasi akan tersedia di **http://localhost:3300**
+
+### 3. Deploy ke Server (dengan Domain)
+
+```bash
+# Set domain & port
+export DOMAIN=example.com
+export PORT=3300
+
+# Jalankan dengan config server
+docker compose -f docker-compose.yml -f docker-compose.server.yml up --build -d
+```
+
+Atau pakai script:
+
+```bash
+chmod +x setup.sh && DOMAIN=example.com PORT=3300 ./setup.sh server
 ```
 
 ### 4. Akun Demo
@@ -79,31 +88,25 @@ http://localhost:3000
 ### Perintah Docker Sehari-hari
 
 ```bash
-# Lihat log
-docker compose logs -f app
-
-# Restart setelah code change
-docker compose up --build -d
-
-# Stop (data tetap ada)
-docker compose down
-
-# Stop + hapus semua data
-docker compose down -v
+docker compose logs -f app        # Lihat log
+docker compose up --build -d      # Rebuild setelah code change
+docker compose down               # Stop (data tetap ada)
+docker compose down -v            # Stop + hapus semua data
 ```
 
 ### Troubleshooting Docker
 
 | Masalah | Solusi |
 |---|---|
-| Port 3000 sudah dipakai | Ganti port di `docker-compose.yml`: `"3001:3000"` |
+| Port 3300 sudah dipakai | Ganti port: `PORT=3301 docker compose up --build -d` |
 | Port 5433 sudah dipakai | `DB_PORT=5434 docker compose up --build -d` |
-| Container restart terus-menerus | `docker compose down -v && docker compose up --build -d` |
-| Seed gagal | Cek log: `docker logs sembako_app`. Set `SEED_DB=false` jika sudah ada data |
+| Container restart terus | `docker compose down -v && docker compose up --build -d` |
+| Seed gagal | `docker logs sembako_app`. Set `SEED_DB=false` jika sudah ada data |
+| `prisma: not found` | Docker build akan otomatis `npm ci` — pastikan koneksi internet ada |
 
 ---
 
-## Menjalankan Tanpa Docker (Manual)
+## Menjalankan Tanpa Docker (Manual Development)
 
 ### Prasyarat
 
@@ -116,51 +119,24 @@ docker compose down -v
 git clone https://github.com/AndreanMlna/sembako-chain-ai.git
 cd sembako-chain-ai
 npm install
-```
-
-### 2. Setup Environment
-
-```bash
 cp .env.example .env
 ```
 
-Edit `.env`, sesuaikan `DATABASE_URL` dengan koneksi PostgreSQL lokalmu:
-
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/sembako_chain_ai"
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="isi-dengan-random-string"
-```
-
-Generate `NEXTAUTH_SECRET`:
-```bash
-openssl rand -base64 32
-```
-
-### 3. Setup Database
+### 2. Setup Database
 
 ```bash
-# Buat database (via psql)
 psql -U postgres -c "CREATE DATABASE sembako_chain_ai;"
-
-# Jalankan migrasi
 npx prisma migrate deploy
-
-# Isi data demo
 npx tsx prisma/seed.ts
 ```
 
-### 4. Jalankan
+### 3. Jalankan
 
 ```bash
-# Development (hot reload)
 npm run dev
-
-# Production
-npm run build && npm run start
 ```
 
-Buka: **http://localhost:3000**
+Buka: **http://localhost:3300**
 
 ### Perintah Berguna
 
