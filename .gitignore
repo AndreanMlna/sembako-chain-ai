@@ -33,9 +33,11 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env
 
-# Google Forms API credentials
-credentials.json
-~/.google_forms_token.json
+# Google Forms API credentials & scripts
+scripts/credentials.json
+scripts/venv/
+scripts/__pycache__/
+*.pyc
 
 # vercel
 .vercel

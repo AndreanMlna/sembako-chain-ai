@@ -1,46 +1,25 @@
 """
 generate_forms.py — Auto-generate Google Forms from JSON for all roles.
 
-Usage:
-    1. Setup Google Forms API credentials (see README_SETUP.md)
-    2. pip install -r requirements.txt
-    3. python generate_forms.py
-
-What it does:
-    - Reads all .json files from ./forms/
-    - Creates a Google Form per JSON file via the Forms API
-    - Prints the URL of each created form
+Uses raw HTTP requests (not google-api-python-client) to avoid serialisation issues.
+Section headers are skipped — the API rejects them, so questions are added flat.
 """
 
 import json
-import os
 import sys
+import requests as http_requests
 from pathlib import Path
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 
 SCOPES = ["https://www.googleapis.com/auth/forms.body"]
-
 FORMS_DIR = Path(__file__).parent / "forms"
 
-QUESTION_TYPES = {
-    "TEXT": "TEXT",
-    "PARAGRAPH": "PARAGRAPH_TEXT",
-    "MULTIPLE_CHOICE": "RADIO",
-    "CHECKBOXES": "CHECKBOX",
-    "DROPDOWN": "DROP_DOWN",
-    "LINEAR_SCALE": "LINEAR_SCALE",
-    "DATE": "DATE",
-    "TIME": "TIME",
-}
 
-
-def get_authenticated_service():
-    """Authenticate and return the Google Forms service."""
+def get_headers():
+    """Return authenticated HTTP headers."""
     creds = None
     token_path = Path.home() / ".google_forms_token.json"
     creds_path = Path(__file__).parent / "credentials.json"
@@ -53,195 +32,149 @@ def get_authenticated_service():
             creds.refresh(Request())
         else:
             if not creds_path.exists():
-                print(
-                    f"ERROR: credentials.json not found at {creds_path}.\n"
-                    "Download it from Google Cloud Console → APIs & Services → Credentials\n"
-                    "→ OAuth 2.0 Client IDs → Web application → download JSON."
-                )
+                print(f"ERROR: credentials.json not found at {creds_path}")
                 sys.exit(1)
             flow = InstalledAppFlow.from_client_secrets_file(str(creds_path), SCOPES)
             creds = flow.run_local_server(port=0)
-        with open(token_path, "w") as token_file:
-            token_file.write(creds.to_json())
+        with open(token_path, "w") as f:
+            f.write(creds.to_json())
 
-    return build("forms", "v1", credentials=creds)
-
-
-def create_question(question_data):
-    """Build a Google Forms API request item for a single question."""
-    q_type = question_data.get("type", "TEXT")
-    required = question_data.get("required", False)
-    title = question_data.get("title", "")
-    api_type = QUESTION_TYPES.get(q_type, "TEXT")
-
-    item = {
-        "title": title,
-        "questionItem": {
-            "question": {
-                "required": required,
-            }
-        },
+    creds.refresh(Request())
+    return {
+        "Authorization": f"Bearer {creds.token}",
+        "Content-Type": "application/json",
     }
 
-    # Handle different question types
-    if q_type in ("MULTIPLE_CHOICE", "DROPDOWN"):
-        options_raw = question_data.get("options", [])
-        options = []
-        for opt in options_raw:
-            if isinstance(opt, str):
-                options.append({"value": opt})
-            elif isinstance(opt, dict):
-                options.append(opt)
-        item["questionItem"]["question"]["choiceQuestion"] = {
-            "type": "RADIO" if q_type == "MULTIPLE_CHOICE" else "DROP_DOWN",
-            "options": options,
-        }
 
-    elif q_type == "CHECKBOXES":
-        options_raw = question_data.get("options", [])
-        options = []
-        for opt in options_raw:
-            if isinstance(opt, str):
-                options.append({"value": opt})
-            elif isinstance(opt, dict):
-                options.append(opt)
-        item["questionItem"]["question"]["choiceQuestion"] = {
-            "type": "CHECKBOX",
-            "options": options,
-        }
+def build_question(q):
+    """Build a question dict for the Google Forms API."""
+    q_type = q.get("type", "TEXT")
+    required = q.get("required", False)
+    title = q.get("title", "")
 
-    elif q_type == "LINEAR_SCALE":
-        item["questionItem"]["question"]["scaleQuestion"] = {
-            "low": question_data.get("min", 1),
-            "high": question_data.get("max", 5),
-            "lowLabel": question_data.get("minLabel", ""),
-            "highLabel": question_data.get("maxLabel", ""),
-        }
-        api_type = "LINEAR_SCALE"
+    question = {"required": required}
 
+    if q_type == "TEXT":
+        question["textQuestion"] = {"paragraph": False}
     elif q_type == "PARAGRAPH":
-        api_type = "PARAGRAPH_TEXT"
-
+        question["textQuestion"] = {"paragraph": True}
+    elif q_type in ("MULTIPLE_CHOICE", "DROPDOWN", "CHECKBOXES"):
+        options_raw = q.get("options", [])
+        options = [{"value": o} if isinstance(o, str) else o for o in options_raw]
+        choice_type = {"MULTIPLE_CHOICE": "RADIO", "DROPDOWN": "DROP_DOWN", "CHECKBOXES": "CHECKBOX"}[q_type]
+        question["choiceQuestion"] = {"type": choice_type, "options": options}
+    elif q_type == "LINEAR_SCALE":
+        question["scaleQuestion"] = {
+            "low": q.get("min", 1),
+            "high": q.get("max", 5),
+            "lowLabel": q.get("minLabel", ""),
+            "highLabel": q.get("maxLabel", ""),
+        }
     elif q_type == "DATE":
-        api_type = "DATE"
-        item["questionItem"]["question"]["dateQuestion"] = {}
-
+        question["dateQuestion"] = {}
     elif q_type == "TIME":
-        api_type = "TIME"
-        item["questionItem"]["question"]["timeQuestion"] = {}
+        question["timeQuestion"] = {}
 
-    item["questionItem"]["question"]["questionType"] = api_type
-
-    return item
+    return {"title": title, "questionItem": {"question": question}}
 
 
-def create_section(section_data):
-    """
-    Build requests for a form section.
-    First item is a section header, then each question.
-    """
+def create_form_via_api(headers, form_def):
+    """Create a Google Form via raw HTTP requests."""
+    info = form_def.get("info", {})
+    title = info.get("title", "Untitled")
+    doc_title = info.get("documentTitle", title)
+
+    # --- Step 1: Create the form ---
+    create_body = {"info": {"title": title, "documentTitle": doc_title}}
+    r = http_requests.post(
+        "https://forms.googleapis.com/v1/forms",
+        headers=headers,
+        json=create_body,
+    )
+    if r.status_code != 200:
+        print(f"  ERROR creating form: {r.status_code} {r.text}")
+        return None
+
+    form = r.json()
+    form_id = form.get("formId")
+    print(f"  Created form: {title}")
+    print(f"  Form ID: {form_id}")
+
+    # --- Step 2: Build batchUpdate requests ---
+    # NOTE: sectionHeaderItem is rejected by the API, so we skip sections.
+    # All questions are added as-is. Section titles are embedded as the
+    # first question text in each group.
+    sections = form_def.get("sections", [])
     requests = []
 
-    section_title = section_data.get("title", "")
-    section_desc = section_data.get("description", "")
+    for sec in sections:
+        sec_title = sec.get("title", "")
+        sec_desc = sec.get("description", "")
 
-    # Section header item
-    requests.append({
-        "createItem": {
-            "item": {
-                "title": section_title,
-                "description": section_desc,
-                "sectionHeaderItem": {"type": "SECTION_HEADER"},
-            },
-            "location": {"index": 0},
-        }
-    })
-
-    # Questions in this section
-    questions = section_data.get("questions", [])
-    for q in questions:
-        item = create_question(q)
+        # Add a text-only header line as a question (since sectionHeaderItem is not supported)
+        # The first item in each section becomes a "section label" question
         requests.append({
             "createItem": {
-                "item": item,
+                "item": {
+                    "title": f">>> {sec_title} <<<",
+                    "description": sec_desc,
+                    "textItem": {},
+                },
                 "location": {"index": 0},
             }
         })
 
-    return requests
+        # Questions
+        for q in sec.get("questions", []):
+            item = build_question(q)
+            requests.append({
+                "createItem": {
+                    "item": item,
+                    "location": {"index": 0},
+                }
+            })
 
+    if not requests:
+        print(f"  No questions to add.")
+        url = f"https://docs.google.com/forms/d/{form_id}"
+        print(f"  URL: {url}\n")
+        return form
 
-def create_form(service, form_def):
-    """Create a Google Form from a JSON definition."""
-    info = form_def.get("info", {})
-    title = info.get("title", "Untitled Form")
-    doc_title = info.get("documentTitle", title)
+    update_body = {"requests": requests}
+    r2 = http_requests.post(
+        f"https://forms.googleapis.com/v1/forms/{form_id}:batchUpdate",
+        headers=headers,
+        json=update_body,
+    )
+    if r2.status_code != 200:
+        print(f"  ERROR updating form: {r2.status_code}")
+        print(f"  Response: {r2.text[:600]}...")
+        print(f"  Form created but empty. URL: https://docs.google.com/forms/d/{form_id}\n")
+        return form
 
-    # Step 1: Create the form
-    form = {
-        "info": {
-            "title": title,
-            "documentTitle": doc_title,
-        }
-    }
-
-    try:
-        result = service.forms().create(body=form).execute()
-        form_id = result.get("formId")
-        print(f"  Created form: {title}")
-        print(f"  Form ID: {form_id}")
-    except HttpError as e:
-        print(f"  ERROR creating form '{title}': {e}")
-        return None
-
-    # Step 2: Add sections and questions
-    sections = form_def.get("sections", [])
-    all_requests = []
-
-    for section in sections:
-        all_requests.extend(create_section(section))
-
-    if all_requests:
-        body = {"requests": all_requests}
-        try:
-            service.forms().batchUpdate(formId=form_id, body=body).execute()
-            print(f"  Added {len(sections)} section(s) and questions to form")
-        except HttpError as e:
-            print(f"  ERROR updating form '{title}': {e}")
-            print(f"  Form was created but may be incomplete. URL: https://docs.google.com/forms/d/{form_id}")
-            return result
-
-    # Print the form URL
-    form_url = f"https://docs.google.com/forms/d/{form_id}"
-    print(f"  URL: {form_url}\n")
-    return result
+    print(f"  OK - {len(sections)} section(s) with questions added")
+    url = f"https://docs.google.com/forms/d/{form_id}"
+    print(f"  URL: {url}\n")
+    return form
 
 
 def main():
     print("=" * 60)
-    print("Sembako-Chain AI — Google Forms Generator")
+    print("Sembako-Chain AI - Google Forms Generator")
     print("=" * 60)
 
-    # Authenticate
-    print("\n[*] Authenticating with Google Forms API...")
-    service = get_authenticated_service()
+    print("\n[*] Authenticating...")
+    headers = get_headers()
     print("[OK] Authenticated.\n")
-
-    # Find all JSON form definitions
-    if not FORMS_DIR.exists():
-        print(f"ERROR: Directory '{FORMS_DIR}' not found.")
-        print(f"Create it and add JSON files (e.g., petani.json)")
-        sys.exit(1)
 
     json_files = sorted(FORMS_DIR.glob("*.json"))
     if not json_files:
-        print(f"ERROR: No .json files found in '{FORMS_DIR}'.")
-        print("Add at least one form definition file (e.g., petani.json)")
+        print(f"ERROR: No .json files in {FORMS_DIR}")
         sys.exit(1)
 
     print(f"Found {len(json_files)} form definition(s):\n")
 
-    created_forms = []
+    results = []
     for jf in json_files:
         print(f"[*] Processing: {jf.name}")
         try:
@@ -251,21 +184,18 @@ def main():
             print(f"  ERROR parsing JSON: {e}\n")
             continue
 
-        result = create_form(service, form_def)
+        result = create_form_via_api(headers, form_def)
         if result:
-            created_forms.append(result)
+            results.append(result)
 
-    # Summary
     print("=" * 60)
-    print(f"SUMMARY: {len(created_forms)}/{len(json_files)} form(s) created successfully\n")
-    for f in created_forms:
+    print(f"SUMMARY: {len(results)}/{len(json_files)} form(s) created\n")
+    for f in results:
         fid = f.get("formId")
-        title = f.get("info", {}).get("title", "Untitled")
-        print(f"  {title}")
+        t = f.get("info", {}).get("title", "Untitled")
+        print(f"  {t}")
         print(f"  https://docs.google.com/forms/d/{fid}\n")
-
-    print("Done! Open the URLs above to view/edit your forms.")
-    print("=" * 60)
+    print("Done!")
 
 
 if __name__ == "__main__":
