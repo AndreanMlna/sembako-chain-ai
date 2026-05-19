@@ -1,0 +1,168 @@
+{
+  "info": {
+    "title": "Survei Kebutuhan Petani — Sembako-Chain AI",
+    "documentTitle": "SembakoChainAI_Survei_Petani"
+  },
+  "sections": [
+    {
+      "title": "Profil Responden",
+      "description": "Isi data diri Anda sebagai petani",
+      "questions": [
+        {"title": "Nama lengkap", "type": "TEXT", "required": true},
+        {"title": "Usia", "type": "MULTIPLE_CHOICE", "options": ["< 20 tahun", "20-30 tahun", "31-40 tahun", "41-50 tahun", "> 50 tahun"], "required": true},
+        {"title": "Jenis kelamin", "type": "MULTIPLE_CHOICE", "options": ["Laki-laki", "Perempuan"], "required": true},
+        {"title": "Pendidikan terakhir", "type": "MULTIPLE_CHOICE", "options": ["Tidak sekolah / Tidak tamat SD", "SD / Sederajat", "SMP / Sederajat", "SMA / Sederajat", "D3 / S1", "S2 / S3"], "required": true},
+        {"title": "Desa / Kecamatan / Kabupaten lokasi lahan", "type": "TEXT", "required": true},
+        {"title": "Luas lahan yang dikelola (hektar)", "type": "TEXT", "required": true},
+        {"title": "Komoditas utama yang ditanam", "type": "MULTIPLE_CHOICE", "options": ["Padi", "Cabai", "Bawang merah", "Bawang putih", "Tomat", "Sayuran daun", "Buah-buahan", "Lainnya"], "required": true},
+        {"title": "Lama bertani (tahun)", "type": "MULTIPLE_CHOICE", "options": ["< 2 tahun", "2-5 tahun", "5-10 tahun", "10-20 tahun", "> 20 tahun"], "required": true},
+        {"title": "Status kepemilikan lahan", "type": "MULTIPLE_CHOICE", "options": ["Milik sendiri", "Sewa / bagi hasil", "Milik keluarga", "Lahan desa / negara"], "required": true},
+        {"title": "Apakah Anda anggota kelompok tani / gapoktan?", "type": "MULTIPLE_CHOICE", "options": ["Ya, aktif", "Ya, tapi tidak aktif", "Tidak"], "required": true}
+      ]
+    },
+    {
+      "title": "Aktivitas Pertanian & Pola Tanam",
+      "description": "Bagaimana pola bertani Anda saat ini",
+      "questions": [
+        {"title": "Apa saja komoditas sembako yang biasa Anda tanam? (bisa pilih lebih dari satu)", "type": "CHECKBOXES", "options": ["Padi", "Cabai", "Bawang merah", "Bawang putih", "Tomat", "Sayuran daun", "Kentang", "Kedelai", "Lainnya"], "required": true},
+        {"title": "Berapa kali panen dalam setahun untuk komoditas utama Anda?", "type": "MULTIPLE_CHOICE", "options": ["1 kali", "2 kali", "3 kali", "> 3 kali"], "required": true},
+        {"title": "Bagaimana sistem irigasi yang Anda gunakan?", "type": "MULTIPLE_CHOICE", "options": ["Tadah hujan", "Irigasi teknis", "Irigasi sederhana / pompa", "Lainnya"], "required": true},
+        {"title": "Apakah Anda pernah mengalami gagal panen dalam 2 tahun terakhir?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true},
+        {"title": "Penyebab utama gagal panen (jika pernah)", "type": "MULTIPLE_CHOICE", "options": ["Hama / penyakit", "Kekeringan / banjir", "Harga jatuh", "Cuaca ekstrem", "Tidak pernah gagal panen"]},
+        {"title": "Bagaimana cara Anda menentukan waktu tanam saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Berdasarkan musim / kalender", "Perkiraan cuaca", "Ikut tetangga / kelompok tani", "Berdasarkan harga pasar", "Lainnya"], "required": true},
+        {"title": "Berapa rata-rata biaya produksi per musim tanam per hektar?", "type": "TEXT"},
+        {"title": "Apakah Anda menggunakan pupuk / pestisida?", "type": "MULTIPLE_CHOICE", "options": ["Ya, pupuk kimia", "Ya, pupuk organik", "Keduanya", "Tidak menggunakan"], "required": true}
+      ]
+    },
+    {
+      "title": "Manajemen Lahan & Tanaman",
+      "description": "Pengelolaan lahan dan tanaman Anda",
+      "questions": [
+        {"title": "Berapa jumlah lahan yang Anda kelola?", "type": "MULTIPLE_CHOICE", "options": ["1 lahan", "2-3 lahan", "4-5 lahan", "> 5 lahan"], "required": true},
+        {"title": "Apakah lahan Anda tersebar di lokasi berbeda?", "type": "MULTIPLE_CHOICE", "options": ["Satu lokasi", "2 lokasi", "> 2 lokasi"], "required": true},
+        {"title": "Apakah Anda mencatat siklus tanam (tanggal tanam, perawatan, panen)?", "type": "MULTIPLE_CHOICE", "options": ["Ya, detail", "Ya, sekadarnya", "Tidak"], "required": true},
+        {"title": "Jika mencatat, bagaimana cara mencatatnya?", "type": "MULTIPLE_CHOICE", "options": ["Buku catatan", "Kalender", "HP / notes", "Ingatan saja", "Tidak mencatat"]},
+        {"title": "Apakah Anda ingin aplikasi memberikan pengingat jadwal tanam / perawatan?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda menanam lebih dari satu jenis dalam satu lahan (tumpang sari)?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true}
+      ]
+    },
+    {
+      "title": "Crop Check AI — Deteksi Penyakit Tanaman",
+      "description": "Fitur foto tanaman untuk deteksi penyakit otomatis",
+      "questions": [
+        {"title": "Apakah Anda pernah mengalami tanaman terserang hama / penyakit?", "type": "MULTIPLE_CHOICE", "options": ["Sering", "Kadang", "Jarang", "Tidak pernah"], "required": true},
+        {"title": "Bagaimana cara Anda mengidentifikasi hama / penyakit saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Lihat sendiri", "Tanya penyuluh (PPL)", "Tanya petani lain", "Internet / Google", "Lainnya"], "required": true},
+        {"title": "Apakah Anda bersedia memotret tanaman yang sakit untuk dianalisis aplikasi?", "type": "MULTIPLE_CHOICE", "options": ["Sangat bersedia", "Bersedia", "Tidak bersedia"], "required": true},
+        {"title": "Tindakan apa yang Anda harapkan setelah mendapat hasil diagnosis?", "type": "MULTIPLE_CHOICE", "options": ["Rekomendasi pengobatan", "Info pestisida yang tepat", "Kontak penyuluh", "Semua"]},
+        {"title": "Seberapa akurat Anda berharap diagnosis AI?", "type": "MULTIPLE_CHOICE", "options": ["100% (pasti benar)", "80-90%", "50-70%", "Yang penting ada rekomendasi"]},
+        {"title": "Seberapa penting fitur Crop Check AI (deteksi penyakit via foto) untuk Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Prediksi Harga & Informasi Pasar",
+      "description": "Fitur prediksi harga dan rekomendasi waktu jual",
+      "questions": [
+        {"title": "Apakah Anda mengetahui harga pasar komoditas saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Tahu pasti", "Perkiraan saja", "Tidak tahu"], "required": true},
+        {"title": "Dari mana Anda mendapatkan informasi harga pasar?", "type": "MULTIPLE_CHOICE", "options": ["Tengkulak", "Petani lain", "Internet / aplikasi", "Dinas pertanian", "TV / radio", "Lainnya"]},
+        {"title": "Apakah Anda pernah menjual saat harga sedang rendah karena terpaksa?", "type": "MULTIPLE_CHOICE", "options": ["Sering", "Kadang", "Tidak pernah"], "required": true},
+        {"title": "Informasi harga seperti apa yang paling berguna?", "type": "MULTIPLE_CHOICE", "options": ["Harga hari ini", "Prediksi 1 minggu", "Prediksi 1 bulan", "Prediksi musim depan"], "required": true},
+        {"title": "Apakah Anda ingin rekomendasi waktu tanam berdasarkan prediksi harga?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Seberapa penting fitur Prediksi Harga AI untuk Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Penjualan & Katalog Produk Online",
+      "description": "Menjual hasil panen melalui platform digital",
+      "questions": [
+        {"title": "Ke mana Anda biasanya menjual hasil panen?", "type": "MULTIPLE_CHOICE", "options": ["Tengkulak", "Pasar tradisional", "Koperasi / gapoktan", "Langsung ke konsumen", "Online / marketplace", "Lainnya"], "required": true},
+        {"title": "Apa kendala utama dalam menjual hasil panen?", "type": "MULTIPLE_CHOICE", "options": ["Harga tidak stabil", "Sulit akses pembeli", "Biaya transportasi", "Tidak ada tempat penyimpanan", "Lainnya"], "required": true},
+        {"title": "Apakah Anda pernah menjual produk secara online?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true},
+        {"title": "Apakah Anda ingin produk Anda tampil di katalog online?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Data apa yang ingin Anda tampilkan di katalog produk?", "type": "CHECKBOXES", "options": ["Foto produk", "Harga", "Berat / volume", "Asal lahan", "Tanggal panen", "Nama petani"]},
+        {"title": "Dalam satuan apa Anda biasa menjual hasil panen?", "type": "MULTIPLE_CHOICE", "options": ["Kilogram", "Karung", "Ikat", "Lainnya"], "required": true},
+        {"title": "Apakah Anda ingin fitur tawar-menawar harga?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true},
+        {"title": "Apakah Anda bisa memenuhi pesanan dalam jumlah besar (>= 50 kg) secara konsisten?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tergantung musim", "Tidak"], "required": true},
+        {"title": "Seberapa penting fitur Katalog Produk Online untuk Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Pre-Order Panen",
+      "description": "Menjual hasil panen sebelum dipanen",
+      "questions": [
+        {"title": "Apakah Anda pernah menjual hasil panen SEBELUM panen (ijon / grojokan)?", "type": "MULTIPLE_CHOICE", "options": ["Sering", "Pernah", "Tidak pernah"], "required": true},
+        {"title": "Apakah Anda tertarik menjual dengan sistem pre-order (dibeli sebelum panen, harga lebih baik)?", "type": "MULTIPLE_CHOICE", "options": ["Sangat tertarik", "Tertarik", "Kurang tertarik", "Tidak tertarik"], "required": true},
+        {"title": "Berapa lama sebelum panen Anda bersedia menerima pre-order?", "type": "MULTIPLE_CHOICE", "options": ["Saat tanam", "1 bulan sebelum panen", "2 minggu sebelum", "1 minggu sebelum"]},
+        {"title": "Berapa persen hasil panen yang bersedia Anda pre-order-kan?", "type": "MULTIPLE_CHOICE", "options": ["100%", "50-75%", "25-50%", "< 25%"]},
+        {"title": "Apakah Anda bersedia memberikan diskon untuk pre-order?", "type": "MULTIPLE_CHOICE", "options": ["Ya, 5-10%", "Ya, 10-25%", "Tidak", "Tergantung harga pasar"]},
+        {"title": "Seberapa penting fitur Pre-Order Panen untuk Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Metode Penjualan",
+      "description": "Cara menjual yang paling sesuai untuk Anda",
+      "questions": [
+        {"title": "Metode penjualan mana yang paling sesuai untuk Anda?", "type": "MULTIPLE_CHOICE", "options": ["Langsung B2C (jual langsung ke konsumen)", "Distribusi B2B (jual besar ke toko mitra)", "AI Fleksibel (sistem yang atur distribusinya)", "Kombinasi semua"], "required": true},
+        {"title": "Jika distribusi B2B, berapa minimal volume per pengiriman?", "type": "MULTIPLE_CHOICE", "options": ["10-25 kg", "25-50 kg", "50-100 kg", "> 100 kg"]},
+        {"title": "Apakah Anda bersedia sistem AI menentukan ke mana produk Anda didistribusikan?", "type": "MULTIPLE_CHOICE", "options": ["Ya, percaya sistem", "Mungkin dengan pengawasan", "Tidak, saya ingin kontrol"], "required": true}
+      ]
+    },
+    {
+      "title": "E-Wallet & Pembayaran Digital",
+      "description": "Dompet digital untuk transaksi",
+      "questions": [
+        {"title": "Apakah Anda memiliki rekening bank?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true},
+        {"title": "Apakah Anda menggunakan mobile banking / e-wallet (GoPay, OVO, Dana, dll)?", "type": "MULTIPLE_CHOICE", "options": ["Ya, aktif", "Punya tapi jarang", "Tidak punya"], "required": true},
+        {"title": "Bagaimana cara Anda menerima pembayaran hasil panen saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Tunai", "Transfer bank", "E-Wallet", "Lainnya"], "required": true},
+        {"title": "Apakah Anda bersedia menerima pembayaran melalui e-wallet aplikasi?", "type": "MULTIPLE_CHOICE", "options": ["Sangat bersedia", "Bersedia", "Tidak bersedia"], "required": true},
+        {"title": "Seberapa penting fitur E-Wallet untuk Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Teknologi & Kesiapan Digital",
+      "description": "Kesiapan Anda menggunakan aplikasi digital",
+      "questions": [
+        {"title": "Apakah Anda memiliki smartphone?", "type": "MULTIPLE_CHOICE", "options": ["Ya, Android", "Ya, iPhone", "Tidak"], "required": true},
+        {"title": "Apakah Anda terbiasa menggunakan aplikasi mobile?", "type": "MULTIPLE_CHOICE", "options": ["Sangat terbiasa", "Terbiasa", "Kurang terbiasa", "Tidak terbiasa"], "required": true},
+        {"title": "Apakah Anda memiliki akses internet yang stabil di lokasi?", "type": "MULTIPLE_CHOICE", "options": ["Sangat stabil", "Stabil", "Kadang putus", "Tidak ada"], "required": true},
+        {"title": "Apakah Anda bersedia menggunakan aplikasi untuk mengelola lahan dan menjual produk?", "type": "MULTIPLE_CHOICE", "options": ["Bersedia", "Mungkin, perlu pelatihan", "Tidak bersedia"], "required": true},
+        {"title": "Apakah Anda bersedia mengikuti pelatihan penggunaan aplikasi?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true},
+        {"title": "Bahasa apa yang paling nyaman untuk antarmuka aplikasi?", "type": "MULTIPLE_CHOICE", "options": ["Indonesia", "Bahasa daerah (Sunda/Jawa/dll)", "Campuran"]}
+      ]
+    },
+    {
+      "title": "Prioritas Fitur — Skala Kepentingan",
+      "description": "Beri nilai 1-5 untuk setiap fitur (1=Tidak Penting, 5=Sangat Penting)",
+      "questions": [
+        {"title": "Manajemen Lahan (catat luas, lokasi, jenis tanah)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Manajemen Tanaman (catat siklus tanam, perawatan)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Crop Check AI (deteksi penyakit via foto)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Prediksi Harga AI (rekomendasi waktu jual terbaik)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Katalog Produk Online (jual hasil panen ke banyak pembeli)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Pre-Order Panen (jual sebelum panen dengan harga lebih baik)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "E-Wallet (terima pembayaran digital, tarik tunai)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Riwayat & Laporan Keuangan Otomatis", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Notifikasi Informasi Pasar & Cuaca", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Kebutuhan Non-Fungsional",
+      "description": "Preferensi teknis aplikasi",
+      "questions": [
+        {"title": "Ukuran huruf (font) seperti apa yang nyaman?", "type": "MULTIPLE_CHOICE", "options": ["Besar", "Sedang", "Kecil (biasa)"], "required": true},
+        {"title": "Apakah Anda butuh panduan video / bantuan di dalam aplikasi?", "type": "MULTIPLE_CHOICE", "options": ["Sangat perlu", "Lumayan", "Tidak perlu"], "required": true},
+        {"title": "Apakah aplikasi perlu bisa diakses tanpa kuota (mode offline)?", "type": "MULTIPLE_CHOICE", "options": ["Sangat perlu", "Lumayan", "Tidak perlu"], "required": true}
+      ]
+    },
+    {
+      "title": "Masukan Terbuka",
+      "description": "Cerita dan harapan Anda",
+      "questions": [
+        {"title": "Apa tantangan terbesar dalam bertani saat ini?", "type": "PARAGRAPH", "required": true},
+        {"title": "Apa harapan Anda untuk platform yang menghubungkan petani dengan pembeli?", "type": "PARAGRAPH"},
+        {"title": "Jika aplikasi ini jadi asisten pribadi usaha tani Anda, apa saja yang harus bisa dilakukan?", "type": "PARAGRAPH"},
+        {"title": "Ceritakan pengalaman terbaik / terburuk menggunakan aplikasi pertanian sebelumnya (jika ada)", "type": "PARAGRAPH"},
+        {"title": "Berapa harga langganan bulanan yang bersedia Anda bayar untuk aplikasi ini? (dalam Rp)", "type": "TEXT"}
+      ]
+    }
+  ]
+}

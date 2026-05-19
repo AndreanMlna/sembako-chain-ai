@@ -1,0 +1,121 @@
+{
+  "info": {
+    "title": "Survei Kebutuhan Konsumen — Sembako-Chain AI",
+    "documentTitle": "SembakoChainAI_Survei_Pembeli"
+  },
+  "sections": [
+    {
+      "title": "Profil Responden",
+      "description": "Data diri Anda sebagai konsumen",
+      "questions": [
+        {"title": "Nama lengkap", "type": "TEXT", "required": true},
+        {"title": "Usia", "type": "MULTIPLE_CHOICE", "options": ["< 20 tahun", "20-30 tahun", "31-40 tahun", "41-50 tahun", "> 50 tahun"], "required": true},
+        {"title": "Pekerjaan", "type": "MULTIPLE_CHOICE", "options": ["Pelajar / Mahasiswa", "Karyawan swasta", "PNS / TNI / Polri", "Wiraswasta", "IRT", "Pensiunan", "Lainnya"], "required": true},
+        {"title": "Domisili (Kecamatan / Kota)", "type": "TEXT", "required": true},
+        {"title": "Status rumah tangga", "type": "MULTIPLE_CHOICE", "options": ["Lajang tinggal sendiri", "Pasangan tanpa anak", "Keluarga dengan anak", "Tinggal dengan orang tua", "Lainnya"], "required": true},
+        {"title": "Jumlah anggota keluarga yang ditanggung", "type": "MULTIPLE_CHOICE", "options": ["1 orang", "2-3 orang", "4-5 orang", "> 5 orang"], "required": true},
+        {"title": "Pengeluaran rata-rata belanja sembako per bulan", "type": "MULTIPLE_CHOICE", "options": ["< Rp500rb", "Rp500rb-1jt", "Rp1-2jt", "Rp2-5jt", "> Rp5jt"], "required": true}
+      ]
+    },
+    {
+      "title": "Kebiasaan Belanja Sembako",
+      "description": "Bagaimana Anda biasa berbelanja sembako",
+      "questions": [
+        {"title": "Di mana Anda biasanya membeli sembako?", "type": "MULTIPLE_CHOICE", "options": ["Pasar tradisional", "Supermarket", "Warung / toko kelontong", "Online (GoMart / Shopee / dll)", "Lainnya"], "required": true},
+        {"title": "Seberapa sering Anda berbelanja sembako?", "type": "MULTIPLE_CHOICE", "options": ["Setiap hari", "2-3 kali seminggu", "Seminggu sekali", "2 minggu sekali", "Sebulan sekali"], "required": true},
+        {"title": "Komoditas sembako apa yang paling sering dibeli?", "type": "CHECKBOXES", "options": ["Beras", "Cabai", "Bawang", "Minyak goreng", "Gula", "Telur", "Tepung", "Lainnya"], "required": true},
+        {"title": "Faktor apa yang paling penting saat memilih tempat belanja sembako?", "type": "MULTIPLE_CHOICE", "options": ["Harga murah", "Dekat rumah", "Kualitas bagus", "Banyak pilihan", "Lainnya"], "required": true},
+        {"title": "Apakah Anda pernah membeli sembako secara online?", "type": "MULTIPLE_CHOICE", "options": ["Sering", "Pernah", "Tidak pernah"], "required": true},
+        {"title": "Platform apa yang digunakan untuk belanja sembako online?", "type": "MULTIPLE_CHOICE", "options": ["GoMart / GrabMart", "Shopee", "Tokopedia", "WhatsApp", "Belum pernah", "Lainnya"]},
+        {"title": "Apa alasan utama TIDAK / BELUM belanja sembako online?", "type": "MULTIPLE_CHOICE", "options": ["Ingin lihat langsung barangnya", "Ongkir mahal", "Takut kualitas jelek", "Tidak punya HP / internet", "Sudah biasa offline", "Lainnya"]}
+      ]
+    },
+    {
+      "title": "Katalog & Pencarian Produk",
+      "description": "Menemukan dan memilih produk di aplikasi",
+      "questions": [
+        {"title": "Informasi apa yang paling penting di halaman produk?", "type": "MULTIPLE_CHOICE", "options": ["Foto produk", "Harga", "Berat / ukuran", "Asal produk (dari petani mana)", "Tanggal panen", "Stok tersedia"], "required": true},
+        {"title": "Apakah Anda ingin tahu siapa petaninya (nama, lokasi lahan)?", "type": "MULTIPLE_CHOICE", "options": ["Ya, penting", "Lumayan", "Tidak peduli"], "required": true},
+        {"title": "Bagaimana tampilan katalog yang Anda sukai?", "type": "MULTIPLE_CHOICE", "options": ["Grid (banyak produk sekaligus)", "List (satu per satu vertikal)", "Lihat di peta"], "required": true},
+        {"title": "Fitur filter apa yang paling berguna?", "type": "MULTIPLE_CHOICE", "options": ["Filter harga", "Filter kategori", "Filter lokasi terdekat", "Urutkan termurah / termahal"], "required": true},
+        {"title": "Apakah Anda ingin bisa belanja dari beberapa petani / toko dalam satu pesanan?", "type": "MULTIPLE_CHOICE", "options": ["Ya, gabung semua", "Ya, tapi pisah pengiriman", "Tidak, cukup satu toko"], "required": true}
+      ]
+    },
+    {
+      "title": "Pre-Order Panen",
+      "description": "Memesan hasil panen sebelum dipanen",
+      "questions": [
+        {"title": "Apakah Anda tertarik memesan hasil panen SEBELUM dipanen?", "type": "MULTIPLE_CHOICE", "options": ["Sangat tertarik", "Tertarik", "Kurang tertarik", "Tidak tertarik"], "required": true},
+        {"title": "Alasan Anda tertarik pre-order? (jika tertarik)", "type": "CHECKBOXES", "options": ["Harga lebih murah", "Produk lebih segar", "Dapat produk langka", "Mendukung petani", "Tidak tertarik"]},
+        {"title": "Alasan TIDAK tertarik pre-order?", "type": "CHECKBOXES", "options": ["Takut kualitas jelek", "Takut tidak jadi panen", "Tidak mau nunggu", "Tidak percaya", "Tertarik"]},
+        {"title": "Berapa lama Anda bersedia menunggu dari pre-order sampai panen?", "type": "MULTIPLE_CHOICE", "options": ["< 1 minggu", "1-2 minggu", "1 bulan", "> 1 bulan"]},
+        {"title": "Apakah Anda bersedia membayar DP untuk pre-order?", "type": "MULTIPLE_CHOICE", "options": ["Ya, bayar lunas", "Ya, 50%", "Ya, 25%", "Tidak, bayar setelah terima"]}
+      ]
+    },
+    {
+      "title": "Pesanan & Tracking",
+      "description": "Mengelola pesanan dan melacak pengiriman",
+      "questions": [
+        {"title": "Informasi apa yang ingin Anda lihat di halaman Pesanan Saya?", "type": "CHECKBOXES", "options": ["Status pesanan", "Nomor resi", "Nama kurir", "Estimasi tiba", "Total pembayaran"]},
+        {"title": "Apakah Anda ingin tracking real-time kurir di peta?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda ingin bisa hubungi kurir langsung?", "type": "MULTIPLE_CHOICE", "options": ["Ya, via chat", "Ya, via telepon", "Tidak, lewat CS"], "required": true},
+        {"title": "Apakah Anda ingin bisa mengubah alamat setelah pesan?", "type": "MULTIPLE_CHOICE", "options": ["Ya, sebelum dikirim", "Ya, asal belum jauh", "Tidak bisa"], "required": true},
+        {"title": "Apakah Anda ingin bisa membatalkan pesanan?", "type": "MULTIPLE_CHOICE", "options": ["Ya, kapan saja", "Ya, sebelum diproses", "Tidak bisa"], "required": true}
+      ]
+    },
+    {
+      "title": "Pembayaran",
+      "description": "Metode pembayaran yang diinginkan",
+      "questions": [
+        {"title": "Metode pembayaran apa yang paling sering Anda gunakan?", "type": "MULTIPLE_CHOICE", "options": ["Tunai (COD)", "Transfer bank", "E-Wallet (GoPay/OVO/Dana)", "QRIS", "Kartu kredit"], "required": true},
+        {"title": "Apakah Anda bersedia COD (bayar di tempat)?", "type": "MULTIPLE_CHOICE", "options": ["Ya, lebih aman", "Ya, tapi harus ada kembalian", "Tidak, lebih suka non-tunai"], "required": true},
+        {"title": "Apakah Anda bersedia bayar di muka (transfer / e-wallet)?", "type": "MULTIPLE_CHOICE", "options": ["Ya, percaya", "Ya, untuk jumlah kecil", "Tidak, takut penipuan"], "required": true}
+      ]
+    },
+    {
+      "title": "Harga, Kualitas & Layanan",
+      "description": "Preferensi harga dan kualitas",
+      "questions": [
+        {"title": "Apakah Anda bersedia membayar lebih mahal untuk produk langsung dari petani?", "type": "MULTIPLE_CHOICE", "options": ["Ya, 10-20% lebih mahal", "Ya, 5-10%", "Harga harus sama", "Harus lebih murah"], "required": true},
+        {"title": "Apakah Anda tertarik dengan paket sembako hemat (bundling)?", "type": "MULTIPLE_CHOICE", "options": ["Sangat tertarik", "Tertarik", "Tidak"], "required": true},
+        {"title": "Apakah Anda ingin berlangganan (subscription) untuk barang tertentu?", "type": "MULTIPLE_CHOICE", "options": ["Ya, beras tiap minggu", "Ya, susu tiap minggu", "Tidak", "Mungkin"]},
+        {"title": "Apakah Anda biasanya memberi rating setelah belanja online?", "type": "MULTIPLE_CHOICE", "options": ["Ya, selalu", "Kadang", "Tidak pernah"], "required": true},
+        {"title": "Apakah Anda membaca review sebelum membeli?", "type": "MULTIPLE_CHOICE", "options": ["Ya, selalu", "Kadang", "Tidak pernah"], "required": true}
+      ]
+    },
+    {
+      "title": "Prioritas Fitur — Skala Kepentingan",
+      "description": "Beri nilai 1-5 untuk setiap fitur (1=Tidak Penting, 5=Sangat Penting)",
+      "questions": [
+        {"title": "Harga yang kompetitif (lebih murah dari pasar)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Kualitas produk segar & terjamin", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Pengiriman cepat (same-day / 1 hari)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Tracking pengiriman real-time", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Katalog produk lengkap dengan foto & deskripsi", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Banyak pilihan metode pembayaran", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Program loyalitas / poin reward", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Pre-order panen (pesan sebelum panen, harga lebih murah)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Kebutuhan Non-Fungsional",
+      "description": "Preferensi teknis",
+      "questions": [
+        {"title": "Perangkat yang digunakan untuk belanja online?", "type": "MULTIPLE_CHOICE", "options": ["HP Android", "iPhone", "Laptop / komputer", "Semua"], "required": true},
+        {"title": "Apakah Anda lebih suka aplikasi mobile atau website?", "type": "MULTIPLE_CHOICE", "options": ["Aplikasi mobile", "Website", "Dua-duanya"], "required": true},
+        {"title": "Apakah koneksi internet di rumah stabil?", "type": "MULTIPLE_CHOICE", "options": ["Stabil", "Kadang putus", "Tidak stabil"], "required": true}
+      ]
+    },
+    {
+      "title": "Masukan Terbuka",
+      "description": "Cerita dan harapan Anda",
+      "questions": [
+        {"title": "Apa keluhan terbesar saat berbelanja sembako saat ini?", "type": "PARAGRAPH", "required": true},
+        {"title": "Apa yang membuat Anda percaya untuk membeli bahan makanan secara online?", "type": "PARAGRAPH"},
+        {"title": "Jika aplikasi ini jadi asisten belanja Anda, apa fitur impiannya?", "type": "PARAGRAPH"},
+        {"title": "Ceritakan pengalaman terbaik & terburuk belanja sembako online (jika pernah)", "type": "PARAGRAPH"},
+        {"title": "Berapa ongkos kirim maksimal yang bersedia Anda bayar?", "type": "TEXT"}
+      ]
+    }
+  ]
+}

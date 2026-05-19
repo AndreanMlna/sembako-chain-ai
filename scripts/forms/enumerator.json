@@ -1,0 +1,123 @@
+{
+  "info": {
+    "title": "Survei Kebutuhan Enumerator / Petugas Lapangan — Sembako-Chain AI",
+    "documentTitle": "SembakoChainAI_Survei_Enumerator"
+  },
+  "sections": [
+    {
+      "title": "Profil Enumerator",
+      "description": "Data diri dan profil pekerjaan Anda",
+      "questions": [
+        {"title": "Nama lengkap", "type": "TEXT", "required": true},
+        {"title": "Usia", "type": "MULTIPLE_CHOICE", "options": ["< 20 tahun", "20-30 tahun", "31-40 tahun", "41-50 tahun", "> 50 tahun"], "required": true},
+        {"title": "Status pekerjaan", "type": "MULTIPLE_CHOICE", "options": ["PNS / staf pemerintah", "Tenaga kontrak / honorer", "Surveyor lepas", "Mahasiswa magang", "Lainnya"], "required": true},
+        {"title": "Instansi tempat bertugas", "type": "MULTIPLE_CHOICE", "options": ["BPS", "Dinas Pertanian", "Dinas Ketahanan Pangan", "Lembaga riset", "Lainnya"], "required": true},
+        {"title": "Wilayah tugas utama (Kecamatan / Kota)", "type": "TEXT", "required": true},
+        {"title": "Lama menjadi enumerator", "type": "MULTIPLE_CHOICE", "options": ["< 1 tahun", "1-3 tahun", "3-5 tahun", "> 5 tahun"], "required": true},
+        {"title": "Berapa responden yang didatangi per bulan?", "type": "MULTIPLE_CHOICE", "options": ["< 20", "20-50", "50-100", "> 100"], "required": true},
+        {"title": "Berapa rata-rata waktu per wawancara?", "type": "MULTIPLE_CHOICE", "options": ["< 15 menit", "15-30 menit", "30-60 menit", "> 60 menit"], "required": true},
+        {"title": "Berapa penghasilan per bulan sebagai enumerator?", "type": "MULTIPLE_CHOICE", "options": ["< Rp500rb", "Rp500rb-1jt", "Rp1-2jt", "Rp2-5jt", "> Rp5jt"], "required": true}
+      ]
+    },
+    {
+      "title": "Metode Pengumpulan Data Saat Ini",
+      "description": "Cara Anda mengumpulkan data di lapangan",
+      "questions": [
+        {"title": "Bagaimana cara Anda mengumpulkan data saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Kertas kuesioner", "Google Form", "Aplikasi khusus (CAPI)", "Lainnya"], "required": true},
+        {"title": "Jika pakai aplikasi, apa nama aplikasinya?", "type": "MULTIPLE_CHOICE", "options": ["CSPro", "SurveyCTO", "ODK", "KoboCollect", "Tidak pakai aplikasi", "Lainnya"]},
+        {"title": "Apa kendala utama saat mengumpulkan data?", "type": "CHECKBOXES", "options": ["Responden sulit ditemui", "Alamat tidak jelas", "HP / alat habis baterai", "Jaringan internet", "Cuaca buruk", "Lainnya"], "required": true},
+        {"title": "Berapa lama data dari lapangan sampai ke kantor?", "type": "MULTIPLE_CHOICE", "options": ["1 hari", "2-3 hari", "Seminggu", "Lebih"], "required": true},
+        {"title": "Apakah ada verifikasi kualitas data yang dilakukan?", "type": "MULTIPLE_CHOICE", "options": ["Ya, ketat", "Kadang", "Tidak ada"], "required": true},
+        {"title": "Jika ada validasi, berapa lama prosesnya?", "type": "MULTIPLE_CHOICE", "options": ["1-2 hari", "3-7 hari", "> 1 minggu", "Tidak ada validasi"]}
+      ]
+    },
+    {
+      "title": "Aplikasi Pencatatan Data",
+      "description": "Fitur aplikasi mobile untuk pencatatan data lapangan",
+      "questions": [
+        {"title": "Kelebihan aplikasi yang pernah digunakan (jika ada)?", "type": "PARAGRAPH"},
+        {"title": "Kekurangan aplikasi yang pernah digunakan (jika ada)?", "type": "PARAGRAPH"},
+        {"title": "Berapa banyak pertanyaan dalam satu kuesioner yang ideal?", "type": "MULTIPLE_CHOICE", "options": ["< 20", "20-30", "30-50", "> 50"], "required": true},
+        {"title": "Tipe pertanyaan apa yang paling efisien?", "type": "MULTIPLE_CHOICE", "options": ["Pilihan ganda", "Isian singkat", "Skala Likert", "Esai"], "required": true},
+        {"title": "Apakah aplikasi perlu mendukung multi-bahasa (Indonesia + daerah)?", "type": "MULTIPLE_CHOICE", "options": ["Sangat perlu", "Perlu", "Tidak perlu"], "required": true}
+      ]
+    },
+    {
+      "title": "Mode Offline & Sinkronisasi",
+      "description": "Bekerja di daerah tanpa sinyal internet",
+      "questions": [
+        {"title": "Apakah koneksi internet di wilayah tugas Anda stabil?", "type": "MULTIPLE_CHOICE", "options": ["Stabil (4G)", "3G kadang-kadang", "Sering tidak ada sinyal", "Tidak ada sama sekali"], "required": true},
+        {"title": "Berapa persen wilayah tugas yang memiliki jaringan internet?", "type": "MULTIPLE_CHOICE", "options": ["> 75%", "50-75%", "25-50%", "< 25%"], "required": true},
+        {"title": "Apakah Anda pernah kehilangan data karena masalah koneksi?", "type": "MULTIPLE_CHOICE", "options": ["Sering", "Kadang", "Jarang", "Tidak pernah"], "required": true},
+        {"title": "Seberapa penting fitur mode offline (input tanpa internet)?", "type": "MULTIPLE_CHOICE", "options": ["Sangat penting (wajib)", "Penting", "Tidak penting"], "required": true},
+        {"title": "Jika offline, berapa lama maksimal menyimpan data sebelum sync?", "type": "MULTIPLE_CHOICE", "options": ["Selesai 1 responden langsung sync", "Akhir hari", "2-3 hari", "Seminggu sekali"], "required": true},
+        {"title": "Mekanisme sync yang ideal?", "type": "MULTIPLE_CHOICE", "options": ["Otomatis saat ada koneksi", "Manual (tekan tombol sync)", "Campuran"], "required": true}
+      ]
+    },
+    {
+      "title": "GPS, Foto & Dokumentasi",
+      "description": "Fitur geotagging dan dokumentasi lapangan",
+      "questions": [
+        {"title": "Apakah Anda mencatat lokasi responden saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Ya, koordinat GPS", "Ya, alamat saja", "Tidak"], "required": true},
+        {"title": "Apakah Anda ingin GPS otomatis terekam saat wawancara?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda mengambil foto responden saat wawancara?", "type": "MULTIPLE_CHOICE", "options": ["Ya, selalu", "Kadang", "Tidak pernah"], "required": true},
+        {"title": "Apakah Anda mengambil foto lokasi / lahan?", "type": "MULTIPLE_CHOICE", "options": ["Ya, selalu", "Kadang", "Tidak pernah"], "required": true},
+        {"title": "Apakah Anda bersedia menambahkan tanda tangan digital responden?", "type": "MULTIPLE_CHOICE", "options": ["Ya, lebih praktis", "Mungkin", "Tidak, lebih suka tanda tangan basah"], "required": true},
+        {"title": "Apakah Anda khawatir ukuran foto besar dan menghabiskan memori HP?", "type": "MULTIPLE_CHOICE", "options": ["Khawatir", "Biasa saja", "Tidak khawatir"], "required": true}
+      ]
+    },
+    {
+      "title": "Validasi Data & Quality Control",
+      "description": "Pemeriksaan kualitas data yang dikumpulkan",
+      "questions": [
+        {"title": "Validasi otomatis apa yang diinginkan?", "type": "CHECKBOXES", "options": ["Range check (harga tidak wajar)", "Konsistensi (umur vs status)", "Kelengkapan (semua terisi)", "Semua"]},
+        {"title": "Apakah Anda ingin sistem menolak input yang tidak valid?", "type": "MULTIPLE_CHOICE", "options": ["Ya, tolak langsung", "Ya, peringatan saja", "Tidak, biarkan"], "required": true}
+      ]
+    },
+    {
+      "title": "Manajemen Tugas & Progress",
+      "description": "Penerimaan tugas dan pelacakan progress",
+      "questions": [
+        {"title": "Bagaimana Anda menerima tugas (daftar responden) saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Dari koordinator via WA", "Cetak daftar", "Aplikasi", "Lainnya"], "required": true},
+        {"title": "Apakah Anda ingin daftar tugas muncul di aplikasi?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda ingin target harian (jumlah responden) di aplikasi?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda ingin progress (berapa % selesai) terlihat?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true}
+      ]
+    },
+    {
+      "title": "Kebutuhan Perangkat & Teknis",
+      "description": "Spesifikasi HP dan preferensi teknis",
+      "questions": [
+        {"title": "Spesifikasi HP yang digunakan?", "type": "MULTIPLE_CHOICE", "options": ["RAM < 2GB", "RAM 2-4GB", "RAM > 4GB"], "required": true},
+        {"title": "Sisa penyimpanan HP yang tersedia?", "type": "MULTIPLE_CHOICE", "options": ["< 2GB", "2-8GB", "> 8GB"], "required": true},
+        {"title": "Berapa daya tahan baterai HP?", "type": "MULTIPLE_CHOICE", "options": ["Tidak sampai 1 hari", "1 hari penuh", "> 1 hari"], "required": true},
+        {"title": "Apakah Anda punya power bank?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true},
+        {"title": "Berapa ukuran aplikasi maksimal yang diinginkan?", "type": "MULTIPLE_CHOICE", "options": ["< 30MB", "30-50MB", "50-100MB", "Tidak masalah"], "required": true}
+      ]
+    },
+    {
+      "title": "Prioritas Fitur — Skala Kepentingan",
+      "description": "Beri nilai 1-5 untuk setiap fitur (1=Tidak Penting, 5=Sangat Penting)",
+      "questions": [
+        {"title": "Aplikasi pencatatan data lapangan", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Mode offline (input tanpa internet)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Geotagging & GPS otomatis", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Foto & dokumentasi responden", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Validasi data otomatis (QC)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Sinkronisasi data otomatis", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Manajemen tugas & target harian", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Masukan Terbuka",
+      "description": "Cerita dan harapan Anda",
+      "questions": [
+        {"title": "Apa tantangan terbesar saat melakukan wawancara lapangan?", "type": "PARAGRAPH", "required": true},
+        {"title": "Jika aplikasi ideal, apa fitur yang paling membantu pekerjaan Anda?", "type": "PARAGRAPH"},
+        {"title": "Ceritakan pengalaman terburuk saat mengumpulkan data (hujan, responden marah, HP error, dll)", "type": "PARAGRAPH"},
+        {"title": "Berapa insentif per responden yang ideal menurut Anda?", "type": "TEXT"},
+        {"title": "Apa saran Anda untuk meningkatkan kualitas data lapangan?", "type": "PARAGRAPH"}
+      ]
+    }
+  ]
+}
