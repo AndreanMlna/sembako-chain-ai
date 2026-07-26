@@ -22,7 +22,7 @@
 1. **APIs & Services** → **Credentials**
 2. Klik **+ CREATE CREDENTIALS** → **OAuth client ID**
 3. Application type: **Desktop app**
-4. Name: `SembakoChainAI Forms Generator`
+4. Name: `HARVEST Forms Generator`
 5. Klik **CREATE**
 6. Klik **DOWNLOAD JSON** → simpan sebagai `credentials.json`
 7. Letakkan file `credentials.json` di folder `scripts/`
@@ -38,7 +38,7 @@ Karena aplikasi masih dalam mode testing:
 
 1. **APIs & Services** → **OAuth consent screen**
 2. Pilih **External** → **CREATE**
-3. Isi App name: `Sembako Chain AI Forms`
+3. Isi App name: `HARVEST Forms`
 4. User support email: email kamu
 5. Developer contact: email kamu
 6. **SAVE AND CONTINUE**
@@ -84,7 +84,7 @@ Script akan membuat Google Form untuk setiap file `.json` di folder `forms/`, la
 Contoh output:
 ```
 [*] Processing: petani.json
-  Created form: Survei Kebutuhan Petani — Sembako-Chain AI
+  Created form: Survei Kebutuhan Petani — HARVEST
   Form ID: abc123xyz
   Added 6 section(s) and questions to form
   URL: https://docs.google.com/forms/d/abc123xyz

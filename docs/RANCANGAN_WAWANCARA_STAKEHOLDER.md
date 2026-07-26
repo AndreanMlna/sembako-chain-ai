@@ -1,4 +1,4 @@
-# Rancangan Wawancara Stakeholder & Mitra — Sembako-Chain AI
+# Rancangan Wawancara Stakeholder & Mitra — HARVEST
 
 ## Daftar Isi
 1. [Pendahuluan & Tujuan](#1-pendahuluan--tujuan)
@@ -20,7 +20,7 @@
 ## 1. Pendahuluan & Tujuan
 
 ### 1.1 Latar Belakang
-Sembako-Chain AI adalah platform rantai pasok komoditas sembako berbasis AI yang menghubungkan Petani, Mitra Toko, Kurir, Pembeli, dan Regulator dalam satu ekosistem digital. Untuk memastikan platform ini benar-benar menjawab kebutuhan seluruh pengguna, diperlukan pengumpulan data primer melalui wawancara dan survei.
+HARVEST adalah platform rantai pasok komoditas sembako berbasis AI yang menghubungkan Petani, Mitra Toko, Kurir, Pembeli, dan Regulator dalam satu ekosistem digital. Untuk memastikan platform ini benar-benar menjawab kebutuhan seluruh pengguna, diperlukan pengumpulan data primer melalui wawancara dan survei.
 
 ### 1.2 Tujuan Dokumen
 - Menyediakan panduan wawancara terstruktur untuk setiap role stakeholder
@@ -551,7 +551,7 @@ Bagian ini berisi pertanyaan lintas-role untuk analisis kebutuhan fungsional dan
 
 ### 5.1 Google Form — Petani
 
-**Judul:** Survei Kebutuhan Petani — Sembako-Chain AI
+**Judul:** Survei Kebutuhan Petani — HARVEST
 **Deskripsi:** Bantu kami memahami kebutuhan Anda sebagai petani untuk membangun platform digital yang tepat.
 
 **Struktur Form:**
@@ -566,7 +566,7 @@ Bagian ini berisi pertanyaan lintas-role untuk analisis kebutuhan fungsional dan
 
 ### 5.2 Google Form — Mitra Toko
 
-**Judul:** Survei Kebutuhan Mitra Toko — Sembako-Chain AI
+**Judul:** Survei Kebutuhan Mitra Toko — HARVEST
 
 **Struktur Form:**
 1. **Bagian 1: Data Profil Toko** (8 pertanyaan profiling)
@@ -578,7 +578,7 @@ Bagian ini berisi pertanyaan lintas-role untuk analisis kebutuhan fungsional dan
 
 ### 5.3 Google Form — Kurir
 
-**Judul:** Survei Kebutuhan Kurir — Sembako-Chain AI
+**Judul:** Survei Kebutuhan Kurir — HARVEST
 
 **Struktur Form:**
 1. **Bagian 1: Data Diri** (8 pertanyaan profiling)
@@ -589,7 +589,7 @@ Bagian ini berisi pertanyaan lintas-role untuk analisis kebutuhan fungsional dan
 
 ### 5.4 Google Form — Pembeli / Konsumen
 
-**Judul:** Survei Kebutuhan Konsumen — Sembako-Chain AI
+**Judul:** Survei Kebutuhan Konsumen — HARVEST
 
 **Struktur Form:**
 1. **Bagian 1: Data Diri** (8 pertanyaan profiling)
@@ -600,7 +600,7 @@ Bagian ini berisi pertanyaan lintas-role untuk analisis kebutuhan fungsional dan
 
 ### 5.5 Google Form — Regulator
 
-**Judul:** Survei Kebutuhan Data & Monitoring — Sembako-Chain AI
+**Judul:** Survei Kebutuhan Data & Monitoring — HARVEST
 
 **Struktur Form:**
 1. **Bagian 1: Data Instansi** (6 pertanyaan profiling)
@@ -613,7 +613,7 @@ Bagian ini berisi pertanyaan lintas-role untuk analisis kebutuhan fungsional dan
 
 ### 5.6 Google Form — Enumerator
 
-**Judul:** Survei Kebutuhan Enumerator — Sembako-Chain AI
+**Judul:** Survei Kebutuhan Enumerator — HARVEST
 
 **Struktur Form:**
 1. **Bagian 1: Data Diri** (7 pertanyaan profiling)
@@ -704,4 +704,4 @@ Bagian ini berisi pertanyaan lintas-role untuk analisis kebutuhan fungsional dan
 
 ---
 
-> **Dokumen ini disusun untuk membantu pembuatan Google Form dan pengumpulan data dari seluruh role pengguna platform Sembako-Chain AI.**
+> **Dokumen ini disusun untuk membantu pembuatan Google Form dan pengumpulan data dari seluruh role pengguna platform HARVEST.**

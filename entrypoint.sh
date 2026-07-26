@@ -2,7 +2,7 @@
 set -e
 
 # ============================================================
-# Entrypoint for sembako-chain-ai Docker container
+# Entrypoint for HARVEST Docker container
 # Order: migrate → (optional seed) → start Next.js
 # ============================================================
 
@@ -10,7 +10,7 @@ set -e
 RESTART_GUARD="/app/.container_initialized"
 
 echo "=========================================="
-echo "  Sembako-Chain AI — Container Startup"
+echo "  HARVEST — Container Startup"
 echo "=========================================="
 
 if [ -f "$RESTART_GUARD" ]; then

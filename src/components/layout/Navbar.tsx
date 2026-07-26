@@ -90,7 +90,7 @@ export default function Navbar() {
                 href="/profil"
                 className={cn(
                     "flex h-9 w-9 items-center justify-center rounded-full transition-all md:hidden",
-                    pathname === "/profil" ? "bg-accent text-sembako-darkest" : "bg-accent/10 text-accent"
+                    pathname === "/profil" ? "bg-accent text-harvest-darkest" : "bg-accent/10 text-accent"
                 )}
                 onClick={closeMenu}
             >
@@ -161,7 +161,7 @@ export default function Navbar() {
             <div className="space-y-2">
               <p className="text-lg font-bold text-foreground">Yakin ingin keluar?</p>
               <p className="text-sm text-foreground/60 leading-relaxed">
-                Sesi login Anda akan dihapus. Anda harus masuk kembali untuk mengakses data Sembako-Chain.
+                Sesi login Anda akan dihapus. Anda harus masuk kembali untuk mengakses data HARVEST.
               </p>
             </div>
             <div className="flex w-full gap-3 pt-2">

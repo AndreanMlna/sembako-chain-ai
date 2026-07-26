@@ -1,4 +1,4 @@
-# Sembako-Chain AI
+# HARVEST
 
 Platform rantai pasok komoditas sembako berbasis AI — menghubungkan **Petani**, **Mitra Toko**, **Kurir**, **Pembeli**, dan **Regulator** dalam satu ekosistem digital.
 
@@ -38,8 +38,8 @@ Platform rantai pasok komoditas sembako berbasis AI — menghubungkan **Petani**
 ### Cepat — Docker
 
 ```bash
-git clone https://github.com/AndreanMlna/sembako-chain-ai.git
-cd sembako-chain-ai
+git clone https://github.com/AndreanMlna/harvest.git
+cd harvest
 docker compose up --build -d
 ```
 
@@ -63,8 +63,8 @@ npm run dev
 ### 1. Clone di server
 
 ```bash
-git clone https://github.com/AndreanMlna/sembako-chain-ai.git
-cd sembako-chain-ai
+git clone https://github.com/AndreanMlna/harvest.git
+cd harvest
 ```
 
 ### 2. Buat `.env` untuk server
@@ -81,7 +81,7 @@ APP_PORT=3300
 NEXTAUTH_URL=https://kedai-pangan.my.id
 NEXTAUTH_SECRET=(generate dengan openssl rand -base64 32)
 NEXT_PUBLIC_API_URL=https://kedai-pangan.my.id/api
-DATABASE_URL=postgresql://sembako:sembako_pass@localhost:5432/sembako_chain_ai
+DATABASE_URL=postgresql://harvest:harvest_pass@localhost:5432/harvest
 DB_PORT=5433
 SEED_DB=true
 ```

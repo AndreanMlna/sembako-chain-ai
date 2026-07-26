@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# Sembako-Chain AI — Setup Script
+# HARVEST — Setup Script
 # ============================================================
 # DEVELOPMENT:  ./setup.sh
 # SERVER:       ./setup.sh server
@@ -10,7 +10,7 @@ set -e
 MODE="${1:-local}"
 
 echo "=========================================="
-echo "  Sembako-Chain AI — Setup"
+echo "  HARVEST — Setup"
 echo "  Mode: ${MODE}"
 echo "=========================================="
 

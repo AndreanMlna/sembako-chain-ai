@@ -59,7 +59,7 @@ export default function EWalletPage() {
         />
 
         {/* Balance Card Section */}
-        <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950 via-sembako-darkest to-black p-1 shadow-2xl transition-all duration-500 hover:shadow-emerald-500/10">
+        <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950 via-harvest-darkest to-black p-1 shadow-2xl transition-all duration-500 hover:shadow-emerald-500/10">
           <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-emerald-500/10 blur-[80px] group-hover:bg-emerald-500/20 transition-all duration-700" />
           <div className="absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-blue-500/10 blur-[80px]" />
 

@@ -14,7 +14,7 @@ export default function HomePage() {
         <header className="bg-gradient-to-b from-primary/10 to-background border-b border-border/50">
           <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
             <h1 className="text-2xl font-bold text-primary tracking-tighter">
-              Sembako-Chain AI
+              HARVEST
             </h1>
             <div className="flex items-center gap-4">
               <ThemeToggle />
@@ -68,7 +68,7 @@ export default function HomePage() {
               Satu Platform untuk Semua
             </h3>
             <p className="mx-auto max-w-2xl text-foreground/50">
-              Sembako-Chain AI menyatukan seluruh ekosistem distribusi pangan
+              HARVEST menyatukan seluruh ekosistem distribusi pangan
               dalam satu platform terintegrasi.
             </p>
           </div>
@@ -118,13 +118,13 @@ export default function HomePage() {
         {/* Footer */}
         <footer className="border-t border-border bg-card py-16">
           <div className="mx-auto max-w-7xl px-6 text-center space-y-6">
-            <h2 className="text-2xl font-bold text-primary tracking-tighter">Sembako-Chain AI</h2>
+            <h2 className="text-2xl font-bold text-primary tracking-tighter">HARVEST</h2>
             <p className="mx-auto max-w-md text-sm text-foreground/40 leading-relaxed">
               Ekosistem Distribusi Pangan Hybrid Berbasis AI untuk Stabilisasi
               Inflasi dan Inklusi Ekonomi
             </p>
             <div className="pt-8 border-t border-border/50 text-xs text-foreground/30 font-medium">
-              &copy; {new Date().getFullYear()} Sembako-Chain AI. Dibuat dengan ❤️ untuk Indonesia.
+              &copy; {new Date().getFullYear()} HARVEST. Dibuat dengan ❤️ untuk Indonesia.
             </div>
           </div>
         </footer>

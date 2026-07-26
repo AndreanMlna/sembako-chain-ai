@@ -24,7 +24,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
       const variants = {
           primary: "bg-primary text-white hover:opacity-90 focus:ring-primary/50",
-          secondary: "bg-sembako-dark text-accent hover:bg-sembako-darker focus:ring-sembako-dark/50",
+          secondary: "bg-harvest-dark text-accent hover:bg-harvest-darker focus:ring-harvest-dark/50",
           outline: "border border-primary text-primary hover:bg-primary/5 focus:ring-primary/50",
           ghost: "text-foreground hover:bg-foreground/5 focus:ring-foreground/20",
           danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500/50",

@@ -160,7 +160,7 @@ def create_form_via_api(headers, form_def):
 
 def main():
     print("=" * 60)
-    print("Sembako-Chain AI - Google Forms Generator")
+    print("HARVEST - Google Forms Generator")
     print("=" * 60)
 
     print("\n[*] Authenticating...")

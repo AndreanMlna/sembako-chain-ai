@@ -36,7 +36,7 @@ export default function Modal({
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         {/* Overlay - Background Gelap Transparan */}
         <div
-            className="absolute inset-0 bg-sembako-darkest/80 backdrop-blur-sm transition-opacity"
+            className="absolute inset-0 bg-harvest-darkest/80 backdrop-blur-sm transition-opacity"
             onClick={onClose}
         />
 

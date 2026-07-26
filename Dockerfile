@@ -1,5 +1,5 @@
 # ==============================================================================
-# Sembako-Chain AI — Dockerfile
+# HARVEST — Dockerfile
 # ==============================================================================
 # Bekerja di local maupun server (fresh clone).
 # network: host di docker-compose.yml memungkinkan akses npm registry.

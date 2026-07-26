@@ -1,9 +1,9 @@
 /**
- * SEMBAKO-CHAIN AI CORE ENGINE (PRODUCTION READY)
+ * HARVEST AI CORE ENGINE (PRODUCTION READY)
  * Terhubung ke Model AI eksternal & Database
  */
 
-const AI_SERVER_URL = process.env.AI_SERVER_URL || "https://api-ai.sembako-chain.ai";
+const AI_SERVER_URL = process.env.AI_SERVER_URL || "https://api-ai.harvest.app";
 
 // 1. AI CROP CHECK (CNN - EfficientNetB0)
 export const analyzeCropHealth = async (imageFile: File | string) => {

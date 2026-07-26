@@ -55,6 +55,6 @@ export const useCartStore = create<CartState>()(
 
             getTotalHarga: () => get().items.reduce((total, item) => total + item.price * item.qty, 0),
         }),
-        { name: "sembako-cart-storage" } // Simpan di LocalStorage otomatis
+        { name: "harvest-cart-storage" } // Simpan di LocalStorage otomatis
     )
 );

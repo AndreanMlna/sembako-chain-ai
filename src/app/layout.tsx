@@ -4,11 +4,11 @@ import { ThemeProvider } from "next-themes";
 import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
-    title: "Sembako-Chain AI",
+    title: "HARVEST",
     description:
         "Ekosistem Distribusi Pangan Hybrid Berbasis AI untuk Stabilisasi Inflasi dan Inklusi Ekonomi",
     keywords: [
-        "sembako", "pangan", "AI", "distribusi", "supply chain", "inflasi", "petani", "Indonesia",
+        "harvest", "pangan", "AI", "distribusi", "supply chain", "inflasi", "petani", "Indonesia",
     ],
 };
 
