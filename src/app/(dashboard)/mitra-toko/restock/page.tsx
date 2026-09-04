@@ -1,46 +1,50 @@
 "use client";
 
-import { useState } from "react";
-import { RefreshCw, MapPin, Wheat, ArrowRight, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { RefreshCw, MapPin, Wheat, ArrowRight, AlertCircle } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import EmptyState from "@/components/shared/EmptyState";
 import { Card, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
-import { cn } from "@/lib/utils";
+import { apiGet } from "@/lib/api";
 
-// Dummy Data Alert Restock dengan Rekomendasi AI
-const RESTOCK_ALERTS = [
-    {
-        id: 1,
-        product: "Beras Rojolele 5kg",
-        currentStock: 3,
-        minStock: 10,
-        priority: "High",
-        recommendation: {
-            farmer: "Kelompok Tani Makmur",
-            distance: "2.5 km",
-            stockAvailable: 500,
-            price: "Rp 68.000/karung"
-        }
-    },
-    {
-        id: 2,
-        product: "Minyak Goreng 2L",
-        currentStock: 5,
-        minStock: 15,
-        priority: "Medium",
-        recommendation: {
-            farmer: "Gudang Distribusi Tegal",
-            distance: "4.8 km",
-            stockAvailable: 120,
-            price: "Rp 32.500/botol"
-        }
-    }
-];
+interface RestockAlert {
+  id: string | number;
+  product: string;
+  currentStock: number;
+  minStock: number;
+  priority: string;
+  recommendation: {
+    farmer: string;
+    distance: string;
+    stockAvailable: number;
+    price: string;
+  };
+}
 
 export default function RestockPage() {
-    const [alerts, setAlerts] = useState(RESTOCK_ALERTS);
+  const [alerts, setAlerts] = useState<RestockAlert[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchRestock = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await apiGet<RestockAlert[]>("/mitra-toko/restock");
+      if (res.success && Array.isArray(res.data)) {
+        setAlerts(res.data);
+      }
+    } catch (err) {
+      console.error("Gagal memuat alert restock:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRestock();
+  }, [fetchRestock]);
+
 
     return (
         <div className="space-y-6 animate-in">
@@ -48,8 +52,14 @@ export default function RestockPage() {
                 title="Auto-Restock"
                 description="Notifikasi otomatis stok rendah dan rekomendasi suplai dari petani terdekat"
                 action={
-                    <Button variant="outline" size="sm" className="font-bold border-primary/20 text-primary">
-                        <RefreshCw className="mr-2 h-4 w-4" />
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="font-bold border-primary/20 text-primary"
+                        onClick={fetchRestock}
+                        disabled={loading}
+                    >
+                        <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
                         Refresh Data
                     </Button>
                 }

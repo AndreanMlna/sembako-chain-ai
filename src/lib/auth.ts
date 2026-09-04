@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { NextAuthOptions, DefaultSession, DefaultUser } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -32,6 +33,7 @@ declare module "next-auth/jwt" {
     role: UserRole;
     nama: string;
     avatar?: string;
+    email?: string;
   }
 }
 
@@ -41,34 +43,38 @@ declare module "next-auth/jwt" {
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 hari
   },
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email.toLowerCase().trim() },
         });
 
-        if (!user) return null;
+        if (!user || !user.isActive) return null;
 
-        // Logika kembalikan data (Tanpa mengubah logika asli Anda)
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isPasswordValid) return null;
+
         return {
           id: user.id,
           name: user.nama,
           nama: user.nama,
           email: user.email,
           role: user.role as unknown as UserRole,
-          avatar: user.avatar ?? undefined
+          avatar: user.avatar ?? undefined,
         };
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -77,6 +83,7 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.nama = user.nama;
         token.avatar = user.avatar;
+        token.email = user.email ?? undefined;
       }
       return token;
     },
@@ -85,12 +92,25 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id;
         session.user.role = token.role;
         session.user.nama = token.nama;
-        session.user.avatar = token.avatar;
+        session.user.email = token.email || session.user.email || "";
       }
       return session;
-    }
+    },
+    async redirect({ url, baseUrl }) {
+      if (url === baseUrl || url === `${baseUrl}/login`) return baseUrl;
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      try {
+        if (new URL(url).origin === baseUrl) return url;
+      } catch {
+        return baseUrl;
+      }
+      return baseUrl;
+    },
   },
-  pages: { signIn: '/login' }
+  pages: {
+    signIn: "/login",
+    error: "/login",
+  },
 };
 
 // ==========================================

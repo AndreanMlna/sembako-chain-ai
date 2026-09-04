@@ -1,10 +1,21 @@
 // src/app/api/petani/tanaman/update-status/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { StatusPanen } from "@prisma/client";
 
-export async function POST() {
+async function executeStatusUpdate(request: NextRequest) {
     try {
+        // Proteksi Vercel Cron Secret (opsional di development, wajib di production jika CRON_SECRET terpasang)
+        const cronSecret = process.env.CRON_SECRET;
+        const authHeader = request.headers.get("authorization");
+
+        if (process.env.NODE_ENV === "production" && cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+            return NextResponse.json(
+                { success: false, message: "Unauthorized. Invalid Cron Secret." },
+                { status: 401 }
+            );
+        }
+
         const now = new Date();
 
         // Reset semua status berdasarkan kondisi waktu saat ini
@@ -14,10 +25,9 @@ export async function POST() {
                 tanggalTanam: {
                     gt: now,
                 },
-                // Tambahan: Abaikan tanaman yang sudah dipanen manual
                 statusPanen: {
                     not: StatusPanen.DIPANEN,
-                }
+                },
             },
             data: {
                 statusPanen: StatusPanen.TANAM,
@@ -34,10 +44,9 @@ export async function POST() {
                 estimasiPanen: {
                     gt: now,
                 },
-                // Tambahan: Abaikan tanaman yang sudah dipanen manual lebih awal
                 statusPanen: {
                     not: StatusPanen.DIPANEN,
-                }
+                },
             },
             data: {
                 statusPanen: StatusPanen.TUMBUH,
@@ -46,16 +55,16 @@ export async function POST() {
         });
 
         // 3. SIAP_PANEN: jika estimasiPanen <= sekarang dan estimasiPanen > (sekarang - 7 hari)
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         await prisma.tanaman.updateMany({
             where: {
                 estimasiPanen: {
                     lte: now,
-                    gt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+                    gt: sevenDaysAgo,
                 },
-                // Tambahan: Jangan kembalikan status menjadi SIAP_PANEN jika sudah di-klik panen
                 statusPanen: {
                     not: StatusPanen.DIPANEN,
-                }
+                },
             },
             data: {
                 statusPanen: StatusPanen.SIAP_PANEN,
@@ -64,16 +73,14 @@ export async function POST() {
         });
 
         // 4. DIPANEN: jika estimasiPanen + 7 hari <= sekarang (Otomatis panen jika dibiarkan)
-        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         await prisma.tanaman.updateMany({
             where: {
                 estimasiPanen: {
                     lte: sevenDaysAgo,
                 },
-                // Tambahan: Hindari database melakukan update berulang pada data yang sudah DIPANEN
                 statusPanen: {
                     not: StatusPanen.DIPANEN,
-                }
+                },
             },
             data: {
                 statusPanen: StatusPanen.DIPANEN,
@@ -84,6 +91,7 @@ export async function POST() {
         return NextResponse.json({
             success: true,
             message: "Status panen tanaman berhasil diperbarui otomatis",
+            timestamp: now.toISOString(),
         });
     } catch (error) {
         console.error("Error updating tanaman status:", error);
@@ -92,4 +100,14 @@ export async function POST() {
             { status: 500 }
         );
     }
+}
+
+// Vercel Cron memanggil endpoint menggunakan method GET
+export async function GET(request: NextRequest) {
+    return executeStatusUpdate(request);
+}
+
+// Mendukung pemanggilan manual / trigger via POST
+export async function POST(request: NextRequest) {
+    return executeStatusUpdate(request);
 }

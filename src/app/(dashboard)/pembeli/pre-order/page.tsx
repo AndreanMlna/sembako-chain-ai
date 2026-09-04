@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { CalendarClock, Sprout, Timer, ArrowRight, Info, MapPin, Star } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { CalendarClock, Sprout, Timer, ArrowRight, Info, MapPin, Star, Loader2 } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import EmptyState from "@/components/shared/EmptyState";
 import { Card, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
+import { useCartStore } from "@/store/cart-store";
+import { toast } from "react-hot-toast";
 
 // Definisi tipe biar TS nggak ngamuk lagi ler
 type BadgeVariant = "default" | "success" | "warning" | "danger" | "info";
@@ -25,35 +28,40 @@ interface PreOrder {
     variant: BadgeVariant;
 }
 
-const PRE_ORDER_DATA: PreOrder[] = [
-    {
-        id: "PO-001",
-        name: "Beras Mentik Susu",
-        seller: "Kelompok Tani Subur",
-        harvestDate: "15 April 2026",
-        price: 13500,
-        unit: "kg",
-        slots: 120,
-        totalSlots: 500,
-        status: "Fase Generatif",
-        variant: "info"
-    },
-    {
-        id: "PO-002",
-        name: "Cabai Rawit Merah",
-        seller: "Kebun Tani Makmur",
-        harvestDate: "28 Maret 2026",
-        price: 35000,
-        unit: "kg",
-        slots: 15,
-        totalSlots: 50,
-        status: "Siap Panen",
-        variant: "success"
-    }
-];
-
 export default function PreOrderPage() {
-    const [items] = useState<PreOrder[]>(PRE_ORDER_DATA);
+    const router = useRouter();
+    const addItem = useCartStore((state) => state.addItem);
+    const [items, setItems] = useState<PreOrder[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const handleOrder = (po: PreOrder) => {
+        addItem({
+            id: po.id,
+            name: `[Pre-Order] ${po.name}`,
+            price: po.price,
+            unit: po.unit,
+            qty: 1,
+        });
+        toast.success(`Pre-order ${po.name} ditambahkan ke keranjang!`);
+        router.push("/pembeli/keranjang");
+    };
+
+    useEffect(() => {
+        const fetchPreOrders = async () => {
+            try {
+                const res = await fetch("/api/pembeli/pre-order");
+                const json = await res.json();
+                if (json.success && Array.isArray(json.data)) {
+                    setItems(json.data);
+                }
+            } catch (err) {
+                console.error("Gagal memuat pre-order:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPreOrders();
+    }, []);
 
     return (
         <div className="space-y-6 animate-in">
@@ -75,7 +83,12 @@ export default function PreOrderPage() {
                 </div>
             </div>
 
-            {items.length > 0 ? (
+            {loading ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-sm font-semibold text-foreground/50">Memuat jadwal pre-order panen dari database...</p>
+                </div>
+            ) : items.length > 0 ? (
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     {items.map((po) => (
                         <Card key={po.id} className="group border-border bg-card hover:border-primary/50 transition-all overflow-hidden shadow-sm">
@@ -121,7 +134,10 @@ export default function PreOrderPage() {
                                                 Rp {po.price.toLocaleString("id-ID")} <span className="text-xs font-medium text-foreground/40">/{po.unit}</span>
                                             </p>
                                         </div>
-                                        <Button className="font-black px-6 shadow-lg shadow-primary/20 active:scale-95 transition-all">
+                                        <Button
+                                            onClick={() => handleOrder(po)}
+                                            className="font-black px-6 shadow-lg shadow-primary/20 active:scale-95 transition-all"
+                                        >
                                             PESAN SEKARANG
                                             <ArrowRight className="ml-2 h-4 w-4" />
                                         </Button>

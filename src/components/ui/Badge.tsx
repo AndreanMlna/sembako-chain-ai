@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-interface BadgeProps {
+interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode;
   variant?: "default" | "success" | "warning" | "danger" | "info";
   className?: string;
@@ -10,6 +10,7 @@ export default function Badge({
   children,
   variant = "default",
   className,
+  ...props
 }: BadgeProps) {
   const variants = {
     default: "bg-foreground/10 text-foreground",
@@ -21,6 +22,7 @@ export default function Badge({
 
   return (
     <span
+      {...props}
       className={cn(
         "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
         variants[variant],

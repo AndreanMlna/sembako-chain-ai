@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { History, MapPin, Package, Calendar, Search, Download, CheckCircle2 } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import EmptyState from "@/components/shared/EmptyState";
@@ -8,80 +8,118 @@ import { Card, CardContent } from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import SearchBar from "@/components/shared/SearchBar";
+import { apiGet } from "@/lib/api";
 
-// Dummy Data Riwayat Pengiriman Kurir
-const DELIVERY_HISTORY = [
-    {
-        id: "DEL-9920",
-        date: "14 Mar 2026",
-        time: "09:30",
-        store: "Toko Sembako Berkah",
-        item: "10 Karung Beras",
-        pickup: "Gudang Tani Jaya",
-        dropoff: "Slawi, Tegal",
-        fee: 35000,
-        distance: "6.2 km",
-        status: "Selesai"
-    },
-    {
-        id: "DEL-9918",
-        date: "13 Mar 2026",
-        time: "15:45",
-        store: "Mitra Tani Sejahtera",
-        item: "5 Karton Minyak Goreng",
-        pickup: "Pasar Pagi Tegal",
-        dropoff: "Mejasem",
-        fee: 15000,
-        distance: "2.5 km",
-        status: "Selesai"
-    },
-    {
-        id: "DEL-9915",
-        date: "13 Mar 2026",
-        time: "11:20",
-        store: "Warung Madura Jaya",
-        item: "20 Kg Gula Pasir",
-        pickup: "Gudang Bulog",
-        dropoff: "Kramat",
-        fee: 22000,
-        distance: "4.8 km",
-        status: "Selesai"
-    }
-];
+interface DeliveryHistoryItem {
+  id: string;
+  date: string;
+  time: string;
+  store: string;
+  item: string;
+  pickup: string;
+  dropoff: string;
+  fee: number;
+  distance: string;
+  status: string;
+}
 
 export default function RiwayatKurirPage() {
-    const [history] = useState(DELIVERY_HISTORY);
+  const [history, setHistory] = useState<DeliveryHistoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
-    return (
-        <div className="space-y-6 animate-in">
-            <PageHeader
-                title="Riwayat Pengiriman"
-                description="Pantau semua pekerjaan yang telah Anda selesaikan"
-                action={
-                    <Button variant="outline" size="sm" className="font-bold border-border bg-card">
-                        <Download className="mr-2 h-4 w-4" />
-                        Rekap Gaji
-                    </Button>
-                }
-            />
+  const fetchHistory = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await apiGet<DeliveryHistoryItem[]>("/kurir/jobs/history");
+      if (res.success && Array.isArray(res.data)) {
+        setHistory(res.data);
+      }
+    } catch (err) {
+      console.error("Gagal memuat riwayat pengiriman kurir:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  const filteredHistory = history.filter(
+    (job) =>
+      job.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.item.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.dropoff.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
+  function handleDownloadRekap() {
+    if (history.length === 0) {
+      alert("Belum ada data riwayat pengiriman untuk direkap.");
+      return;
+    }
+
+    const headers = ["ID Pengiriman", "Tanggal", "Waktu", "Muatan", "Tujuan", "Jarak", "Ongkos Kirim (Rp)", "Status"];
+    const rows = history.map((item) => [
+      item.id,
+      item.date,
+      `${item.time} WIB`,
+      `"${item.item.replace(/"/g, '""')}"`,
+      `"${item.dropoff.replace(/"/g, '""')}"`,
+      item.distance,
+      item.fee,
+      item.status,
+    ]);
+
+    const totalFee = history.reduce((acc, curr) => acc + curr.fee, 0);
+    rows.push(["", "", "", "", "TOTAL PENDAPATAN", "", totalFee, ""]);
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Rekap_Gaji_Kurir_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  return (
+    <div className="space-y-6 animate-in">
+      <PageHeader
+        title="Riwayat Pengiriman"
+        description="Pantau semua pekerjaan yang telah Anda selesaikan"
+        action={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDownloadRekap}
+            className="font-bold border-border bg-card"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Rekap Gaji
+          </Button>
+        }
+      />
 
             {/* Filter & Search */}
             <div className="flex flex-col gap-4 sm:flex-row">
                 <div className="flex-1">
                     <SearchBar
-                        placeholder="Cari ID pengiriman atau nama toko..."
-                        onSearch={(q) => console.log(q)}
+                        placeholder="Cari ID pengiriman atau nama lokasi..."
+                        onSearch={(q) => setSearchQuery(q)}
                     />
                 </div>
-                <Button variant="outline" className="h-11 border-border bg-card font-bold">
+                <Button variant="outline" className="h-11 border-border bg-card font-bold" onClick={fetchHistory} disabled={loading}>
                     <Calendar className="mr-2 h-4 w-4" />
-                    Filter Tanggal
+                    Segarkan
                 </Button>
             </div>
 
-            {history.length > 0 ? (
+            {filteredHistory.length > 0 ? (
                 <div className="space-y-4">
-                    {history.map((job) => (
+                    {filteredHistory.map((job) => (
                         <Card key={job.id} className="border-border bg-card hover:border-primary/50 transition-all overflow-hidden">
                             <CardContent className="p-0">
                                 <div className="flex flex-col md:flex-row md:items-center p-5 gap-6">
@@ -142,8 +180,8 @@ export default function RiwayatKurirPage() {
             ) : (
                 <EmptyState
                     icon="History"
-                    title="Belum ada riwayat"
-                    description="Riwayat pengiriman akan muncul setelah Anda menyelesaikan pekerjaan pertama Anda."
+                    title={loading ? "Memuat riwayat pengiriman..." : "Belum ada riwayat pengiriman"}
+                    description={loading ? "Mengambil data dari database..." : "Riwayat pekerjaan pengiriman yang Anda selesaikan akan otomatis tercatat di sini."}
                 />
             )}
         </div>

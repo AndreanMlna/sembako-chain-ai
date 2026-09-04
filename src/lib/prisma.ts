@@ -6,8 +6,13 @@ import { PrismaPg } from "@prisma/adapter-pg";
 // Ambil URL dari environment
 const connectionString = `${process.env.DATABASE_URL}`;
 
-// Inisialisasi pool koneksi database
-const pool = new Pool({ connectionString });
+// Inisialisasi pool koneksi database dengan konfigurasi aman serverless
+const pool = new Pool({
+  connectionString,
+  max: process.env.NODE_ENV === "production" ? 10 : 5,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
+});
 
 // PERBAIKAN: Gunakan @ts-expect-error alih-alih 'as any'
 // untuk melewati konflik versi @types/pg tanpa memicu error ESLint

@@ -1,17 +1,54 @@
 "use client";
 
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck, MapPin, Loader2 } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import Button from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import EmptyState from "@/components/shared/EmptyState";
-import Badge from "@/components/ui/Badge"; // <--- INI YANG TADI KURANG LER!
+import Badge from "@/components/ui/Badge";
 import { useCartStore } from "@/store/cart-store";
 import { formatRupiah, cn } from "@/lib/utils";
-import Link from "next/link";
+import { toast } from "react-hot-toast";
 
 export default function KeranjangPage() {
-    const { items, getTotalHarga, getTotalItems, updateQuantity, removeItem } = useCartStore();
+    const router = useRouter();
+    const { items, getTotalHarga, getTotalItems, updateQuantity, removeItem, clearCart } = useCartStore();
+    const [alamat, setAlamat] = useState("Jl. Ir. H. Juanda No. 120, Bandung, Jawa Barat");
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+    const handleCheckout = async () => {
+        if (items.length === 0 || isCheckingOut) return;
+        setIsCheckingOut(true);
+
+        try {
+            const res = await fetch("/api/pembeli/orders", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    items,
+                    alamatPengiriman: alamat,
+                    ongkosKirim: 0,
+                    metodeJual: "LANGSUNG",
+                }),
+            });
+
+            const json = await res.json();
+            if (json.success && json.data) {
+                toast.success("Pesanan berhasil dikonfirmasi!");
+                clearCart();
+                router.push(`/pembeli/tracking?id=${json.data.id}`);
+            } else {
+                toast.error(json.message || "Gagal membuat pesanan");
+            }
+        } catch (err) {
+            console.error("Checkout error:", err);
+            toast.error("Terjadi kendala koneksi saat checkout.");
+        } finally {
+            setIsCheckingOut(false);
+        }
+    };
 
     return (
         <div className="space-y-6 animate-in">
@@ -26,7 +63,7 @@ export default function KeranjangPage() {
                     title="Keranjang masih kosong"
                     description="Sepertinya Anda belum memilih bahan pangan segar. Ayo jelajahi katalog kami!"
                     actionLabel="Mulai Belanja"
-                    onAction={() => window.location.href = "/pembeli/katalog"}
+                    onAction={() => router.push("/pembeli/katalog")}
                 />
             ) : (
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -82,6 +119,24 @@ export default function KeranjangPage() {
                             </Card>
                         ))}
 
+                        {/* Alamat Pengiriman */}
+                        <div className="rounded-2xl border border-border bg-card p-4 space-y-2 shadow-sm">
+                            <div className="flex items-center gap-2 text-foreground font-bold text-sm">
+                                <MapPin className="h-4 w-4 text-primary" />
+                                <span>Alamat Pengiriman</span>
+                            </div>
+                            <input
+                                type="text"
+                                value={alamat}
+                                onChange={(e) => setAlamat(e.target.value)}
+                                placeholder="Masukkan alamat lengkap penerimaan barang..."
+                                className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                            />
+                            <p className="text-[11px] text-foreground/40 font-medium">
+                                Pengiriman akan diantarkan langsung oleh kurir ke titik alamat ini.
+                            </p>
+                        </div>
+
                         <div className="rounded-2xl bg-primary/5 border border-primary/10 p-4 flex gap-3 items-start">
                             <Truck className="h-5 w-5 text-primary shrink-0" />
                             <p className="text-xs text-foreground/60 leading-relaxed font-medium">
@@ -105,7 +160,6 @@ export default function KeranjangPage() {
                                     </div>
                                     <div className="flex justify-between text-sm border-b border-border pb-4">
                                         <span className="text-foreground/50 font-medium">Ongkos Kirim</span>
-                                        {/* Sekarang Badge sudah aman karena sudah di-import */}
                                         <Badge variant="info" className="text-[10px] h-5 bg-primary/10 text-primary border-none">
                                             FREE SUBSIDI
                                         </Badge>
@@ -115,15 +169,28 @@ export default function KeranjangPage() {
                                         <div className="flex justify-between items-baseline mb-6">
                                             <span className="text-base font-bold text-foreground">Total Bayar</span>
                                             <span className="text-2xl font-black text-primary tracking-tighter">
-                        {formatRupiah(getTotalHarga())}
-                      </span>
+                                                {formatRupiah(getTotalHarga())}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <Button className="w-full py-7 text-base font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95 group">
-                                    LANJUT CHECKOUT
-                                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                <Button
+                                    className="w-full py-7 text-base font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95 group"
+                                    onClick={handleCheckout}
+                                    disabled={isCheckingOut || items.length === 0}
+                                >
+                                    {isCheckingOut ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                            MEMPROSES PESANAN...
+                                        </>
+                                    ) : (
+                                        <>
+                                            LANJUT CHECKOUT
+                                            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                        </>
+                                    )}
                                 </Button>
 
                                 <div className="mt-6 flex items-center justify-center gap-2 text-[10px] font-bold text-foreground/30 uppercase tracking-widest">
@@ -137,4 +204,4 @@ export default function KeranjangPage() {
             )}
         </div>
     );
-}
+}

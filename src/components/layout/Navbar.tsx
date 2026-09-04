@@ -1,20 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, LogOut, User, Menu, X, AlertCircle } from "lucide-react";
+import { Bell, LogOut, User, Menu, X, AlertCircle, ShoppingCart } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { APP_NAME } from "@/constants";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import { useCartStore } from "@/store/cart-store";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  const totalCartItems = useCartStore((state) => state.getTotalItems());
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const cartCount = isMounted ? totalCartItems : 0;
+  const isPembeli = pathname.startsWith("/pembeli");
 
   const closeMenu = () => setIsOpen(false);
 
@@ -55,6 +66,21 @@ export default function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-3">
+              {isPembeli && (
+                <Link
+                  href="/pembeli/keranjang"
+                  className="relative flex h-9 w-9 items-center justify-center rounded-lg text-accent/70 hover:bg-white/5 hover:text-accent transition-colors"
+                  title="Keranjang Belanja"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary text-white text-[9px] font-black px-1 shadow-sm animate-in zoom-in">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+              )}
+
               <Link
                   href="/notifikasi"
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-accent/70 hover:bg-white/5 hover:text-accent transition-colors"
@@ -83,6 +109,23 @@ export default function Navbar() {
                 <LogOut className="h-5 w-5" />
               </button>
             </div>
+
+            {/* Mobile Cart Shortcut for Pembeli */}
+            {isPembeli && (
+              <Link
+                href="/pembeli/keranjang"
+                className="relative flex h-9 w-9 items-center justify-center rounded-full bg-accent/10 text-accent transition-all md:hidden"
+                onClick={closeMenu}
+                title="Keranjang Belanja"
+              >
+                <ShoppingCart className="h-5 w-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary text-white text-[9px] font-black px-1 shadow-sm">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            )}
 
             {/* User Icon Mobile Shortcut */}
             <Link

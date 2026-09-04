@@ -1,9 +1,9 @@
-// src/app/api/petani/lahan/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Lahan, Tanaman } from "@prisma/client";
+import { lahanSchema } from "@/lib/validators";
 
 // Memperluas tipe Lahan bawaan Prisma untuk menyertakan relasi tanaman
 interface LahanWithRelations extends Lahan {
@@ -89,8 +89,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { nama, luasHektar, lokasi } = body;
+    const rawBody = await request.json();
+    const parsedBody = {
+      ...rawBody,
+      luasHektar: Number(rawBody.luasHektar),
+      lokasi: rawBody.lokasi ? {
+        ...rawBody.lokasi,
+        latitude: Number(rawBody.lokasi.latitude || 0),
+        longitude: Number(rawBody.lokasi.longitude || 0),
+      } : undefined,
+    };
+
+    const validation = lahanSchema.safeParse(parsedBody);
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Data lahan tidak valid",
+          errors: validation.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const { nama, luasHektar, lokasi } = validation.data;
 
     const lahanBaru = await prisma.lahan.create({
       data: {
@@ -107,8 +129,8 @@ export async function POST(request: NextRequest) {
         longitude: lokasi?.longitude ? Number(lokasi.longitude) : 0,
       },
       include: {
-        tanaman: true
-      }
+        tanaman: true,
+      },
     });
 
     return NextResponse.json({
