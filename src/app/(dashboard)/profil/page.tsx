@@ -201,62 +201,62 @@ export default function ProfilPage() {
         />
 
         <div className="mx-auto max-w-4xl space-y-6">
-          <div className="relative overflow-hidden rounded-[2rem] bg-zinc-900 border border-white/5 shadow-xl">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] -mr-32 -mt-32" />
+          <div className="relative overflow-hidden rounded-[2rem] bg-card border border-border shadow-xl">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] -mr-32 -mt-32" />
             <CardContent className="relative z-10 p-8 flex flex-col sm:flex-row items-center gap-6">
               <div className="relative group">
-                <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-zinc-800 text-3xl font-bold text-emerald-400 border border-emerald-500/20">
+                <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-background text-3xl font-bold text-primary border border-primary/20">
                   {displayName.charAt(0).toUpperCase()}
                 </div>
-                <button className="absolute -bottom-1 -right-1 rounded-lg bg-emerald-500 p-2 text-zinc-950 hover:scale-110 transition-transform shadow-lg">
+                <button className="absolute -bottom-1 -right-1 rounded-lg bg-primary p-2 text-white hover:scale-110 transition-transform shadow-lg">
                   <CameraIcon className="h-4 w-4" />
                 </button>
               </div>
               <div className="flex-1 text-center sm:text-left">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-400 tracking-wider mb-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-bold text-primary tracking-wider mb-2">
                 <CheckIcon className="h-3 w-3" /> VERIFIED {user?.role || "MEMBER"}
               </span>
-                <h3 className="text-2xl font-bold text-zinc-100">{displayName}</h3>
-                <p className="text-zinc-500 text-sm mt-1 flex items-center justify-center sm:justify-start gap-2">
+                <h3 className="text-2xl font-bold text-foreground">{displayName}</h3>
+                <p className="text-foreground/60 text-sm mt-1 flex items-center justify-center sm:justify-start gap-2">
                   <MailIcon className="h-3.5 w-3.5" /> {formData.email}
                 </p>
               </div>
             </CardContent>
           </div>
 
-          <Card className="border-none bg-zinc-900/50 backdrop-blur-xl shadow-2xl ring-1 ring-white/5 rounded-[2rem] overflow-hidden">
+          <Card className="border-none bg-card/50 backdrop-blur-xl shadow-2xl ring-1 ring-border rounded-[2rem] overflow-hidden">
             <CardContent className="p-8 sm:p-10">
-              <div className="flex items-center gap-3 mb-8 pb-4 border-b border-white/5">
-                <div className="p-2.5 bg-emerald-500/10 rounded-xl text-emerald-500">
+              <div className="flex items-center gap-3 mb-8 pb-4 border-b border-border">
+                <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
                   <UserIcon className="h-5 w-5" />
                 </div>
-                <h3 className="text-lg font-bold text-zinc-100">Informasi Pribadi</h3>
+                <h3 className="text-lg font-bold text-foreground">Informasi Pribadi</h3>
               </div>
 
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <Input label="Nama Lengkap" value={formData.name} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="bg-zinc-800/40 border-white/5 focus:border-emerald-500/50 rounded-xl" />
-                  <Input label="Email" type="email" value={formData.email} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="bg-zinc-800/40 border-white/5 focus:border-emerald-500/50 rounded-xl" />
-                  <Input label="Nomor Telepon" value={formData.phone} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="bg-zinc-800/40 border-white/5 focus:border-emerald-500/50 rounded-xl" />
-                  <Input label="Kode Pos" value={formData.kodePos} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, kodePos: e.target.value })} className="bg-zinc-800/40 border-white/5 focus:border-emerald-500/50 rounded-xl" />
+                  <Input label="Nama Lengkap" value={formData.name} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="bg-background/40 border-border focus:border-primary/50 rounded-xl" />
+                  <Input label="Email" type="email" value={formData.email} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="bg-background/40 border-border focus:border-primary/50 rounded-xl" />
+                  <Input label="Nomor Telepon" value={formData.phone} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="bg-background/40 border-border focus:border-primary/50 rounded-xl" />
+                  <Input label="Kode Pos" value={formData.kodePos} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, kodePos: e.target.value })} className="bg-background/40 border-border focus:border-primary/50 rounded-xl" />
                   <div className="sm:col-span-2">
-                    <Input label="Alamat Jalan" value={formData.jalan} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, jalan: e.target.value })} className="bg-zinc-800/40 border-white/5 focus:border-emerald-500/50 rounded-xl" />
+                    <Input label="Alamat Jalan" value={formData.jalan} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, jalan: e.target.value })} className="bg-background/40 border-border focus:border-primary/50 rounded-xl" />
                   </div>
-                  <Input label="Kelurahan" value={formData.kelurahan} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, kelurahan: e.target.value })} className="bg-zinc-800/40 rounded-xl" />
-                  <Input label="Kecamatan" value={formData.kecamatan} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, kecamatan: e.target.value })} className="bg-zinc-800/40 rounded-xl" />
-                  <Input label="Kota/Kabupaten" value={formData.kabupaten} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, kabupaten: e.target.value })} className="bg-zinc-800/40 rounded-xl" />
-                  <Input label="Provinsi" value={formData.provinsi} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, provinsi: e.target.value })} className="bg-zinc-800/40 rounded-xl" />
+                  <Input label="Kelurahan" value={formData.kelurahan} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, kelurahan: e.target.value })} className="bg-background/40 rounded-xl border-border" />
+                  <Input label="Kecamatan" value={formData.kecamatan} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, kecamatan: e.target.value })} className="bg-background/40 rounded-xl border-border" />
+                  <Input label="Kota/Kabupaten" value={formData.kabupaten} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, kabupaten: e.target.value })} className="bg-background/40 rounded-xl border-border" />
+                  <Input label="Provinsi" value={formData.provinsi} disabled={!isEditing} onChange={(e) => setFormData({ ...formData, provinsi: e.target.value })} className="bg-background/40 rounded-xl border-border" />
                 </div>
 
-                <div className="flex items-center justify-end gap-3 pt-6 border-t border-white/5">
+                <div className="flex items-center justify-end gap-3 pt-6 border-t border-border">
                   {!isEditing ? (
-                      <Button type="button" onClick={() => setIsEditing(true)} className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold px-6 py-2 rounded-xl transition-all">
+                      <Button type="button" onClick={() => setIsEditing(true)} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-6 py-2 rounded-xl transition-all">
                         <EditIcon className="h-4 w-4" /> Edit Profil
                       </Button>
                   ) : (
                       <>
-                        <button type="button" onClick={() => setIsEditing(false)} className="text-sm font-bold text-zinc-400 hover:text-white px-4">Batal</button>
-                        <Button type="submit" disabled={isSaving} className="bg-zinc-100 hover:bg-white text-zinc-950 font-bold px-8 py-2 rounded-xl">
+                        <button type="button" onClick={() => setIsEditing(false)} className="text-sm font-bold text-foreground/50 hover:text-foreground px-4">Batal</button>
+                        <Button type="submit" disabled={isSaving} className="bg-foreground text-background hover:bg-foreground/90 font-bold px-8 py-2 rounded-xl">
                           {isSaving ? <LoaderIcon className="h-4 w-4 animate-spin" /> : <SaveIcon className="h-4 w-4 mr-2" />} Simpan
                         </Button>
                       </>
@@ -267,20 +267,20 @@ export default function ProfilPage() {
           </Card>
 
           {/* Security Card */}
-          <Card className="border-none bg-zinc-900/50 backdrop-blur-xl shadow-xl ring-1 ring-white/5 rounded-[2rem] overflow-hidden">
+          <Card className="border-none bg-card/50 backdrop-blur-xl shadow-xl ring-1 ring-border rounded-[2rem] overflow-hidden">
             <CardContent className="p-8 sm:p-10">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-blue-500/10 rounded-xl text-blue-400">
+                  <div className="p-2.5 bg-blue-500/10 rounded-xl text-blue-500">
                     <ShieldIcon className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-zinc-100 text-lg">Keamanan Akun</h3>
-                    <p className="text-xs text-zinc-500 mt-1">Ganti password secara berkala untuk menjaga keamanan</p>
+                    <h3 className="font-bold text-foreground text-lg">Keamanan Akun</h3>
+                    <p className="text-xs text-foreground/50 mt-1">Ganti password secara berkala untuk menjaga keamanan</p>
                   </div>
                 </div>
                 {!isEditingPassword && (
-                    <Button type="button" onClick={() => setIsEditingPassword(true)} variant="outline" className="w-full sm:w-auto border-white/10 hover:bg-white/5 text-zinc-300 rounded-xl h-10 px-6 text-xs">
+                    <Button type="button" onClick={() => setIsEditingPassword(true)} variant="outline" className="w-full sm:w-auto border-border hover:bg-foreground/5 text-foreground/70 rounded-xl h-10 px-6 text-xs">
                       <KeyIcon className="mr-2 h-3.5 w-3.5" /> Ganti Password
                     </Button>
                 )}
@@ -296,7 +296,7 @@ export default function ProfilPage() {
                             type="password"
                             value={passwordData.oldPassword}
                             onChange={(e) => setPasswordData({...passwordData, oldPassword: e.target.value})}
-                            className="bg-zinc-800/40 border-white/5 focus:border-blue-500/50 rounded-xl"
+                            className="bg-background/40 border-border focus:border-blue-500/50 rounded-xl"
                             placeholder="••••••••"
                         />
                       </div>
@@ -305,7 +305,7 @@ export default function ProfilPage() {
                           type="password"
                           value={passwordData.newPassword}
                           onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                          className="bg-zinc-800/40 border-white/5 focus:border-blue-500/50 rounded-xl"
+                          className="bg-background/40 border-border focus:border-blue-500/50 rounded-xl"
                           placeholder="Minimal 8 karakter"
                       />
                       <Input
@@ -313,19 +313,19 @@ export default function ProfilPage() {
                           type="password"
                           value={passwordData.confirmPassword}
                           onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                          className="bg-zinc-800/40 border-white/5 focus:border-blue-500/50 rounded-xl"
+                          className="bg-background/40 border-border focus:border-blue-500/50 rounded-xl"
                           placeholder="Ulangi password baru"
                       />
                     </div>
 
-                    <div className="flex items-center justify-end gap-3 pt-6 border-t border-white/5">
+                    <div className="flex items-center justify-end gap-3 pt-6 border-t border-border">
                       <button
                           type="button"
                           onClick={() => {
                             setIsEditingPassword(false);
                             setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
                           }}
-                          className="text-sm font-bold text-zinc-400 hover:text-white px-4"
+                          className="text-sm font-bold text-foreground/50 hover:text-foreground px-4"
                       >
                         Batal
                       </button>

@@ -13,6 +13,13 @@ export async function GET(
         if (!session?.user?.id) {
             return NextResponse.json({ success: false, message: "Unauthorized." }, { status: 401 });
         }
+        if (session.user.role !== "PETANI") {
+            return NextResponse.json(
+                { success: false, message: "Forbidden — hanya Petani" },
+                { status: 403 }
+            );
+        }
+
 
         // Penting: Await params untuk Next.js 15/16
         const { id } = await params;

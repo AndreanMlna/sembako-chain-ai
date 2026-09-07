@@ -1,148 +1,146 @@
-import bcrypt from "bcryptjs";
-import { NextAuthOptions, DefaultSession, DefaultUser } from "next-auth";
-import { JWT } from "next-auth/jwt";
+import { type NextAuthOptions, type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { UserRole } from "@/types";
+import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
+import { UserRole } from "@/types";
 
 // ==========================================
-// 1. MODULE AUGMENTATION (Sinkron dengan next-auth.ts)
+// 1. MODULE AUGMENTATION
 // ==========================================
 declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      nama: string;
-      email: string;
-      role: UserRole;
-      avatar?: string;
-    } & DefaultSession["user"];
-  }
+    interface Session {
+        user: {
+            id: string;
+            nama: string;
+            email: string;
+            role: UserRole;
+            avatar?: string;
+        } & DefaultSession["user"];
+    }
 
-  interface User extends DefaultUser {
-    id: string;
-    role: UserRole;
-    nama: string;
-    avatar?: string;
-  }
+    interface User {
+        id: string;
+        nama: string;
+        email: string;
+        role: UserRole;
+        avatar?: string;
+    }
 }
 
 declare module "next-auth/jwt" {
-  interface JWT {
-    id: string;
-    role: UserRole;
-    nama: string;
-    avatar?: string;
-    email?: string;
-  }
+    interface JWT {
+        id: string;
+        nama: string;
+        role: UserRole;
+        avatar?: string;
+        email?: string;
+    }
 }
 
 // ==========================================
 // 2. NEXTAUTH CONFIGURATION
 // ==========================================
 export const authOptions: NextAuthOptions = {
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 hari
-  },
-  secret: process.env.NEXTAUTH_SECRET,
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+    providers: [
+        CredentialsProvider({
+            name: "credentials",
+            credentials: {
+                email: { label: "Email", type: "email" },
+                password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+                if (!credentials?.email || !credentials?.password) {
+                    throw new Error("Email dan password wajib diisi");
+                }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase().trim() },
-        });
+                const user = await prisma.user.findUnique({
+                    where: { email: credentials.email.toLowerCase().trim() },
+                });
 
-        if (!user || !user.isActive) return null;
+                if (!user) throw new Error("Email atau password salah");
+                if (!user.isActive) throw new Error("Akun Anda telah dinonaktifkan");
 
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
-        if (!isPasswordValid) return null;
+                const isPasswordValid = await bcrypt.compare(
+                    credentials.password,
+                    user.password
+                );
+                if (!isPasswordValid) throw new Error("Email atau password salah");
 
-        return {
-          id: user.id,
-          name: user.nama,
-          nama: user.nama,
-          email: user.email,
-          role: user.role as unknown as UserRole,
-          avatar: user.avatar ?? undefined,
-        };
-      },
-    }),
-  ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-        token.nama = user.nama;
-        token.avatar = user.avatar;
-        token.email = user.email ?? undefined;
-      }
-      return token;
+                return {
+                    id: user.id,
+                    name: user.nama,
+                    nama: user.nama,
+                    email: user.email,
+                    role: user.role as UserRole,
+                    avatar: user.avatar ?? undefined,
+                };
+            },
+        }),
+    ],
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+                token.nama = user.nama;
+                token.role = user.role;
+                token.avatar = user.avatar;
+                token.email = user.email;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            session.user = {
+                id: token.id,
+                nama: token.nama,
+                email: token.email ?? "",
+                role: token.role,
+                avatar: token.avatar,
+            };
+            return session;
+        },
+        async redirect({ url, baseUrl }) {
+            if (url === baseUrl || url === `${baseUrl}/login`) return baseUrl;
+            if (url.startsWith("/")) return `${baseUrl}${url}`;
+            try {
+                if (new URL(url).origin === baseUrl) return url;
+            } catch {
+                return baseUrl;
+            }
+            return baseUrl;
+        },
     },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-        session.user.nama = token.nama;
-        session.user.email = token.email || session.user.email || "";
-      }
-      return session;
-    },
-    async redirect({ url, baseUrl }) {
-      if (url === baseUrl || url === `${baseUrl}/login`) return baseUrl;
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      try {
-        if (new URL(url).origin === baseUrl) return url;
-      } catch {
-        return baseUrl;
-      }
-      return baseUrl;
-    },
-  },
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
+    pages: { signIn: "/login", error: "/login" },
+    session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
+    secret: process.env.NEXTAUTH_SECRET,
 };
 
 // ==========================================
-// 3. HELPER FUNCTIONS (Logika Asli Anda)
+// 3. HELPER FUNCTIONS
 // ==========================================
 
 export interface SessionUser {
-  id: string;
-  nama: string;
-  email: string;
-  role: UserRole;
-  avatar?: string;
+    id: string;
+    nama: string;
+    email: string;
+    role: UserRole;
+    avatar?: string;
 }
 
 export function hasRole(userRole: UserRole, requiredRole: UserRole): boolean {
-  return userRole === requiredRole;
+    return userRole === requiredRole;
 }
 
-export function hasAnyRole(
-    userRole: UserRole,
-    requiredRoles: UserRole[]
-): boolean {
-  return requiredRoles.includes(userRole);
+export function hasAnyRole(userRole: UserRole, requiredRoles: UserRole[]): boolean {
+    return requiredRoles.includes(userRole);
 }
 
 export function getDefaultRedirect(role: UserRole): string {
-  const routes: Record<UserRole, string> = {
-    [UserRole.PETANI]: "/petani",
-    [UserRole.MITRA_TOKO]: "/mitra-toko",
-    [UserRole.KURIR]: "/kurir",
-    [UserRole.PEMBELI]: "/pembeli",
-    [UserRole.REGULATOR]: "/regulator",
-  };
-  return routes[role];
+    const routes: Record<UserRole, string> = {
+        [UserRole.PETANI]: "/petani",
+        [UserRole.MITRA_TOKO]: "/mitra-toko",
+        [UserRole.KURIR]: "/kurir",
+        [UserRole.PEMBELI]: "/pembeli",
+        [UserRole.REGULATOR]: "/regulator",
+    };
+    return routes[role];
 }

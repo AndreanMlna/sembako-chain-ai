@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
-import { Providers } from "@/components/providers"; // Import Providers Anda
+import { Providers } from "@/components/providers";
 
 const inter = Inter({ subsets: ["latin"] });
-
 const baseUrl = process.env.NEXTAUTH_URL || "https://sembako-chain.vercel.app";
 
 export const metadata: Metadata = {
@@ -17,7 +16,7 @@ export const metadata: Metadata = {
     description:
         "Ekosistem Distribusi Pangan Hybrid Berbasis AI untuk Stabilisasi Inflasi, Efisiensi Rantai Pasok, dan Inklusi Ekonomi Petani & Mitra Toko.",
     keywords: [
-        "sembako", "pangan", "AI", "distribusi", "supply chain", "inflasi", "petani", "Indonesia", "b2b ecommerce pangan"
+        "sembako", "harvest", "pangan", "AI", "distribusi", "supply chain", "inflasi", "petani", "Indonesia", "b2b ecommerce pangan"
     ],
     authors: [{ name: "Sembako-Chain Team" }],
     creator: "Sembako-Chain AI",
@@ -78,8 +77,8 @@ const jsonLdSchema = {
 };
 
 export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
+    children,
+}: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
@@ -142,7 +141,6 @@ export default function RootLayout({
         </head>
         <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {/* Bungkus dengan SessionProvider melalui komponen Providers */}
             <Providers>
                 {children}
             </Providers>

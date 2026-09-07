@@ -155,7 +155,7 @@ export default function DetailLahanEditPage() {
                     <Loader2 className="h-16 w-16 animate-spin text-primary" />
                     <div className="absolute inset-0 blur-2xl bg-primary/20 animate-pulse rounded-full" />
                 </div>
-                <p className="text-slate-400 animate-pulse font-medium tracking-tight">Menghubungkan ke satelit data...</p>
+                <p className="text-foreground/60 animate-pulse font-medium tracking-tight">Menghubungkan ke satelit data...</p>
             </div>
         );
     }
@@ -163,8 +163,8 @@ export default function DetailLahanEditPage() {
     return (
         <div className="space-y-6 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Navigasi Breadcrumb */}
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
-                <span className="cursor-pointer hover:text-white transition-colors" onClick={() => router.push("/petani/lahan")}>Lahan</span>
+            <div className="flex items-center gap-2 text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2">
+                <span className="cursor-pointer hover:text-foreground transition-colors" onClick={() => router.push("/petani/lahan")}>Lahan</span>
                 <ChevronRight className="h-3 w-3" />
                 <span className="text-primary">Edit Detail</span>
             </div>
@@ -174,7 +174,7 @@ export default function DetailLahanEditPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => router.back()}
-                    className="group gap-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-all border border-transparent hover:border-slate-700"
+                    className="group gap-2 text-foreground/60 hover:text-foreground hover:bg-secondary rounded-full transition-all border border-transparent hover:border-border"
                 >
                     <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
                     Batal
@@ -186,7 +186,7 @@ export default function DetailLahanEditPage() {
                 description="Perbarui informasi lokasi dan dimensi lahan untuk analisis vegetasi yang lebih akurat."
             />
 
-            <Card className="border-none shadow-2xl overflow-hidden bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/10 relative">
+            <Card className="border-none shadow-2xl overflow-hidden bg-card/40 backdrop-blur-2xl ring-1 ring-border/10 relative">
                 <div className="absolute top-0 left-0 w-full h-0.5 bg-linear-to-r from-transparent via-primary/50 to-transparent" />
 
                 <CardContent className="p-0">
@@ -198,16 +198,16 @@ export default function DetailLahanEditPage() {
                                 <div className="p-2 bg-primary/10 rounded-lg">
                                     <Target className="h-5 w-5 text-primary" />
                                 </div>
-                                <h3 className="text-sm font-black text-white uppercase tracking-wider">Identitas Lahan</h3>
+                                <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Identitas Lahan</h3>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-3 group">
-                                    <label className="text-[10px] font-bold text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-[0.2em]">
+                                    <label className="text-[10px] font-bold text-foreground/60 group-focus-within:text-primary transition-colors uppercase tracking-[0.2em]">
                                         Nama Lahan
                                     </label>
                                     <input
-                                        className="w-full p-4 bg-slate-950/50 border border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all text-white placeholder:text-slate-700 shadow-xl"
+                                        className="w-full p-4 bg-background/50 border border-border rounded-2xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all text-foreground placeholder:text-foreground/30 shadow-xl"
                                         placeholder="Contoh: Sawah Utara Blok A"
                                         required
                                         value={formData.nama}
@@ -215,20 +215,20 @@ export default function DetailLahanEditPage() {
                                     />
                                 </div>
                                 <div className="space-y-3 group">
-                                    <label className="text-[10px] font-bold text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-[0.2em]">
+                                    <label className="text-[10px] font-bold text-foreground/60 group-focus-within:text-primary transition-colors uppercase tracking-[0.2em]">
                                         Luas Lahan (Ha)
                                     </label>
                                     <div className="relative group/input">
                                         <input
                                             type="number"
                                             step="0.01"
-                                            className="w-full p-4 bg-slate-950/50 border border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all text-white font-mono shadow-xl"
+                                            className="w-full p-4 bg-background/50 border border-border rounded-2xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all text-foreground font-mono shadow-xl"
                                             placeholder="0.00"
                                             required
                                             value={formData.luasHektar}
                                             onChange={(e) => setFormData({...formData, luasHektar: e.target.value})}
                                         />
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-xl text-[10px] font-black text-primary tracking-tighter shadow-lg group-focus-within/input:border-primary/30">
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 px-3 py-1 bg-card border border-border rounded-xl text-[10px] font-black text-primary tracking-tighter shadow-lg group-focus-within/input:border-primary/30">
                                             HEKTAR
                                         </div>
                                     </div>
@@ -237,37 +237,37 @@ export default function DetailLahanEditPage() {
                         </div>
 
                         {/* Section 2: Titik Koordinat GPS */}
-                        <div className="pt-10 border-t border-white/5 space-y-6">
+                        <div className="pt-10 border-t border-border/10 space-y-6">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-emerald-500/10 rounded-lg">
                                             <Navigation className="h-5 w-5 text-emerald-400" />
                                         </div>
-                                        <h3 className="text-sm font-black text-white uppercase tracking-wider">Titik Geospasial</h3>
+                                        <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Titik Geospasial</h3>
                                     </div>
-                                    <p className="text-[11px] text-slate-500 ml-10">Sinkronisasi GPS memastikan akurasi data sensor cuaca.</p>
+                                    <p className="text-[11px] text-foreground/60 ml-10">Sinkronisasi GPS memastikan akurasi data sensor cuaca.</p>
                                 </div>
 
-                                <div className="flex bg-black/40 p-1 rounded-2xl border border-white/5 backdrop-blur-md shadow-2xl">
+                                <div className="flex bg-background/40 p-1 rounded-2xl border border-border/10 backdrop-blur-md shadow-2xl">
                                     <button
                                         type="button"
                                         onClick={() => setManualCoord(true)}
-                                        className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${manualCoord ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                                        className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${manualCoord ? 'bg-primary text-primary-foreground shadow-lg' : 'text-foreground/60 hover:text-foreground'}`}
                                     >
                                         Manual
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => { setManualCoord(false); handleGetLocation(); }}
-                                        className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!manualCoord ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                                        className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!manualCoord ? 'bg-primary text-primary-foreground shadow-lg' : 'text-foreground/60 hover:text-foreground'}`}
                                     >
                                         Auto GPS
                                     </button>
                                 </div>
                             </div>
 
-                            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 p-8 rounded-[2.5rem] border transition-all duration-700 relative overflow-hidden ${isDetecting ? 'bg-primary/5 border-primary/30 shadow-[0_0_50px_rgba(var(--primary),0.1)]' : 'bg-black/40 border-slate-800 shadow-inner'}`}>
+                            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 p-8 rounded-[2.5rem] border transition-all duration-700 relative overflow-hidden ${isDetecting ? 'bg-primary/5 border-primary/30 shadow-[0_0_50px_rgba(var(--primary),0.1)]' : 'bg-background/40 border-border shadow-inner'}`}>
                                 {isDetecting && (
                                     <div className="absolute inset-0 pointer-events-none">
                                         <div className="absolute inset-0 bg-linear-to-r from-transparent via-primary/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
@@ -275,28 +275,28 @@ export default function DetailLahanEditPage() {
                                 )}
 
                                 <div className="space-y-3 group">
-                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-2">
+                                    <label className="text-[9px] font-black text-foreground/60 uppercase tracking-[0.3em] flex items-center gap-2">
                                         <div className={`w-1.5 h-1.5 rounded-full ${isDetecting ? 'bg-primary animate-ping' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`} />
                                         Garis Lintang (Lat)
                                     </label>
                                     <input
                                         type="number" step="any"
                                         readOnly={!manualCoord}
-                                        className={`w-full p-5 bg-slate-900/50 border rounded-2xl text-2xl font-mono transition-all outline-none shadow-2xl ${manualCoord ? 'border-primary/40 text-white focus:ring-4 ring-primary/10' : 'border-transparent text-emerald-400 cursor-default'}`}
+                                        className={`w-full p-5 bg-card/50 border rounded-2xl text-2xl font-mono transition-all outline-none shadow-2xl ${manualCoord ? 'border-primary/40 text-foreground focus:ring-4 ring-primary/10' : 'border-transparent text-emerald-400 cursor-default'}`}
                                         value={formData.lokasi.latitude}
                                         onChange={(e) => setFormData({...formData, lokasi: {...formData.lokasi, latitude: Number(e.target.value)}})}
                                     />
                                 </div>
 
                                 <div className="space-y-3 group">
-                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-2">
+                                    <label className="text-[9px] font-black text-foreground/60 uppercase tracking-[0.3em] flex items-center gap-2">
                                         <div className={`w-1.5 h-1.5 rounded-full ${isDetecting ? 'bg-primary animate-ping' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`} />
                                         Garis Bujur (Long)
                                     </label>
                                     <input
                                         type="number" step="any"
                                         readOnly={!manualCoord}
-                                        className={`w-full p-5 bg-slate-900/50 border rounded-2xl text-2xl font-mono transition-all outline-none shadow-2xl ${manualCoord ? 'border-primary/40 text-white focus:ring-4 ring-primary/10' : 'border-transparent text-emerald-400 cursor-default'}`}
+                                        className={`w-full p-5 bg-card/50 border rounded-2xl text-2xl font-mono transition-all outline-none shadow-2xl ${manualCoord ? 'border-primary/40 text-foreground focus:ring-4 ring-primary/10' : 'border-transparent text-emerald-400 cursor-default'}`}
                                         value={formData.lokasi.longitude}
                                         onChange={(e) => setFormData({...formData, lokasi: {...formData.lokasi, longitude: Number(e.target.value)}})}
                                     />
@@ -305,30 +305,30 @@ export default function DetailLahanEditPage() {
                         </div>
 
                         {/* Section 3: Informasi Wilayah */}
-                        <div className="pt-10 border-t border-white/5 space-y-8">
+                        <div className="pt-10 border-t border-border/10 space-y-8">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-blue-500/10 rounded-lg">
                                     <Globe className="h-5 w-5 text-blue-400" />
                                 </div>
-                                <h3 className="text-sm font-black text-white uppercase tracking-wider">Lokasi Administratif</h3>
+                                <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Lokasi Administratif</h3>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-3 group">
-                                    <label className="text-[10px] font-bold text-slate-500 group-focus-within:text-blue-400 transition-colors uppercase ml-1 tracking-widest">Nama Jalan / Blok</label>
+                                    <label className="text-[10px] font-bold text-foreground/60 group-focus-within:text-blue-400 transition-colors uppercase ml-1 tracking-widest">Nama Jalan / Blok</label>
                                     <div className="relative">
-                                        <Home className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 transition-colors group-focus-within:text-blue-400" />
+                                        <Home className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40 transition-colors group-focus-within:text-blue-400" />
                                         <input
-                                            className="w-full p-4 pl-12 bg-slate-950/50 border border-slate-800 rounded-2xl text-sm focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all text-white outline-none"
+                                            className="w-full p-4 pl-12 bg-background/50 border border-border rounded-2xl text-sm focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all text-foreground outline-none"
                                             value={formData.lokasi.jalan}
                                             onChange={(e) => setFormData({...formData, lokasi: {...formData.lokasi, jalan: e.target.value}})}
                                         />
                                     </div>
                                 </div>
                                 <div className="space-y-3 group">
-                                    <label className="text-[10px] font-bold text-slate-500 group-focus-within:text-blue-400 transition-colors uppercase ml-1 tracking-widest">Kelurahan / Desa</label>
+                                    <label className="text-[10px] font-bold text-foreground/60 group-focus-within:text-blue-400 transition-colors uppercase ml-1 tracking-widest">Kelurahan / Desa</label>
                                     <input
-                                        className="w-full p-4 bg-slate-950/50 border border-slate-800 rounded-2xl text-sm focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all text-white outline-none"
+                                        className="w-full p-4 bg-background/50 border border-border rounded-2xl text-sm focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all text-foreground outline-none"
                                         value={formData.lokasi.kelurahan}
                                         onChange={(e) => setFormData({...formData, lokasi: {...formData.lokasi, kelurahan: e.target.value}})}
                                     />
@@ -338,9 +338,9 @@ export default function DetailLahanEditPage() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {(['kecamatan', 'kabupaten', 'provinsi'] as const).map((field) => (
                                     <div key={field} className="space-y-3 group">
-                                        <label className="text-[10px] font-bold text-slate-500 group-focus-within:text-blue-400 transition-colors uppercase ml-1 tracking-widest">{field}</label>
+                                        <label className="text-[10px] font-bold text-foreground/60 group-focus-within:text-blue-400 transition-colors uppercase ml-1 tracking-widest">{field}</label>
                                         <input
-                                            className="w-full p-4 bg-slate-950/50 border border-slate-800 rounded-2xl text-sm focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all text-white outline-none"
+                                            className="w-full p-4 bg-background/50 border border-border rounded-2xl text-sm focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all text-foreground outline-none"
                                             required
                                             value={formData.lokasi[field]}
                                             onChange={(e) => setFormData({
@@ -354,21 +354,21 @@ export default function DetailLahanEditPage() {
                         </div>
 
                         {/* Footer Action */}
-                        <div className="pt-12 flex flex-col md:flex-row items-center justify-between gap-8 border-t border-white/5">
+                        <div className="pt-12 flex flex-col md:flex-row items-center justify-between gap-8 border-t border-border/10">
                             <div className="flex items-center gap-4 group cursor-help">
-                                <div className="p-3 bg-slate-800 rounded-full group-hover:bg-primary/20 transition-colors">
-                                    <Edit3 className="h-4 w-4 text-slate-500 group-hover:text-primary transition-colors" />
+                                <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/20 transition-colors">
+                                    <Edit3 className="h-4 w-4 text-foreground/60 group-hover:text-primary transition-colors" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-white uppercase tracking-tighter">Verifikasi Satelit</p>
-                                    <p className="text-[9px] text-slate-500 font-medium">Auto-mapping aktif melalui Nominatim OSM</p>
+                                    <p className="text-[10px] font-black text-foreground uppercase tracking-tighter">Verifikasi Satelit</p>
+                                    <p className="text-[9px] text-foreground/60 font-medium">Auto-mapping aktif melalui Nominatim OSM</p>
                                 </div>
                             </div>
 
                             <Button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full md:w-auto min-w-60 h-16 text-xs font-black tracking-[0.2em] shadow-[0_20px_40px_rgba(var(--primary),0.2)] rounded-2xl transition-all active:scale-95 group bg-primary hover:bg-primary/90 text-white border-none flex items-center justify-center gap-4"
+                                className="w-full md:w-auto min-w-60 h-16 text-xs font-black tracking-[0.2em] shadow-[0_20px_40px_rgba(var(--primary),0.2)] rounded-2xl transition-all active:scale-95 group bg-primary hover:bg-primary/90 text-primary-foreground border-none flex items-center justify-center gap-4"
                             >
                                 {isSubmitting ? (
                                     <Loader2 className="h-5 w-5 animate-spin" />

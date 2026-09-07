@@ -1,0 +1,137 @@
+{
+  "info": {
+    "title": "Survei Kebutuhan Regulator & Pemerintah — HARVEST",
+    "documentTitle": "HARVEST_Survei_Regulator"
+  },
+  "sections": [
+    {
+      "title": "Profil Instansi",
+      "description": "Data instansi Anda",
+      "questions": [
+        {"title": "Nama lengkap", "type": "TEXT", "required": true},
+        {"title": "Instansi", "type": "MULTIPLE_CHOICE", "options": ["Bank Indonesia", "Dinas Ketahanan Pangan", "BPS", "Bappeda", "Kementerian Pertanian", "Pemda / Satgas Pangan", "Lainnya"], "required": true},
+        {"title": "Jabatan / Bidang", "type": "TEXT", "required": true},
+        {"title": "Level instansi", "type": "MULTIPLE_CHOICE", "options": ["Pusat / Nasional", "Provinsi", "Kabupaten / Kota", "Kecamatan"], "required": true},
+        {"title": "Apa tugas pokok Anda terkait pangan?", "type": "CHECKBOXES", "options": ["Monitoring harga", "Pengendalian inflasi", "Distribusi pangan", "Stabilitas pasokan", "Kebijakan pangan"], "required": true},
+        {"title": "Apakah saat ini sudah menggunakan sistem informasi pangan?", "type": "MULTIPLE_CHOICE", "options": ["Ya, sebutkan: ___", "Ya, tapi kurang optimal", "Belum, masih manual"], "required": true}
+      ]
+    },
+    {
+      "title": "Dashboard Monitoring Harga & Inflasi",
+      "description": "Fitur pemantauan harga dan inflasi real-time",
+      "questions": [
+        {"title": "Komoditas apa yang perlu dipantau harganya secara real-time?", "type": "CHECKBOXES", "options": ["Beras", "Cabai", "Bawang merah", "Bawang putih", "Minyak goreng", "Gula", "Telur", "Daging ayam", "Semua"], "required": true},
+        {"title": "Level agregasi data harga yang dibutuhkan?", "type": "MULTIPLE_CHOICE", "options": ["Nasional", "Provinsi", "Kabupaten / Kota", "Kecamatan", "Pasar spesifik"], "required": true},
+        {"title": "Apakah Anda perlu perbandingan harga antar kota?", "type": "MULTIPLE_CHOICE", "options": ["Sangat perlu", "Perlu", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda ingin notifikasi lonjakan harga?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin, real-time", "Ingin, rekap harian", "Tidak perlu"], "required": true},
+        {"title": "Ambang batas kenaikan harga yang perlu di-notifikasi?", "type": "MULTIPLE_CHOICE", "options": ["> 5% dalam sehari", "> 10% dalam sehari", "> 20% dalam seminggu", "Lainnya"], "required": true},
+        {"title": "Apakah Anda perlu data harga di level petani (harga pokok)?", "type": "MULTIPLE_CHOICE", "options": ["Sangat perlu", "Perlu", "Tidak perlu"], "required": true},
+        {"title": "Metode visualisasi apa yang paling efektif?", "type": "MULTIPLE_CHOICE", "options": ["Grafik garis (time series)", "Tabel angka", "Peta warna (choropleth)", "Indikator naik/turun (traffic light)"], "required": true},
+        {"title": "Seberapa penting Dashboard Inflasi Real-Time untuk instansi Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Heatmap Stok & Data Pasokan",
+      "description": "Pemetaan stok pangan berbasis lokasi",
+      "questions": [
+        {"title": "Apakah Anda memiliki data stok pangan real-time saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak", "Periodik (bulanan)"], "required": true},
+        {"title": "Data stok pada level apa yang dibutuhkan?", "type": "MULTIPLE_CHOICE", "options": ["Gudang distributor", "Toko / retail", "Lahan petani", "Semua"], "required": true},
+        {"title": "Visualisasi heatmap seperti apa yang diinginkan?", "type": "MULTIPLE_CHOICE", "options": ["Peta titik (marker per lokasi)", "Peta area (warna per kecamatan)", "Tabel daftar stok per wilayah"], "required": true},
+        {"title": "Apakah Anda perlu data pasokan (produksi + stok masuk) selain stok?", "type": "MULTIPLE_CHOICE", "options": ["Sangat perlu", "Perlu", "Tidak perlu"], "required": true},
+        {"title": "Seberapa penting Heatmap Stok untuk instansi Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Prediksi Harga AI",
+      "description": "Fitur prediksi harga menggunakan AI LSTM",
+      "questions": [
+        {"title": "Apakah Anda menggunakan prediksi harga saat ini untuk kebijakan?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak, hanya data historis"], "required": true},
+        {"title": "Timeframe prediksi apa yang paling berguna?", "type": "MULTIPLE_CHOICE", "options": ["7 hari ke depan", "30 hari (1 bulan)", "90 hari (1 musim)", "1 tahun"], "required": true},
+        {"title": "Seberapa akurat prediksi yang diharapkan?", "type": "MULTIPLE_CHOICE", "options": ["+- 5%", "+- 10%", "+- 20%", "Yang penting trennya benar"], "required": true},
+        {"title": "Apakah Anda ingin prediksi dalam bentuk skenario (optimis, moderat, pesimis)?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Cukup angka tunggal"], "required": true}
+      ]
+    },
+    {
+      "title": "Tools Intervensi Pasar",
+      "description": "Fitur untuk membantu keputusan intervensi pasar",
+      "questions": [
+        {"title": "Jenis intervensi apa yang biasa dilakukan instansi Anda?", "type": "CHECKBOXES", "options": ["Operasi pasar (jual murah)", "Subsidi distribusi", "Bantuan langsung", "Impor / ekspor", "Lainnya"]},
+        {"title": "Data apa yang menjadi trigger intervensi?", "type": "CHECKBOXES", "options": ["Harga > HET", "Kenaikan harga > threshold", "Stok menipis", "Laporan bencana / gagal panen"]},
+        {"title": "Apakah Anda ingin sistem memberikan rekomendasi intervensi?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda ingin tracking realisasi intervensi?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda ingin laporan dampak intervensi?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin, otomatis", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Seberapa penting Tools Intervensi Pasar untuk instansi Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Laporan Otomatis",
+      "description": "Generate laporan PDF/Excel otomatis",
+      "questions": [
+        {"title": "Laporan apa yang rutin Anda buat?", "type": "CHECKBOXES", "options": ["Laporan harga harian", "Laporan inflasi bulanan", "Laporan stok mingguan", "Laporan intervensi", "Laporan tahunan"]},
+        {"title": "Format laporan yang dibutuhkan?", "type": "CHECKBOXES", "options": ["PDF (narasi + tabel)", "Excel / CSV (data mentah)", "Dashboard link", "Semua"]},
+        {"title": "Apakah Anda ingin scheduling laporan otomatis?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Via apa laporan dikirim?", "type": "MULTIPLE_CHOICE", "options": ["Email", "WhatsApp", "Aplikasi", "Semua"]},
+        {"title": "Periode laporan standar yang digunakan?", "type": "MULTIPLE_CHOICE", "options": ["Harian", "Mingguan", "Bulanan", "Triwulan", "Tahunan"], "required": true}
+      ]
+    },
+    {
+      "title": "Data Lapangan Kerja & Distribusi",
+      "description": "Data employment dan logistik",
+      "questions": [
+        {"title": "Apakah instansi Anda melacak data lapangan kerja sektor pangan?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true},
+        {"title": "Data apa yang ingin dilihat?", "type": "CHECKBOXES", "options": ["Jumlah petani terdaftar", "Jumlah kurir aktif", "Jumlah toko mitra", "Jumlah enumerator", "Pertumbuhan (trend)"]},
+        {"title": "Apakah Anda perlu data arus distribusi (dari petani ke mana)?", "type": "MULTIPLE_CHOICE", "options": ["Sangat perlu", "Perlu", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda perlu data hambatan logistik (macet, banjir, rusak)?", "type": "MULTIPLE_CHOICE", "options": ["Sangat perlu", "Perlu", "Tidak perlu"], "required": true}
+      ]
+    },
+    {
+      "title": "Data Sharing & Kolaborasi",
+      "description": "Kesediaan berbagi data antar instansi",
+      "questions": [
+        {"title": "Apakah instansi Anda bersedia memberikan data harga acuan ke platform?", "type": "MULTIPLE_CHOICE", "options": ["Ya, terbuka", "Mungkin (dengan MoU)", "Tidak"], "required": true},
+        {"title": "Apakah instansi Anda bersedia menerima data dari platform?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Mungkin", "Tidak"], "required": true},
+        {"title": "Mekanisme sharing data yang diinginkan?", "type": "MULTIPLE_CHOICE", "options": ["API otomatis", "Laporan periodik (CSV/Excel)", "Dashboard akses", "Lainnya"]},
+        {"title": "Apakah ada standar data yang harus diikuti? (BPS, SNI, dll)", "type": "PARAGRAPH"},
+        {"title": "Apakah ada regulasi yang membatasi pertukaran data ini?", "type": "PARAGRAPH"},
+        {"title": "Apakah Anda bersedia menjadi mitra pilot project platform ini?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Mungkin, perlu persetujuan atasan", "Tidak"], "required": true}
+      ]
+    },
+    {
+      "title": "Prioritas Fitur — Skala Kepentingan",
+      "description": "Beri nilai 1-5 untuk setiap fitur (1=Tidak Penting, 5=Sangat Penting)",
+      "questions": [
+        {"title": "Dashboard Inflasi Real-Time", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Heatmap Stok Berbasis Peta", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Prediksi Harga AI (LSTM)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Rekomendasi Intervensi Pasar", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Laporan Otomatis (PDF/Excel)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Data Lapangan Kerja Sektor Pangan", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Monitoring Distribusi Logistik", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Simulasi Dampak Kebijakan", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Kebutuhan Non-Fungsional",
+      "description": "Preferensi teknis sistem",
+      "questions": [
+        {"title": "Frekuensi update data yang diinginkan?", "type": "MULTIPLE_CHOICE", "options": ["Real-time", "Harian", "Mingguan", "Bulanan"], "required": true},
+        {"title": "Jumlah pengguna dari instansi yang perlu akses?", "type": "MULTIPLE_CHOICE", "options": ["1-2 orang", "3-5 orang", "5-10 orang", "> 10 orang"], "required": true},
+        {"title": "Level akses yang dibutuhkan?", "type": "MULTIPLE_CHOICE", "options": ["Admin + viewer", "Semua viewer", "Satu level saja"], "required": true},
+        {"title": "Apakah perlu integrasi dengan sistem existing (Siskaperbapo, dll)?", "type": "MULTIPLE_CHOICE", "options": ["Ya, wajib", "Nice to have", "Tidak perlu"], "required": true},
+        {"title": "Apakah perlu whitelabel (platform atas nama instansi)?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true}
+      ]
+    },
+    {
+      "title": "Masukan Terbuka",
+      "description": "Pandangan dan harapan Anda",
+      "questions": [
+        {"title": "Apa tantangan terbesar dalam monitoring pangan di wilayah / instansi Anda?", "type": "PARAGRAPH", "required": true},
+        {"title": "Menurut Anda, apa penyebab utama fluktuasi harga sembako di Indonesia?", "type": "PARAGRAPH"},
+        {"title": "Seperti apa platform monitoring pangan ideal versi Anda?", "type": "PARAGRAPH"},
+        {"title": "Apa kekhawatiran terbesar menggunakan data dari platform swasta?", "type": "PARAGRAPH"},
+        {"title": "Apa yang membuat instansi Anda tertarik berkolaborasi dengan platform ini?", "type": "PARAGRAPH"},
+        {"title": "Apakah ada fitur khusus yang belum disebutkan tapi penting untuk tugas Anda?", "type": "PARAGRAPH"}
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react"; // Tambahkan useEffect & useState
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type LucideIcon, Circle } from "lucide-react";
@@ -15,14 +15,17 @@ interface MobileNavProps {
     role: UserRole;
 }
 
+function useIsMounted(): boolean {
+    return useSyncExternalStore(
+        () => () => {},
+        () => true,
+        () => false
+    );
+}
+
 export default function MobileNav({ role }: MobileNavProps) {
     const pathname = usePathname();
-    const [mounted, setMounted] = useState(false); // State untuk handle hydration
-
-    // Pastikan komponen hanya me-render konten dinamis setelah mounted di client
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    const mounted = useIsMounted();
 
     const navItems = NAV_ITEMS[role] || [];
     const visibleItems = navItems.slice(0, 5);

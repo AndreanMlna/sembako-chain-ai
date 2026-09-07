@@ -1,38 +1,42 @@
+/* Inter is loaded at runtime — no build-time network fetch required */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 @import "tailwindcss";
 
 @layer base {
   :root {
     /* Spektrum Biru & Slate Modern */
-    --sembako-darkest: #020617; /* Slate 950 */
-    --sembako-darker: #0f172a;  /* Slate 900 */
-    --sembako-dark: #1e293b;    /* Slate 800 */
-    --sembako-primary: #3b82f6; /* Blue 500 */
-    --sembako-light: #64748b;   /* Slate 500 */
-    --sembako-accent: #e2e8f0;  /* Slate 200 */
+    --harvest-darkest: #020617; /* Slate 950 */
+    --harvest-darker: #0f172a;  /* Slate 900 */
+    --harvest-dark: #1e293b;    /* Slate 800 */
+    --harvest-primary: #3b82f6; /* Blue 500 */
+    --harvest-light: #64748b;   /* Slate 500 */
+    --harvest-accent: #e2e8f0;  /* Slate 200 */
 
     --background: #f8fafc;
-    --foreground: var(--sembako-darkest);
+    --foreground: var(--harvest-darkest);
+    --muted-foreground: #64748b; /* Slate 500 */
     --card-bg: #ffffff;
-    --nav-bg: var(--sembako-darkest);
+    --nav-bg: var(--harvest-darkest);
     --border-color: rgba(15, 23, 42, 0.1);
   }
 
   .dark {
-    --background: var(--sembako-darkest);
-    --foreground: var(--sembako-accent);
-    --card-bg: var(--sembako-darker);
+    --background: var(--harvest-darkest);
+    --foreground: var(--harvest-accent);
+    --muted-foreground: #94a3b8; /* Slate 400 */
+    --card-bg: var(--harvest-darker);
     --nav-bg: #010409;
     --border-color: rgba(226, 232, 240, 0.05);
   }
 }
 
-/* --- THE BOUNCE FIX --- */
 html {
   min-height: 100%;
   overscroll-behavior-y: auto;
 }
 
 body {
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   min-height: 100vh;
   height: auto;
   overflow-y: auto;
@@ -47,11 +51,12 @@ body {
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
   --color-card: var(--card-bg);
   --color-nav: var(--nav-bg);
   --color-border: var(--border-color);
-  --color-primary: var(--sembako-primary);
-  --color-accent: var(--sembako-accent);
+  --color-primary: var(--harvest-primary);
+  --color-accent: var(--harvest-accent);
 }
 
 .animate-in {

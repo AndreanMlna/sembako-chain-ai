@@ -13,20 +13,19 @@ interface GeolocationState {
  * Hook untuk mendapatkan lokasi pengguna
  */
 export function useGeolocation(): GeolocationState {
-  const [state, setState] = useState<GeolocationState>({
-    latitude: null,
-    longitude: null,
-    error: null,
-    isLoading: true,
+  const [state, setState] = useState<GeolocationState>(() => {
+    const geolocationSupported = typeof navigator !== "undefined" && !!navigator.geolocation;
+
+    return {
+      latitude: null,
+      longitude: null,
+      error: geolocationSupported ? null : "Geolocation tidak didukung oleh browser ini",
+      isLoading: geolocationSupported,
+    };
   });
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setState((prev) => ({
-        ...prev,
-        error: "Geolocation tidak didukung oleh browser ini",
-        isLoading: false,
-      }));
       return;
     }
 

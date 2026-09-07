@@ -1,12 +1,11 @@
 import { defineConfig } from '@prisma/config';
-import { config } from 'dotenv';
+import dotenv from 'dotenv';
 
-// PERBAIKAN: Memaksa file config untuk membaca isi file .env terlebih dahulu
-config();
+dotenv.config();
 
 export default defineConfig({
     schema: 'prisma/schema.prisma',
     datasource: {
-        url: process.env.DATABASE_URL as string, // Sekarang nilai ini tidak akan kosong
+        url: process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/sembako_chain_ai?schema=public',
     },
 });

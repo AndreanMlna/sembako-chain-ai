@@ -1,5 +1,5 @@
 // ==========================================
-// SEMBAKO-CHAIN AI - Type Definitions
+// HARVEST - Type Definitions
 // ==========================================
 
 // ---- Enums ----

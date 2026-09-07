@@ -93,7 +93,7 @@ export const inventorySchema = z.object({
 export const intervensiSchema = z.object({
   wilayah: z.string().min(1, "Wilayah wajib diisi"),
   komoditas: z.string().min(1, "Komoditas wajib dipilih"),
-  // UPDATE: Menyesuaikan enum agar sinkron dengan metode jual yang ada di sistem Sembako-Chain
+  // UPDATE: Menyesuaikan enum agar sinkron dengan metode jual yang ada di sistem HARVEST
   jenisIntervensi: z.enum([
     "SUBSIDI_ONGKIR",
     "SUBSIDI_HARGA",

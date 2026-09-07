@@ -13,6 +13,13 @@ export async function POST(
         if (!session?.user?.id) {
             return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
         }
+        if (session.user.role !== "PETANI") {
+            return NextResponse.json(
+                { success: false, message: "Forbidden — hanya Petani" },
+                { status: 403 }
+            );
+        }
+
 
         const { id: lahanId } = await context.params;
         const body = await request.json();

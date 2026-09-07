@@ -1,5 +1,5 @@
 {
-  "name": "sembako-chain-ai",
+  "name": "harvest",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -31,11 +31,12 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.3.1",
     "lucide-react": "^0.577.0",
-    "next": "16.1.6",
+    "next": "^16.2.1",
     "next-auth": "^4.24.13",
     "next-themes": "^0.4.6",
     "pg": "^8.20.0",
     "prisma": "^7.5.0",
+    "qrcode": "^1.5.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.2",
@@ -49,6 +50,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.37",
     "@types/pg": "^8.18.0",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

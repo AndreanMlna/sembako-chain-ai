@@ -10,6 +10,13 @@ export async function GET() {
         if (!session?.user?.id) {
             return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
         }
+        if (session.user.role !== "PETANI") {
+            return NextResponse.json(
+                { success: false, message: "Forbidden — hanya Petani" },
+                { status: 403 }
+            );
+        }
+
 
         // Ambil data User yang mencakup Wallet DAN Transaksi
         const userData = await prisma.user.findUnique({

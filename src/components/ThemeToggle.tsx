@@ -1,24 +1,28 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+
+function useIsMounted(): boolean {
+    return useSyncExternalStore(
+        () => () => {},
+        () => true,
+        () => false
+    );
+}
 
 export function ThemeToggle() {
     const { theme, setTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    const mounted = useIsMounted();
 
     if (!mounted) {
-        return <div className="w-10 h-10 rounded-lg bg-sembako-primary/5" suppressHydrationWarning />;
+        return <div className="w-10 h-10 rounded-lg bg-primary/5" suppressHydrationWarning />;
     }
 
     return (
         <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="flex items-center justify-center w-10 h-10 rounded-lg bg-sembako-primary/10 hover:bg-sembako-primary/20 text-sembako-primary transition-all dark:bg-sembako-light/10 dark:text-sembako-light"
+            className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-all"
             aria-label="Toggle Theme"
             suppressHydrationWarning
         >

@@ -33,9 +33,9 @@ export default function StatsCard({
               // Rounded dan border dasar
               "rounded-xl border shadow-sm transition-colors duration-300",
               // Mode Terang: Background mint pucat, teks hijau paling gelap
-              "bg-sembako-accent border-sembako-light/20 text-sembako-darkest",
-              // Mode Gelap: Background hijau hutan, border halus, teks putih mint
-              "dark:bg-sembako-dark dark:border-sembako-light/10 dark:text-sembako-accent",
+"bg-harvest-accent border-harvest-light/20 text-harvest-darkest",
+               // Mode Gelap: Background hijau hutan, border halus, teks putih mint
+               "dark:bg-harvest-dark dark:border-harvest-light/10 dark:text-harvest-accent",
               className
           )}
       >
@@ -51,7 +51,7 @@ export default function StatsCard({
                         "mt-1 text-xs font-medium",
                         // Warna trend menyesuaikan mode
                         trend.isPositive
-                            ? "text-primary dark:text-sembako-light"
+                            ? "text-primary dark:text-harvest-light"
                             : "text-red-600 dark:text-red-400"
                     )}
                 >
@@ -63,7 +63,7 @@ export default function StatsCard({
           {/* bg-green-50 -> bg-primary/10 (hijau transparan) */}
           <div className="rounded-lg bg-primary/10 p-2.5">
             {/* text-green-600 -> text-primary (mode terang), text-sembako-light (mode gelap) */}
-            <IconComponent className="h-6 w-6 text-primary dark:text-sembako-light" />
+            <IconComponent className="h-6 w-6 text-primary dark:text-harvest-light" />
           </div>
         </div>
       </div>

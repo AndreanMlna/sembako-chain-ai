@@ -60,7 +60,7 @@ export default function PriceChart({ data, title }: PriceChartProps) {
                   type="monotone"
                   dataKey="hargaAktual"
                   name="Harga Aktual"
-                  stroke="var(--primary)" // Pakai warna brand Sembako-Chain
+                  stroke="var(--primary)" // Pakai warna brand HARVEST
                   strokeWidth={3}
                   dot={{ r: 4, fill: 'var(--primary)', strokeWidth: 2 }}
                   activeDot={{ r: 6, strokeWidth: 0 }}

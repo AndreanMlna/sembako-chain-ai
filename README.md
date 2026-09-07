@@ -1,36 +1,186 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HARVEST
 
-## Getting Started
+Platform rantai pasok komoditas sembako berbasis AI — menghubungkan **Petani**, **Mitra Toko**, **Kurir**, **Pembeli**, dan **Regulator** dalam satu ekosistem digital.
 
-First, run the development server:
+---
+
+## Tech Stack
+
+| Layer | Teknologi |
+|---|---|
+| Frontend | Next.js 16 (App Router + Turbopack), React 19, Tailwind CSS 4 |
+| Backend | Next.js API Routes, Prisma 7, PostgreSQL 16 |
+| Auth | NextAuth.js v4 (Credentials + JWT), bcrypt |
+| State | Zustand (cart, auth, notifications) |
+| Validasi | Zod + react-hook-form |
+| Charts | Recharts |
+| AI Service | Python FastAPI (eksternal) — CNN, LSTM, RL |
+
+---
+
+## Role & Dashboard
+
+| Role | Dashboard | Fitur Utama |
+|---|---|---|
+| **PETANI** | `/petani` | Kelola lahan, tanaman, panen, produk, crop-check AI, e-wallet |
+| **MITRA_TOKO** | `/mitra-toko` | Inventory, restock alerts, POS kasir |
+| **KURIR** | `/kurir` | Job marketplace, route optimizer, scan QR delivery |
+| **PEMBELI** | `/pembeli` | Katalog produk, keranjang, pre-order, tracking |
+| **REGULATOR** | `/regulator` | Monitoring inflasi, heatmap stok, intervensi pasar, laporan |
+
+---
+
+## Menjalankan di Local (Development)
+
+### Prasyarat
+- **Docker** 24+ & **Docker Compose** 2+
+
+### Cepat — Docker
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/AndreanMlna/harvest.git
+cd harvest
+docker compose up --build -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka **http://localhost:3300**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Hot Reload — Manual
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+cp .env.example .env
+# Edit .env — sesuaikan DATABASE_URL ke PostgreSQL lokal
+npx prisma migrate deploy
+npx tsx prisma/seed.ts
+npm run dev
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy ke Server
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1. Clone di server
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+git clone https://github.com/AndreanMlna/harvest.git
+cd harvest
+```
 
-## Deploy on Vercel
+### 2. Buat `.env` untuk server
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+cp .env.example .env
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Edit `.env` — isi dengan domain server:
+
+```env
+APP_URL=https://kedai-pangan.my.id
+APP_PORT=3300
+NEXTAUTH_URL=https://kedai-pangan.my.id
+NEXTAUTH_SECRET=(generate dengan openssl rand -base64 32)
+NEXT_PUBLIC_API_URL=https://kedai-pangan.my.id/api
+DATABASE_URL=postgresql://harvest:harvest_pass@localhost:5432/harvest
+DB_PORT=5433
+SEED_DB=true
+```
+
+### 3. Jalankan
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.server.yml up --build -d
+```
+
+Atau pakai script:
+
+```bash
+chmod +x setup.sh
+APP_URL=https://kedai-pangan.my.id ./setup.sh server
+```
+
+Akses: **https://kedai-pangan.my.id:3300**
+
+---
+
+## Konfigurasi `.env`
+
+Semua konfigurasi dipusatkan di file `.env`. Salin dari `.env.example`:
+
+| Variable | Default (Local) | Server | Keterangan |
+|---|---|---|---|
+| `APP_URL` | `http://localhost:3300` | `https://domain.com` | URL utama aplikasi |
+| `APP_PORT` | `3300` | `3300` | Port aplikasi |
+| `DATABASE_URL` | `postgresql://...:5432/...` | (sama) | Koneksi PostgreSQL |
+| `DB_PORT` | `5433` | `5433` | Port DB di host |
+| `NEXTAUTH_URL` | `http://localhost:3300` | `https://domain.com` | URL untuk NextAuth |
+| `NEXTAUTH_SECRET` | (wajib diganti) | (wajib diganti) | Secret enkripsi session |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:3300/api` | `https://domain.com/api` | API base URL |
+| `SEED_DB` | `true` | `true` | Auto-seed database |
+
+---
+
+## Akun Demo
+
+| Role | Email | Password |
+|---|---|---|
+| Petani | `petani@demo.com` | `password123` |
+| Mitra Toko | `toko@demo.com` | `password123` |
+| Kurir | `kurir@demo.com` | `password123` |
+| Pembeli | `pembeli@demo.com` | `password123` |
+| Regulator | `regulator@demo.com` | `password123` |
+
+---
+
+## Struktur Proyek
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (auth)/             # Login, register, forgot-password
+│   ├── (dashboard)/        # Dashboard per role (petani, mitra-toko, etc)
+│   └── api/                # API routes
+├── components/             # UI components (ui/, layout/, cards/, charts/)
+├── lib/                    # auth.ts, prisma.ts, validators.ts, utils.ts
+├── services/               # Service layer per role + AI service
+├── store/                  # Zustand stores (auth, cart, notifications)
+├── hooks/                  # Custom hooks
+├── constants/              # Role labels, nav items
+└── types/                  # TypeScript types
+prisma/
+├── schema.prisma           # Database schema (14 tabel)
+├── seed.ts                 # Data seeder
+└── migrations/             # Migration files
+```
+
+---
+
+## Perintah Berguna
+
+```bash
+# Docker
+docker compose up --build -d      # Build & jalankan
+docker compose logs -f app        # Lihat log real-time
+docker compose down               # Stop (data tetap ada)
+docker compose down -v            # Stop + hapus semua data
+
+# Manual
+npm run dev                       # Development server
+npx prisma migrate dev            # Generate & apply migration
+npx prisma migrate deploy         # Apply migration (production-safe)
+npx prisma migrate reset          # Reset database
+npx tsx prisma/seed.ts            # Isi data demo
+npx prisma studio                 # GUI database
+```
+
+---
+
+## Troubleshooting
+
+| Masalah | Solusi |
+|---|---|
+| Port sudah dipakai | Edit `APP_PORT` dan `DB_PORT` di `.env` |
+| Container restart terus | `docker compose down -v && docker compose up --build -d` |
+| `prisma: not found` | Docker build akan otomatis `npm ci` — pastikan koneksi internet ada |
+| Login gagal | Cek `NEXTAUTH_SECRET` sudah di-set di `.env` |
+| Database tidak konek | Cek `DATABASE_URL` di `.env` — untuk Docker pakai `@db:5432` |

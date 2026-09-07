@@ -9,6 +9,13 @@ export async function GET(req: NextRequest) {
         if (!session?.user?.id) {
             return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
         }
+        if (session.user.role !== "PETANI") {
+            return NextResponse.json(
+                { success: false, message: "Forbidden — hanya Petani" },
+                { status: 403 }
+            );
+        }
+
 
         // Ambil query parameter untuk pagination (default page 1, limit 10)
         const { searchParams } = new URL(req.url);

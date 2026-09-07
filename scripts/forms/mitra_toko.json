@@ -1,0 +1,140 @@
+{
+  "info": {
+    "title": "Survei Kebutuhan Mitra Toko / Pasar — HARVEST",
+    "documentTitle": "HARVEST_Survei_MitraToko"
+  },
+  "sections": [
+    {
+      "title": "Profil Toko",
+      "description": "Data profil toko Anda",
+      "questions": [
+        {"title": "Nama pemilik / pengelola", "type": "TEXT", "required": true},
+        {"title": "Nama toko", "type": "TEXT", "required": true},
+        {"title": "Jenis toko", "type": "MULTIPLE_CHOICE", "options": ["Toko kelontong", "Pasar tradisional", "Agen sembako", "Koperasi", "Lainnya"], "required": true},
+        {"title": "Lokasi toko (Kecamatan / Kabupaten)", "type": "TEXT", "required": true},
+        {"title": "Lama berjualan (tahun)", "type": "MULTIPLE_CHOICE", "options": ["< 1 tahun", "1-3 tahun", "3-5 tahun", "5-10 tahun", "> 10 tahun"], "required": true},
+        {"title": "Jumlah karyawan", "type": "MULTIPLE_CHOICE", "options": ["Tidak ada (sendiri)", "1-2 orang", "3-5 orang", "> 5 orang"], "required": true},
+        {"title": "Rata-rata omzet harian", "type": "MULTIPLE_CHOICE", "options": ["< Rp500rb", "Rp500rb-1jt", "Rp1-3jt", "Rp3-5jt", "> Rp5jt"], "required": true},
+        {"title": "Berapa rata-rata transaksi per hari?", "type": "MULTIPLE_CHOICE", "options": ["< 20 transaksi", "20-50", "50-100", "> 100"], "required": true},
+        {"title": "Apakah toko memiliki lebih dari 1 cabang?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true},
+        {"title": "Metode pembayaran apa yang diterima di toko?", "type": "CHECKBOXES", "options": ["Tunai", "Transfer bank", "QRIS", "Kartu debit/kredit", "E-Wallet"], "required": true}
+      ]
+    },
+    {
+      "title": "Manajemen Inventaris & Stok",
+      "description": "Bagaimana Anda mengelola stok barang",
+      "questions": [
+        {"title": "Dari mana Anda mendapatkan barang sembako saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Distributor langsung", "Pasar induk", "Petani langsung", "Agen", "Lainnya"], "required": true},
+        {"title": "Seberapa sering Anda melakukan pengadaan stok?", "type": "MULTIPLE_CHOICE", "options": ["Setiap hari", "2-3 kali seminggu", "Seminggu sekali", "Tidak menentu"], "required": true},
+        {"title": "Bagaimana cara Anda mengetahui stok barang?", "type": "MULTIPLE_CHOICE", "options": ["Catatan manual (buku)", "Ingatan saja", "Excel / spreadsheet", "Aplikasi / software"], "required": true},
+        {"title": "Berapa jumlah item / SKU yang Anda kelola?", "type": "MULTIPLE_CHOICE", "options": ["< 20 item", "20-50 item", "50-100 item", "> 100 item"], "required": true},
+        {"title": "Apakah Anda sering kehabisan stok barang tertentu?", "type": "MULTIPLE_CHOICE", "options": ["Sering", "Kadang", "Jarang", "Tidak pernah"], "required": true},
+        {"title": "Barang apa yang paling sering kehabisan stok?", "type": "CHECKBOXES", "options": ["Beras", "Minyak goreng", "Gula", "Telur", "Tepung terigu", "Lainnya"]},
+        {"title": "Apakah Anda mencatat tanggal kadaluarsa barang?", "type": "MULTIPLE_CHOICE", "options": ["Ya, selalu", "Kadang", "Tidak"], "required": true},
+        {"title": "Apakah Anda ingin sistem memberi peringatan barang mendekati kadaluarsa?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true}
+      ]
+    },
+    {
+      "title": "Sistem POS & Kasir Digital",
+      "description": "Point of Sale / sistem kasir",
+      "questions": [
+        {"title": "Apakah Anda menggunakan kasir / mesin POS saat ini?", "type": "MULTIPLE_CHOICE", "options": ["POS komputer / tablet", "Dicatat manual di buku", "Dicatat di HP", "Tidak dicatat"], "required": true},
+        {"title": "Apakah Anda mencatat penjualan harian?", "type": "MULTIPLE_CHOICE", "options": ["Ya, manual", "Ya, digital", "Tidak"], "required": true},
+        {"title": "Apakah Anda bersedia menggunakan sistem POS digital?", "type": "MULTIPLE_CHOICE", "options": ["Sangat bersedia", "Bersedia, perlu pelatihan", "Tidak bersedia"], "required": true},
+        {"title": "Fitur POS apa yang paling penting?", "type": "MULTIPLE_CHOICE", "options": ["Hitung kembalian otomatis", "Cetak struk", "Catat riwayat penjualan", "Multi-metode bayar", "Manajemen hutang pelanggan"], "required": true},
+        {"title": "Apakah Anda butuh koneksi ke printer struk?", "type": "MULTIPLE_CHOICE", "options": ["Ya, thermal", "Ya, bluetooth", "Tidak perlu"]},
+        {"title": "Seberapa penting fitur POS Digital untuk Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Restock Otomatis & Notifikasi",
+      "description": "Peringatan stok menipis dan pemesanan ulang otomatis",
+      "questions": [
+        {"title": "Bagaimana Anda tahu kapan harus restok barang?", "type": "MULTIPLE_CHOICE", "options": ["Lihat stok langsung", "Pelanggan bilang habis", "Catatan stok", "Jadwal tetap"], "required": true},
+        {"title": "Apakah Anda ingin notifikasi otomatis saat stok menipis?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Dalam bentuk apa notifikasi yang diinginkan?", "type": "MULTIPLE_CHOICE", "options": ["Notifikasi aplikasi", "WhatsApp", "Email", "SMS"], "required": true},
+        {"title": "Apakah Anda ingin notifikasi juga dikirim ke pemasok agar otomatis mengirim barang?", "type": "MULTIPLE_CHOICE", "options": ["Ya, otomatis pesan", "Ya, tapi saya konfirmasi dulu", "Tidak"], "required": true},
+        {"title": "Seberapa penting fitur Notifikasi Restock Otomatis untuk Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Pemesanan ke Petani",
+      "description": "Memesan stok langsung dari petani",
+      "questions": [
+        {"title": "Apakah Anda membeli langsung dari petani saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true},
+        {"title": "Apakah Anda tertarik memesan stok langsung dari petani melalui aplikasi?", "type": "MULTIPLE_CHOICE", "options": ["Sangat tertarik", "Tertarik", "Kurang tertarik", "Tidak tertarik"], "required": true},
+        {"title": "Komoditas apa yang paling ingin dipesan langsung dari petani?", "type": "CHECKBOXES", "options": ["Beras", "Cabai", "Bawang", "Sayuran", "Buah", "Telur", "Lainnya"]},
+        {"title": "Berapa volume minimal pembelian dari petani yang ideal?", "type": "MULTIPLE_CHOICE", "options": ["Berapa saja", "Minimal 5 kg", "Minimal 10 kg", "Minimal 50 kg"]},
+        {"title": "Apakah Anda bersedia membayar DP untuk pesanan petani?", "type": "MULTIPLE_CHOICE", "options": ["Ya, 100%", "Ya, 50% DP", "Ya, 25% DP", "Tidak, bayar setelah terima"]},
+        {"title": "Berapa lama Anda bersedia menunggu pengiriman dari petani?", "type": "MULTIPLE_CHOICE", "options": ["1 hari", "2-3 hari", "Seminggu", "Tergantung komoditas"]},
+        {"title": "Faktor terpenting dalam memilih petani pemasok?", "type": "MULTIPLE_CHOICE", "options": ["Harga", "Kualitas", "Jarak", "Konsistensi stok", "Kepercayaan"], "required": true},
+        {"title": "Seberapa penting fitur Pemesanan ke Petani untuk Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Katalog Online & Layanan Digital",
+      "description": "Toko online dan layanan tambahan",
+      "questions": [
+        {"title": "Apakah Anda ingin produk toko muncul di katalog online?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda bersedia update stok online secara real-time?", "type": "MULTIPLE_CHOICE", "options": ["Ya, otomatis dari POS", "Ya, manual", "Tidak"], "required": true},
+        {"title": "Apakah Anda ingin menerima pesanan online untuk diambil di toko (click & collect)?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Mungkin", "Tidak"]},
+        {"title": "Apakah Anda ingin melayani pengiriman untuk pesanan online?", "type": "MULTIPLE_CHOICE", "options": ["Ya, diantar kurir", "Ya, diantar sendiri", "Tidak"]}
+      ]
+    },
+    {
+      "title": "Manajemen Harga & Laporan",
+      "description": "Pengaturan harga jual dan laporan bisnis",
+      "questions": [
+        {"title": "Bagaimana Anda menentukan harga jual saat ini?", "type": "MULTIPLE_CHOICE", "options": ["Harga pasar + markup tetap", "Ikut harga toko sebelah", "Negosiasi pelanggan", "Lainnya"], "required": true},
+        {"title": "Berapa persen markup (margin) yang biasa diambil?", "type": "MULTIPLE_CHOICE", "options": ["< 10%", "10-20%", "20-30%", "> 30%", "Tergantung barang"], "required": true},
+        {"title": "Apakah Anda ingin sistem memberi rekomendasi harga jual?", "type": "MULTIPLE_CHOICE", "options": ["Sangat ingin", "Ingin", "Tidak perlu"]},
+        {"title": "Laporan apa yang paling Anda butuhkan?", "type": "CHECKBOXES", "options": ["Penjualan per hari", "Penjualan per produk", "Laba kotor", "Stok tersisa", "Produk terlaris"]},
+        {"title": "Apakah Anda ingin laporan otomatis?", "type": "MULTIPLE_CHOICE", "options": ["Ya, via WhatsApp", "Ya, via email", "Saya lihat di aplikasi", "Tidak perlu"]}
+      ]
+    },
+    {
+      "title": "E-Wallet & Pembayaran Digital",
+      "description": "Dompet digital untuk transaksi toko",
+      "questions": [
+        {"title": "Apakah Anda bersedia menerima pembayaran digital di toko?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Mungkin", "Tidak"], "required": true},
+        {"title": "Metode pembayaran digital apa yang ingin diterima?", "type": "CHECKBOXES", "options": ["QRIS", "Transfer bank", "E-Wallet aplikasi", "Kartu debit/kredit"]},
+        {"title": "Seberapa penting fitur E-Wallet untuk bisnis Anda?", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Kebutuhan Teknis & Non-Fungsional",
+      "description": "Preferensi teknis aplikasi",
+      "questions": [
+        {"title": "Perangkat apa yang tersedia di toko?", "type": "MULTIPLE_CHOICE", "options": ["Smartphone saja", "Smartphone + tablet", "Komputer / laptop", "Semua"], "required": true},
+        {"title": "Apakah koneksi internet di toko stabil?", "type": "MULTIPLE_CHOICE", "options": ["Stabil (WiFi)", "Stabil (data seluler)", "Kadang putus", "Tidak stabil"], "required": true},
+        {"title": "Apakah aplikasi perlu bisa dipakai offline (tanpa internet)?", "type": "MULTIPLE_CHOICE", "options": ["Sangat perlu", "Lumayan", "Tidak perlu"], "required": true},
+        {"title": "Apakah butuh akses untuk pemilik dan karyawan dengan hak berbeda?", "type": "MULTIPLE_CHOICE", "options": ["Sangat perlu", "Lumayan", "Tidak perlu"], "required": true},
+        {"title": "Apakah Anda bersedia mengikuti pelatihan penggunaan aplikasi?", "type": "MULTIPLE_CHOICE", "options": ["Ya", "Tidak"], "required": true}
+      ]
+    },
+    {
+      "title": "Prioritas Fitur — Skala Kepentingan",
+      "description": "Beri nilai 1-5 untuk setiap fitur (1=Tidak Penting, 5=Sangat Penting)",
+      "questions": [
+        {"title": "Manajemen Inventaris (catat stok barang)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Notifikasi Restock Otomatis (peringatan stok menipis)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "POS Digital (kasir otomatis + struk)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Katalog Online (toko muncul di aplikasi pembeli)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Pemesanan ke Petani (order stok langsung dari petani)", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Laporan Penjualan Otomatis", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "Manajemen Harga Jual", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true},
+        {"title": "E-Wallet / Pembayaran Digital", "type": "LINEAR_SCALE", "min": 1, "max": 5, "minLabel": "Tidak Penting", "maxLabel": "Sangat Penting", "required": true}
+      ]
+    },
+    {
+      "title": "Masukan Terbuka",
+      "description": "Cerita dan harapan Anda",
+      "questions": [
+        {"title": "Apa tantangan terbesar dalam mengelola toko sembako?", "type": "PARAGRAPH", "required": true},
+        {"title": "Apa fitur yang paling Anda impikan untuk membantu mengelola toko?", "type": "PARAGRAPH"},
+        {"title": "Ceritakan pengalaman terbaik / terburuk menggunakan aplikasi toko atau kasir (jika ada)", "type": "PARAGRAPH"},
+        {"title": "Berapa biaya berlangganan bulanan yang bersedia Anda bayar untuk aplikasi ini? (dalam Rp)", "type": "TEXT"}
+      ]
+    }
+  ]
+}

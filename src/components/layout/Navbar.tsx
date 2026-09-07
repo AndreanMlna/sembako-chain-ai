@@ -56,8 +56,9 @@ export default function Navbar() {
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
 
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-xl font-bold text-accent tracking-tighter">{APP_NAME}</span>
+            <Link href="/" className="flex flex-col items-start gap-0.5">
+              <span className="text-xl font-bold text-accent tracking-tighter leading-none">{APP_NAME}</span>
+              <div className="h-1 w-10 bg-primary rounded-full opacity-60 hidden md:block"></div>
             </Link>
           </div>
 
@@ -132,7 +133,7 @@ export default function Navbar() {
                 href="/profil"
                 className={cn(
                     "flex h-9 w-9 items-center justify-center rounded-full transition-all md:hidden",
-                    pathname === "/profil" ? "bg-accent text-sembako-darkest" : "bg-accent/10 text-accent"
+                    pathname === "/profil" ? "bg-accent text-harvest-darkest" : "bg-accent/10 text-accent"
                 )}
                 onClick={closeMenu}
             >
@@ -203,7 +204,7 @@ export default function Navbar() {
             <div className="space-y-2">
               <p className="text-lg font-bold text-foreground">Yakin ingin keluar?</p>
               <p className="text-sm text-foreground/60 leading-relaxed">
-                Sesi login Anda akan dihapus. Anda harus masuk kembali untuk mengakses data Sembako-Chain.
+                Sesi login Anda akan dihapus. Anda harus masuk kembali untuk mengakses data HARVEST.
               </p>
             </div>
             <div className="flex w-full gap-3 pt-2">

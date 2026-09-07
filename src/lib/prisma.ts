@@ -14,10 +14,7 @@ const pool = new Pool({
   connectionTimeoutMillis: 10000,
 });
 
-// PERBAIKAN: Gunakan @ts-expect-error alih-alih 'as any'
-// untuk melewati konflik versi @types/pg tanpa memicu error ESLint
-// @ts-expect-error: Konflik definisi tipe bawaan antara library pg dan adapter prisma
-const adapter = new PrismaPg(pool);
+const adapter = new PrismaPg(pool as any);
 
 const globalForPrisma = globalThis as unknown as {
     prisma: PrismaClient | undefined;

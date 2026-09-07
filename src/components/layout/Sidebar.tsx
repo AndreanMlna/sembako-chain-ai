@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { NAV_ITEMS } from "@/constants";
+import { NAV_ITEMS, APP_NAME } from "@/constants";
 import * as LucideIcons from "lucide-react";
 import { Circle, type LucideIcon } from "lucide-react";
 import { UserRole } from "@/types";
@@ -22,8 +22,8 @@ export default function Sidebar({ role }: SidebarProps) {
     const icons = LucideIcons as unknown as Record<string, LucideIcon>;
 
     return (
-        <div className="h-full bg-transparent py-4">
-            <nav className="flex flex-col gap-1 px-4">
+        <div className="h-full flex flex-col bg-transparent">
+            <nav className="flex-1 flex flex-col gap-1 px-4 py-4 md:py-8">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
                     // Ambil komponen icon, jika tidak ketemu pakai Circle sebagai fallback
@@ -34,21 +34,31 @@ export default function Sidebar({ role }: SidebarProps) {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                                "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 group",
                                 isActive
-                                    ? "bg-accent/20 text-accent shadow-sm ring-1 ring-white/10"
-                                    : "text-accent/60 hover:bg-white/5 hover:text-accent"
+                                    ? "bg-white/10 text-white shadow-lg shadow-black/20"
+                                    : "text-accent/50 hover:bg-white/5 hover:text-accent"
                             )}
                         >
                             <IconComponent className={cn(
-                                "h-5 w-5 transition-colors",
-                                isActive ? "text-accent" : "text-accent/40"
+                                "h-5 w-5 transition-all duration-300",
+                                isActive ? "text-primary scale-110" : "text-accent/30 group-hover:text-accent/60"
                             )} />
                             <span>{item.label}</span>
+                            {isActive && (
+                                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                            )}
                         </Link>
                     );
                 })}
             </nav>
+
+            {/* Footer Sidebar (Optional) */}
+            <div className="p-6 mt-auto border-t border-white/5 opacity-20 hidden md:block">
+                <p className="text-[10px] text-accent font-medium uppercase tracking-widest">
+                    v1.0.0 Stable
+                </p>
+            </div>
         </div>
     );
 }

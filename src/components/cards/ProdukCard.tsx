@@ -35,14 +35,14 @@ export default function ProdukCard({
               // Struktur dasar dan rounded
               "overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md",
               // Mode Terang: Background mint pucat, border halus, teks hijau gelap
-              "bg-sembako-accent border-sembako-light/20 text-sembako-darkest",
-              // Mode Gelap: Background hijau hutan, border sangat halus, teks putih mint
-              "dark:bg-sembako-dark dark:border-sembako-light/10 dark:text-sembako-accent",
+"bg-harvest-accent border-harvest-light/20 text-harvest-darkest",
+               // Mode Gelap: Background hijau hutan, border sangat halus, teks putih mint
+               "dark:bg-harvest-dark dark:border-harvest-light/10 dark:text-harvest-accent",
               className
           )}
       >
         {/* Image Area */}
-        <div className="relative aspect-square bg-sembako-primary/5">
+        <div className="relative aspect-square bg-harvest-primary/5">
           {produk.fotoUrl ? (
               <Image
                   src={produk.fotoUrl}
@@ -52,7 +52,7 @@ export default function ProdukCard({
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
           ) : (
-              <div className="flex h-full items-center justify-center text-sembako-darkest/40 dark:text-sembako-accent/30 bg-sembako-light/10">
+              <div className="flex h-full items-center justify-center text-harvest-darkest/40 dark:text-harvest-accent/30 bg-harvest-light/10">
                 <span className="text-xs font-medium">Tidak ada foto</span>
               </div>
           )}
@@ -67,7 +67,7 @@ export default function ProdukCard({
           <h3 className="font-semibold text-inherit truncate">{produk.nama}</h3>
 
           {/* Harga & Satuan: text-primary agar warnanya hijau utama kamu */}
-          <p className="mt-1 text-lg font-bold text-sembako-primary dark:text-sembako-light">
+          <p className="mt-1 text-lg font-bold text-harvest-primary dark:text-harvest-light">
             {formatRupiah(produk.hargaPerSatuan)}
             <span className="text-sm font-normal text-inherit opacity-70"> / {produk.satuan}</span>
           </p>
@@ -78,7 +78,7 @@ export default function ProdukCard({
           </p>
 
           {showDistance && distance !== undefined && (
-              <p className="mt-1.5 flex items-center gap-1 text-[11px] text-inherit opacity-50 border-t border-sembako-light/10 pt-1.5">
+              <p className="mt-1.5 flex items-center gap-1 text-[11px] text-inherit opacity-50 border-t border-harvest-light/10 pt-1.5">
                 <MapPin className="h-3 w-3" />
                 {distance.toFixed(1)} km dari lokasi Anda
               </p>

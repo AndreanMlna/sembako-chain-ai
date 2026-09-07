@@ -1,0 +1,69 @@
+# ============================================================
+# Docker Compose — HARVEST
+# ============================================================
+# Semua konfigurasi diambil dari file .env
+# Jalankan: docker compose up --build -d
+# ============================================================
+
+services:
+
+  # ----------------------------------------------------------
+  # PostgreSQL database
+  # ----------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: harvest_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: harvest
+      POSTGRES_PASSWORD: harvest_pass
+      POSTGRES_DB: harvest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U harvest -d harvest"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ----------------------------------------------------------
+  # Next.js application
+  # ----------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    container_name: harvest_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://harvest:harvest_pass@db:5432/harvest
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      SEED_DB: ${SEED_DB:-true}
+      PORT: "${APP_PORT:-3300}"
+    volumes:
+      - ./public/uploads:/app/public/uploads
+    ports:
+      - "${APP_PORT:-3300}:3300"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:3300/ > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+volumes:
+  postgres_data:
+    driver: local

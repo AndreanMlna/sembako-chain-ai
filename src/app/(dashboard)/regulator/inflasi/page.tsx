@@ -12,7 +12,7 @@ import { KATEGORI_KOMODITAS } from "@/constants";
 
 export default function InflasiPage() {
   return (
-    <div>
+    <div className="space-y-6 animate-in pb-20">
       <PageHeader
         title="Dashboard Inflasi"
         description="Monitoring dan prediksi pergerakan harga komoditas pangan"
@@ -21,7 +21,7 @@ export default function InflasiPage() {
       {/* Filters */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row">
         <Select>
-          <SelectTrigger className="w-full sm:w-48">
+          <SelectTrigger className="w-full sm:w-48 bg-card border-border">
             <SelectValue placeholder="Pilih Komoditas" />
           </SelectTrigger>
           <SelectContent>
@@ -33,7 +33,7 @@ export default function InflasiPage() {
           </SelectContent>
         </Select>
         <Select>
-          <SelectTrigger className="w-full sm:w-48">
+          <SelectTrigger className="w-full sm:w-48 bg-card border-border">
             <SelectValue placeholder="Periode" />
           </SelectTrigger>
           <SelectContent>
@@ -46,22 +46,22 @@ export default function InflasiPage() {
       </div>
 
       {/* TODO: Integrate PriceChart component with real data */}
-      <div className="rounded-xl border bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">
+      <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <h3 className="mb-4 text-lg font-bold text-foreground">
           Grafik Harga vs Prediksi AI
         </h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-foreground/60">
           Grafik pergerakan harga pasar dibandingkan dengan prediksi AI (LSTM).
         </p>
         {/* TODO: <PriceChart data={...} /> */}
       </div>
 
       {/* Commodity Table */}
-      <div className="mt-6 rounded-xl border bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">
+      <div className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <h3 className="mb-4 text-lg font-bold text-foreground">
           Tabel Harga Komoditas
         </h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-foreground/60">
           Perbandingan harga per komoditas per wilayah.
         </p>
         {/* TODO: Implement commodity price table */}

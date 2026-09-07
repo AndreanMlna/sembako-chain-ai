@@ -21,6 +21,13 @@ export async function GET() {
           { status: 401 }
       );
     }
+    if (session.user.role !== "PETANI") {
+        return NextResponse.json(
+            { success: false, message: "Forbidden — hanya Petani" },
+            { status: 403 }
+        );
+    }
+
 
     // Mengambil profil petani dari database berdasarkan ID session
     const profilPetaniRaw = await prisma.user.findUnique({

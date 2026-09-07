@@ -1,11 +1,11 @@
 // ==========================================
-// SEMBAKO-CHAIN AI - Constants
+// HARVEST - Constants
 // ==========================================
 
 import { UserRole } from "@/types";
 
 // ---- App Config ----
-export const APP_NAME = "Sembako-Chain AI";
+export const APP_NAME = "HARVEST";
 export const APP_DESCRIPTION =
   "Ekosistem Distribusi Pangan Hybrid Berbasis AI untuk Stabilisasi Inflasi dan Inklusi Ekonomi";
 export const APP_VERSION = "1.0.0";
