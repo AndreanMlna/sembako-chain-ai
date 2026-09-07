@@ -1,88 +1,91 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+// src/app/api/pembeli/pre-order/route.ts
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET() {
-    try {
-        const session = await getServerSession(authOptions);
-        if (!session?.user?.id) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-        if (session.user.role !== "PEMBELI") return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
-
-        const tanaman = await prisma.tanaman.findMany({
-            where: { statusPanen: { in: ["TUMBUH", "SIAP_PANEN"] } },
-            include: {
-                lahan: {
-                    include: {
-                        petani: { select: { id: true, nama: true, latitude: true, longitude: true } },
-                    },
-                },
-            },
-            orderBy: { estimasiPanen: "asc" },
-            take: 20,
-        });
-
-        const formatted = tanaman.map((t) => {
-            const now = new Date();
-            const daysUntilHarvest = Math.ceil((t.estimasiPanen.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-            const progress = t.statusPanen === "SIAP_PANEN" ? 90 : Math.min(85, Math.max(10, ((90 - daysUntilHarvest) / 90) * 100));
-            return {
-                id: t.id,
-                nama: t.nama,
-                varietas: t.varietasNama,
-                statusPanen: t.statusPanen,
-                estimasiPanen: t.estimasiPanen,
-                hariKePanen: daysUntilHarvest,
-                progress: Math.round(progress),
-                petani: {
-                    id: t.lahan.petani.id,
-                    nama: t.lahan.petani.nama,
-                    latitude: t.lahan.petani.latitude,
-                    longitude: t.lahan.petani.longitude,
-                },
-                lahan: { id: t.lahan.id, nama: t.lahan.nama },
-            };
-        });
-
-        return NextResponse.json({ success: true, data: formatted });
-    } catch (error) {
-        console.error("Pre-order Error:", error);
-        return NextResponse.json({ success: false, message: "Gagal mengambil data pre-order" }, { status: 500 });
-    }
+function estimatePrice(nama: string): number {
+  const lower = nama.toLowerCase();
+  if (lower.includes("cabai") || lower.includes("cabe")) return 35000;
+  if (lower.includes("bawang")) return 28000;
+  if (lower.includes("beras") || lower.includes("padi")) return 13500;
+  if (lower.includes("tomat")) return 12000;
+  if (lower.includes("kentang")) return 16000;
+  if (lower.includes("jagung")) return 8500;
+  if (lower.includes("kedelai")) return 11000;
+  return 20000;
 }
 
-export async function POST(request: NextRequest) {
-    try {
-        const session = await getServerSession(authOptions);
-        if (!session?.user?.id) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-        if (session.user.role !== "PEMBELI") return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
+export async function GET() {
+  try {
+    const crops = await prisma.tanaman.findMany({
+      where: {
+        statusPanen: {
+          not: "DIPANEN",
+        },
+      },
+      include: {
+        lahan: {
+          include: {
+            petani: true,
+          },
+        },
+      },
+      orderBy: {
+        estimasiPanen: "asc",
+      },
+      take: 20,
+    });
 
-        const body = await request.json();
-        const { tanamanId, jumlah } = body;
+    const preOrders = crops.map((crop, idx) => {
+      let statusText = "Fase Generatif";
+      let variant: "default" | "success" | "warning" | "danger" | "info" = "info";
 
-        const tanaman = await prisma.tanaman.findUnique({
-            where: { id: tanamanId },
-            include: { lahan: { include: { petani: true } } },
-        });
+      if (crop.statusPanen === "SIAP_PANEN") {
+        statusText = "Siap Panen";
+        variant = "success";
+      } else if (crop.statusPanen === "TANAM") {
+        statusText = "Fase Vegetatif";
+        variant = "warning";
+      }
 
-        if (!tanaman) return NextResponse.json({ success: false, message: "Tanaman tidak ditemukan" }, { status: 404 });
+      const totalSlots = crop.jumlahKg ? Math.round(crop.jumlahKg) : 500;
+      const slots = Math.min(
+        crop.jumlahKg ? Math.round(crop.jumlahKg * 0.35) : 150,
+        totalSlots
+      );
 
-        const estimasiHarga = (tanaman.jumlahKg || 10) * (jumlah || 1) * 10000;
+      const formattedHarvest = new Date(crop.estimasiPanen).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
 
-        return NextResponse.json({
-            success: true,
-            data: {
-                tanamanId: tanaman.id,
-                tanamanNama: tanaman.nama,
-                petaniNama: tanaman.lahan.petani.nama,
-                estimasiPanen: tanaman.estimasiPanen,
-                jumlah: jumlah || 1,
-                estimasiHarga,
-            },
-            message: `Pre-order ${tanaman.nama} berhasil dibuat. Estimasi panen: ${tanaman.estimasiPanen.toLocaleDateString("id-ID")}`,
-        });
-    } catch (error) {
-        console.error("Pre-order POST Error:", error);
-        return NextResponse.json({ success: false, message: "Gagal membuat pre-order" }, { status: 500 });
-    }
+      const sellerName = crop.lahan?.petani?.nama
+        ? `Kelompok Tani ${crop.lahan.petani.nama}`
+        : crop.lahan?.nama || "Petani Mitra";
+
+      return {
+        id: `PO-${String(idx + 1).padStart(3, "0")}`,
+        name: crop.varietasNama ? `${crop.nama} (${crop.varietasNama})` : crop.nama,
+        seller: sellerName,
+        harvestDate: formattedHarvest,
+        price: estimatePrice(crop.nama),
+        unit: "kg",
+        slots,
+        totalSlots,
+        status: statusText,
+        variant,
+      };
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: preOrders,
+    });
+  } catch (error) {
+    console.error("GET Pre-order error:", error);
+    return NextResponse.json(
+      { success: false, message: "Gagal memuat jadwal pre-order", error: error instanceof Error ? error.message : "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }

@@ -123,6 +123,9 @@ export async function getTransaksiHistory(page: number = 1): Promise<PaginatedRe
   return apiGetPaginated<Transaksi>(`${BASE}/wallet/transaksi`, page);
 }
 
+export const getTransaksiWallet = getTransaksiHistory;
+
+
 // ---- Dashboard ----
 export interface DashboardData {
   stats: {

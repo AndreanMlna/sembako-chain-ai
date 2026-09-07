@@ -38,9 +38,10 @@ export async function getOptimizedRoute(jobId: string): Promise<
 // ---- Scan QR ----
 export async function confirmDelivery(
   jobId: string,
-  qrCode: string
+  qrCode: string,
+  fotoBukti?: string
 ): Promise<ApiResponse<Job>> {
-  return apiPost<Job>(`${BASE}/jobs/${jobId}/confirm`, { qrCode });
+  return apiPost<Job>(`${BASE}/jobs/${jobId}/confirm`, { qrCode, fotoBukti });
 }
 
 // ---- Riwayat ----

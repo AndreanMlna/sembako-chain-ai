@@ -1,9 +1,9 @@
-// src/app/api/petani/tanaman/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { StatusPanen, StatusKesehatan } from "@prisma/client";
+import { tanamanSchema } from "@/lib/validators";
 
 export async function GET() {
     try {
@@ -65,15 +65,29 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const body = await request.json();
-        const { lahanId, nama, varietasNama, tanggalTanam, estimasiPanen } = body;
+        const rawBody = await request.json();
+        const { lahanId } = rawBody;
 
-        if (!lahanId || !nama || !tanggalTanam) {
+        if (!lahanId) {
             return NextResponse.json(
-                { success: false, message: "Data wajib (lahanId, nama, tanggalTanam) tidak lengkap" },
+                { success: false, message: "Lahan wajib dipilih" },
                 { status: 400 }
             );
         }
+
+        const validation = tanamanSchema.safeParse(rawBody);
+        if (!validation.success) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Data tanaman tidak valid",
+                    errors: validation.error.flatten().fieldErrors,
+                },
+                { status: 400 }
+            );
+        }
+
+        const { nama, varietasNama, tanggalTanam, estimasiPanen } = validation.data;
 
         const lahanMilikPetani = await prisma.lahan.findFirst({
             where: {

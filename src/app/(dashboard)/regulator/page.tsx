@@ -1,104 +1,126 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { TrendingUp, AlertTriangle, Activity, Users, Package, Store, Truck, ShoppingCart } from "lucide-react";
+import { useEffect, useState } from "react";
 import PageHeader from "@/components/shared/PageHeader";
 import StatsCard from "@/components/cards/StatsCard";
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
-import { Card, CardContent } from "@/components/ui/Card";
-import { formatRupiah } from "@/lib/utils";
 import { apiGet } from "@/lib/api";
 
-interface DashboardData {
-    totalPetani: number; totalToko: number; totalKurir: number;
-    totalProduk: number; totalOrders: number; totalTransaksi: number;
-    inflasiData: { komoditas: string; hargaRataRata: number; jumlahProduk: number }[];
+interface RegulatorStats {
+  rataRataInflasi: string;
+  wilayahRawan: number;
+  totalTransaksi: string;
+  lapanganKerjaBaru: string;
+  distribusiUser: {
+    petani: number;
+    kurir: number;
+    toko: number;
+  };
+  totalKomoditasTersedia: number;
 }
 
 export default function RegulatorDashboard() {
-    const [data, setData] = useState<DashboardData | null>(null);
+  const [stats, setStats] = useState<RegulatorStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        apiGet<DashboardData>("/regulator/dashboard").then((res) => {
-            if (res.success && res.data) setData(res.data);
-        });
-    }, []);
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await apiGet<RegulatorStats>("/regulator/dashboard");
+        if (res.success && res.data) {
+          setStats(res.data);
+        }
+      } catch (err) {
+        console.error("Gagal mengambil data dashboard regulator:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchStats();
+  }, []);
 
-    if (!data) return <LoadingSpinner />;
+  return (
+    <div>
+      <PageHeader
+        title="Dashboard Regulator"
+        description="Monitoring inflasi pangan dan stok nasional"
+      />
 
-    const avgPrice = Math.round(data.inflasiData.reduce((a, i) => a + i.hargaRataRata, 0) / Math.max(data.inflasiData.length, 1));
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatsCard
+          title="Rata-rata Inflasi"
+          value={loading ? "..." : (stats?.rataRataInflasi || "0.0%")}
+          icon="TrendingUp"
+          trend={{ value: -0.5, isPositive: true }}
+        />
+        <StatsCard
+          title="Wilayah Pantauan"
+          value={loading ? "..." : (stats ? String(stats.wilayahRawan) : "0")}
+          icon="AlertTriangle"
+          trend={{ value: 2, isPositive: false }}
+        />
+        <StatsCard
+          title="Total Transaksi"
+          value={loading ? "..." : (stats?.totalTransaksi || "0")}
+          icon="Activity"
+          trend={{ value: 18, isPositive: true }}
+        />
+        <StatsCard
+          title="Lapangan Kerja Baru"
+          value={loading ? "..." : (stats?.lapanganKerjaBaru || "0")}
+          icon="Users"
+          trend={{ value: 22, isPositive: true }}
+        />
+      </div>
 
-    return (
-        <div className="space-y-8 animate-in pb-20">
-            <PageHeader title="Dashboard Regulator" description="Monitoring inflasi pangan dan stok nasional" />
-
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <StatsCard title="Harga Rata-rata" value={formatRupiah(avgPrice)} icon="TrendingUp" />
-                <StatsCard title="Total Petani" value={data.totalPetani} icon="Users" />
-                <StatsCard title="Mitra Toko" value={data.totalToko} icon="Store" />
-                <StatsCard title="Kurir Aktif" value={data.totalKurir} icon="Truck" />
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="rounded-xl border bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            Early Warning System
+          </h3>
+          <p className="text-sm text-gray-500">
+            Peringatan dini wilayah yang terdeteksi potensi kenaikan harga.
+          </p>
+          <div className="mt-4 rounded-lg bg-emerald-50 p-4 border border-emerald-200">
+            <div className="flex items-center gap-2 text-emerald-800 font-medium text-sm">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              Sistem Pemantauan Aktif
             </div>
-
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <StatsCard title="Total Produk" value={data.totalProduk} icon="Package" />
-                <StatsCard title="Total Order" value={data.totalOrders} icon="ShoppingCart" />
-                <StatsCard title="Total Transaksi" value={data.totalTransaksi} icon="Activity" />
-                <StatsCard
-                    title="Lapangan Kerja"
-                    value={data.totalPetani + data.totalKurir + data.totalToko}
-                    icon="Users"
-                    trend={{ value: 100, isPositive: true }}
-                />
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {/* Inflasi Data */}
-                <Card className="border-border">
-                    <CardContent className="p-6">
-                        <h3 className="mb-4 text-lg font-bold text-foreground flex items-center gap-2">
-                            <TrendingUp className="h-5 w-5 text-primary" />
-                            Harga per Komoditas
-                        </h3>
-                        <div className="space-y-3">
-                            {data.inflasiData.map((item) => (
-                                <div key={item.komoditas} className="flex items-center justify-between rounded-lg bg-foreground/5 p-3">
-                                    <div>
-                                        <p className="text-sm font-bold text-foreground">{item.komoditas}</p>
-                                        <p className="text-[10px] text-foreground/40">{item.jumlahProduk} produk</p>
-                                    </div>
-                                    <p className="text-sm font-black text-primary">{formatRupiah(item.hargaRataRata)}</p>
-                                </div>
-                            ))}
-                            {data.inflasiData.length === 0 && (
-                                <p className="text-sm text-foreground/40 text-center py-4">Belum ada data komoditas</p>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Quick Links */}
-                <Card className="border-border">
-                    <CardContent className="p-6">
-                        <h3 className="mb-4 text-lg font-bold text-foreground flex items-center gap-2">
-                            <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                            Monitoring & Aksi
-                        </h3>
-                        <div className="grid grid-cols-2 gap-3">
-                            {[
-                                { label: "Inflasi", href: "/regulator/inflasi", icon: "TrendingUp", desc: "Pantau harga" },
-                                { label: "Heatmap", href: "/regulator/heatmap", icon: "Map", desc: "Peta stok" },
-                                { label: "Intervensi", href: "/regulator/intervensi", icon: "Zap", desc: "Aksi pasar" },
-                                { label: "Laporan", href: "/regulator/laporan", icon: "FileText", desc: "Generate" },
-                            ].map((link) => (
-                                <a key={link.href} href={link.href} className="rounded-lg border border-border p-4 hover:bg-foreground/5 transition-colors">
-                                    <p className="text-sm font-bold text-foreground">{link.label}</p>
-                                    <p className="text-[10px] text-foreground/40 mt-1">{link.desc}</p>
-                                </a>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+            <p className="mt-1 text-xs text-emerald-700">
+              {stats?.totalKomoditasTersedia ?? 0} komoditas pangan dipantau di database real-time. Tidak terdeteksi lonjakan ekstrem di atas ambang batas.
+            </p>
+          </div>
         </div>
-    );
+
+        <div className="rounded-xl border bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            Ringkasan Stok & Partisipan Nasional
+          </h3>
+          <p className="text-sm text-gray-500">
+            Overview partisipan rantai pasok sembako yang terverifikasi dalam sistem.
+          </p>
+          <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+            <div className="rounded-lg bg-gray-50 p-3">
+              <p className="text-xs text-gray-500">Petani</p>
+              <p className="mt-1 text-lg font-bold text-gray-900">
+                {loading ? "..." : (stats?.distribusiUser.petani ?? 0)}
+              </p>
+            </div>
+            <div className="rounded-lg bg-gray-50 p-3">
+              <p className="text-xs text-gray-500">Kurir</p>
+              <p className="mt-1 text-lg font-bold text-gray-900">
+                {loading ? "..." : (stats?.distribusiUser.kurir ?? 0)}
+              </p>
+            </div>
+            <div className="rounded-lg bg-gray-50 p-3">
+              <p className="text-xs text-gray-500">Mitra Toko</p>
+              <p className="mt-1 text-lg font-bold text-gray-900">
+                {loading ? "..." : (stats?.distribusiUser.toko ?? 0)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
+

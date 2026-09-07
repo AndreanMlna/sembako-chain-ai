@@ -1,14 +1,15 @@
 import { cn } from "@/lib/utils";
 
-interface CardProps {
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
     className?: string;
 }
 
 // Komponen Card Utama
-export function Card({ children, className }: CardProps) {
+export function Card({ children, className, ...props }: CardProps) {
     return (
         <div
+            {...props}
             className={cn(
                 "rounded-xl border shadow-sm transition-all duration-300",
                 // Light: Background putih, Dark: Hijau Hutan

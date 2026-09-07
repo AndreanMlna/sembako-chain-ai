@@ -1,54 +1,52 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck, CheckCircle2, Receipt } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck, MapPin, Loader2 } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import Button from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import EmptyState from "@/components/shared/EmptyState";
 import Badge from "@/components/ui/Badge";
-import Modal from "@/components/ui/Modal";
 import { useCartStore } from "@/store/cart-store";
 import { formatRupiah, cn } from "@/lib/utils";
-import { apiPost } from "@/lib/api";
-
-interface OrderResult {
-    orderId: string;
-    totalHarga: number;
-    status: string;
-    items: { nama: string; jumlah: number; harga: number; subtotal: number }[];
-    createdAt: string;
-}
+import { toast } from "react-hot-toast";
 
 export default function KeranjangPage() {
+    const router = useRouter();
     const { items, getTotalHarga, getTotalItems, updateQuantity, removeItem, clearCart } = useCartStore();
-    const [checkingOut, setCheckingOut] = useState(false);
-    const [error, setError] = useState("");
-    const [orderResult, setOrderResult] = useState<OrderResult | null>(null);
+    const [alamat, setAlamat] = useState("Jl. Ir. H. Juanda No. 120, Bandung, Jawa Barat");
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     const handleCheckout = async () => {
-        if (items.length === 0 || checkingOut) return;
-        setCheckingOut(true);
-        setError("");
+        if (items.length === 0 || isCheckingOut) return;
+        setIsCheckingOut(true);
 
         try {
-            const res = await apiPost<OrderResult>("/pembeli/orders", {
-                items: items.map((item) => ({
-                    produkId: item.id,
-                    quantity: item.qty,
-                })),
+            const res = await fetch("/api/pembeli/orders", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    items,
+                    alamatPengiriman: alamat,
+                    ongkosKirim: 0,
+                    metodeJual: "LANGSUNG",
+                }),
             });
 
-            if (res.success && res.data) {
-                setOrderResult(res.data);
+            const json = await res.json();
+            if (json.success && json.data) {
+                toast.success("Pesanan berhasil dikonfirmasi!");
                 clearCart();
+                router.push(`/pembeli/tracking?id=${json.data.id}`);
             } else {
-                setError(res.message || "Gagal membuat pesanan");
+                toast.error(json.message || "Gagal membuat pesanan");
             }
-        } catch {
-            setError("Gagal terhubung ke server");
+        } catch (err) {
+            console.error("Checkout error:", err);
+            toast.error("Terjadi kendala koneksi saat checkout.");
         } finally {
-            setCheckingOut(false);
+            setIsCheckingOut(false);
         }
     };
 
@@ -59,15 +57,15 @@ export default function KeranjangPage() {
                 description={`${getTotalItems()} item siap untuk diproses`}
             />
 
-            {items.length === 0 && !orderResult ? (
+            {items.length === 0 ? (
                 <EmptyState
                     icon="ShoppingCart"
                     title="Keranjang masih kosong"
                     description="Sepertinya Anda belum memilih bahan pangan segar. Ayo jelajahi katalog kami!"
                     actionLabel="Mulai Belanja"
-                    onAction={() => window.location.href = "/pembeli/katalog"}
+                    onAction={() => router.push("/pembeli/katalog")}
                 />
-            ) : items.length > 0 ? (
+            ) : (
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     {/* LEFT: ITEMS LIST */}
                     <div className="lg:col-span-2 space-y-4">
@@ -121,9 +119,23 @@ export default function KeranjangPage() {
                             </Card>
                         ))}
 
-                        {error && (
-                            <div className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-500">{error}</div>
-                        )}
+                        {/* Alamat Pengiriman */}
+                        <div className="rounded-2xl border border-border bg-card p-4 space-y-2 shadow-sm">
+                            <div className="flex items-center gap-2 text-foreground font-bold text-sm">
+                                <MapPin className="h-4 w-4 text-primary" />
+                                <span>Alamat Pengiriman</span>
+                            </div>
+                            <input
+                                type="text"
+                                value={alamat}
+                                onChange={(e) => setAlamat(e.target.value)}
+                                placeholder="Masukkan alamat lengkap penerimaan barang..."
+                                className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                            />
+                            <p className="text-[11px] text-foreground/40 font-medium">
+                                Pengiriman akan diantarkan langsung oleh kurir ke titik alamat ini.
+                            </p>
+                        </div>
 
                         <div className="rounded-2xl bg-primary/5 border border-primary/10 p-4 flex gap-3 items-start">
                             <Truck className="h-5 w-5 text-primary shrink-0" />
@@ -166,10 +178,19 @@ export default function KeranjangPage() {
                                 <Button
                                     className="w-full py-7 text-base font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95 group"
                                     onClick={handleCheckout}
-                                    disabled={checkingOut}
+                                    disabled={isCheckingOut || items.length === 0}
                                 >
-                                    {checkingOut ? "MEMPROSES..." : "BAYAR SEKARANG"}
-                                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                    {isCheckingOut ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                            MEMPROSES PESANAN...
+                                        </>
+                                    ) : (
+                                        <>
+                                            LANJUT CHECKOUT
+                                            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                        </>
+                                    )}
                                 </Button>
 
                                 <div className="mt-6 flex items-center justify-center gap-2 text-[10px] font-bold text-foreground/30 uppercase tracking-widest">
@@ -180,62 +201,7 @@ export default function KeranjangPage() {
                         </Card>
                     </div>
                 </div>
-            ) : null}
-
-            {/* SUCCESS MODAL */}
-            <Modal
-                isOpen={!!orderResult}
-                onClose={() => setOrderResult(null)}
-                title="Pesanan Berhasil Dibuat!"
-            >
-                {orderResult && (
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-3 rounded-lg bg-green-500/10 p-4">
-                            <CheckCircle2 className="h-8 w-8 text-green-500" />
-                            <div>
-                                <p className="font-bold text-foreground">Pembayaran Berhasil</p>
-                                <p className="text-xs text-foreground/50">Order ID: {orderResult.orderId}</p>
-                            </div>
-                        </div>
-
-                        <div className="border-y border-border py-3 space-y-2">
-                            {orderResult.items.map((item, idx) => (
-                                <div key={idx} className="flex justify-between text-sm">
-                                    <span className="text-foreground/70">
-                                        {item.nama} x{item.jumlah}
-                                    </span>
-                                    <span className="font-semibold">{formatRupiah(item.subtotal)}</span>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="flex justify-between text-lg font-black">
-                            <span>Total</span>
-                            <span className="text-primary">{formatRupiah(orderResult.totalHarga)}</span>
-                        </div>
-
-                        <div className="flex gap-3 pt-2">
-                            <Button
-                                variant="outline"
-                                className="flex-1"
-                                onClick={() => setOrderResult(null)}
-                            >
-                                Tutup
-                            </Button>
-                            <Button
-                                className="flex-1"
-                                onClick={() => {
-                                    setOrderResult(null);
-                                    window.location.href = "/pembeli/pesanan";
-                                }}
-                            >
-                                <Receipt className="mr-2 h-4 w-4" />
-                                Lihat Pesanan
-                            </Button>
-                        </div>
-                    </div>
-                )}
-            </Modal>
+            )}
         </div>
     );
-}
+}

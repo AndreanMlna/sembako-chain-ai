@@ -1,104 +1,155 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bell, CheckCheck, Trash2, Info, AlertTriangle, BadgeCheck } from "lucide-react";
+import { Bell, CheckCheck, Trash2, Info, AlertTriangle, BadgeCheck, Loader2 } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
 import Button from "@/components/ui/Button";
 import EmptyState from "@/components/shared/EmptyState";
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import { Card, CardContent } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
-import { apiGet, apiPatch } from "@/lib/api";
 
-interface Notif {
-    id: string; judul: string; pesan: string; tipe: string;
-    dibaca: boolean; createdAt: string; link?: string;
+interface NotificationItem {
+    id: string | number;
+    title: string;
+    description: string;
+    time: string;
+    type: string;
+    isRead: boolean;
+    link?: string;
 }
 
 export default function NotifikasiPage() {
-    const [notifs, setNotifs] = useState<Notif[]>([]);
+    const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const fetchNotifs = async () => {
+    const loadNotifications = async () => {
         try {
-            const res = await apiGet<Notif[]>("/notifikasi");
-            if (res.success && res.data) setNotifs(res.data);
-        } catch { /* silent */ } finally { setLoading(false); }
+            setLoading(true);
+            const res = await fetch("/api/notifikasi");
+            const json = await res.json();
+            if (json.success && Array.isArray(json.data)) {
+                setNotifications(json.data);
+            }
+        } catch (err) {
+            console.error("Gagal memuat notifikasi:", err);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    useEffect(() => { fetchNotifs(); }, []);
+    useEffect(() => {
+        loadNotifications();
+    }, []);
 
     const markAllRead = async () => {
-        await apiPatch("/notifikasi", { readAll: true });
-        setNotifs((prev) => prev.map((n) => ({ ...n, dibaca: true })));
+        setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+        try {
+            await fetch("/api/notifikasi", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ all: true }),
+            });
+        } catch (err) {
+            console.error("Gagal menandai notifikasi:", err);
+        }
     };
 
-    const markRead = async (id: string) => {
-        await apiPatch("/notifikasi", { id });
-        setNotifs((prev) => prev.map((n) => (n.id === id ? { ...n, dibaca: true } : n)));
+    const deleteNotif = async (id: string | number) => {
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+        try {
+            await fetch(`/api/notifikasi?id=${encodeURIComponent(id)}`, {
+                method: "DELETE",
+            });
+        } catch (err) {
+            console.error("Gagal menghapus notifikasi:", err);
+        }
     };
 
-    const getIcon = (tipe: string) => {
-        switch (tipe) {
-            case "SUKSES": return <BadgeCheck className="h-5 w-5 text-green-500" />;
-            case "PERINGATAN": return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
-            case "ERROR": return <AlertTriangle className="h-5 w-5 text-red-500" />;
+    const getIcon = (type: string) => {
+        switch (type) {
+            case "success": return <BadgeCheck className="h-5 w-5 text-primary" />;
+            case "warning": return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+            case "danger": return <AlertTriangle className="h-5 w-5 text-red-500" />;
             default: return <Info className="h-5 w-5 text-blue-500" />;
         }
     };
 
-    const unreadCount = notifs.filter((n) => !n.dibaca).length;
-
-    if (loading) return <LoadingSpinner />;
-
     return (
         <div className="space-y-6 animate-in">
             <PageHeader
-                title={`Notifikasi${unreadCount > 0 ? ` (${unreadCount})` : ""}`}
-                description="Semua pemberitahuan aktivitas Anda"
+                title="Notifikasi"
+                description="Semua pemberitahuan aktivitas akun Anda dari sistem"
                 action={
-                    notifs.length > 0 && (
-                        <Button variant="ghost" size="sm" onClick={markAllRead} className="text-primary">
-                            <CheckCheck className="mr-2 h-4 w-4" /> Tandai Semua Dibaca
+                    notifications.length > 0 && (
+                        <Button variant="ghost" size="sm" onClick={markAllRead} className="text-primary hover:text-primary/80">
+                            <CheckCheck className="mr-2 h-4 w-4" />
+                            Tandai Semua Dibaca
                         </Button>
                     )
                 }
             />
 
-            {notifs.length > 0 ? (
+            {loading ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-3">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-sm font-semibold text-foreground/50">Memuat pemberitahuan terbaru...</p>
+                </div>
+            ) : notifications.length > 0 ? (
                 <div className="mx-auto max-w-3xl space-y-3">
-                    {notifs.map((notif) => (
-                        <div key={notif.id} onClick={() => !notif.dibaca && markRead(notif.id)} className="cursor-pointer">
-                        <Card className={cn(
-                                "transition-all duration-300 border-l-4 shadow-sm cursor-pointer",
-                                notif.dibaca ? "border-l-border bg-card/50" : "border-l-primary bg-primary/5"
+                    {notifications.map((notif) => (
+                        <Card
+                            key={notif.id}
+                            className={cn(
+                                "transition-all duration-300 border-l-4 shadow-sm",
+                                notif.isRead ? "border-l-border bg-card/50" : "border-l-primary bg-primary/5"
                             )}
                         >
                             <CardContent className="flex items-start gap-4 p-4">
-                                <div className={cn("mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full", notif.dibaca ? "bg-foreground/10" : "bg-primary/20")}>
-                                    {getIcon(notif.tipe)}
+                                <div className={cn(
+                                    "mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
+                                    notif.isRead ? "bg-foreground/10" : "bg-primary/20"
+                                )}>
+                                    {getIcon(notif.type)}
                                 </div>
+
                                 <div className="flex-1 space-y-1">
                                     <div className="flex items-center justify-between">
-                                        <h4 className={cn("text-sm font-bold", notif.dibaca ? "text-foreground/70" : "text-foreground")}>
-                                            {notif.judul}
+                                        <h4 className={cn(
+                                            "text-sm font-bold",
+                                            notif.isRead ? "text-foreground/70" : "text-foreground"
+                                        )}>
+                                            {notif.title}
                                         </h4>
-                                        <span className="text-[10px] font-medium text-foreground/40 uppercase">
-                                            {new Date(notif.createdAt).toLocaleDateString("id-ID")}
+                                        <span className="text-[10px] font-medium text-foreground/40 uppercase tracking-wider">
+                                            {notif.time}
                                         </span>
                                     </div>
-                                    <p className={cn("text-sm", notif.dibaca ? "text-foreground/50" : "text-foreground/80")}>
-                                        {notif.pesan}
+                                    <p className={cn(
+                                        "text-sm leading-relaxed",
+                                        notif.isRead ? "text-foreground/50" : "text-foreground/80"
+                                    )}>
+                                        {notif.description}
                                     </p>
                                 </div>
+
+                                <button
+                                    onClick={() => deleteNotif(notif.id)}
+                                    className="rounded-lg p-2 text-foreground/20 hover:bg-red-500/10 hover:text-red-500 transition-all"
+                                    title="Hapus notifikasi"
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </button>
                             </CardContent>
                         </Card>
-                        </div>
                     ))}
                 </div>
             ) : (
-                <EmptyState icon="Bell" title="Tidak ada notifikasi" description="Semua pemberitahuan aktivitas terbaru akan muncul di sini." />
+                <EmptyState
+                    icon="Bell"
+                    title="Tidak ada notifikasi"
+                    description="Semua pemberitahuan aktivitas terbaru akan muncul di sini."
+                />
             )}
         </div>
     );
-}
+}

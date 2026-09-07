@@ -42,7 +42,7 @@ export default function PetaniDashboard() {
         if (showRefresh) toast.success("Dashboard diperbarui");
       } else {
         if (response.message?.includes("Unauthorized")) {
-          router.push("/auth/login");
+          router.push("/login");
           return;
         }
         toast.error(response.message || "Gagal mengambil data dari server");

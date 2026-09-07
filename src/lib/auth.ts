@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 const user = await prisma.user.findUnique({
-                    where: { email: credentials.email },
+                    where: { email: credentials.email.toLowerCase().trim() },
                 });
 
                 if (!user) throw new Error("Email atau password salah");
@@ -68,6 +68,7 @@ export const authOptions: NextAuthOptions = {
 
                 return {
                     id: user.id,
+                    name: user.nama,
                     nama: user.nama,
                     email: user.email,
                     role: user.role as UserRole,

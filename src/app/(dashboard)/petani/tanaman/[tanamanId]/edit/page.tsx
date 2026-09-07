@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, Save, Leaf, Tag, Calendar, ChevronRight, Sprout } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
@@ -252,7 +252,12 @@ function EditTanamanContent() {
 
 export default function EditTanamanPage() {
     return (
-        <Suspense fallback={<div className="py-10 text-sm text-slate-400">Memuat halaman...</div>}>
+        <Suspense fallback={
+            <div className="flex flex-col justify-center items-center py-40 gap-4">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                <p className="text-slate-400 text-sm">Memuat form edit tanaman...</p>
+            </div>
+        }>
             <EditTanamanContent />
         </Suspense>
     );
