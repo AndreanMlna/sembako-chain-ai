@@ -216,7 +216,7 @@ export default function PesananPage() {
             ) : (
               <div className="text-center py-12 rounded-2xl border border-dashed border-border bg-card/40">
                 <p className="text-sm font-medium text-foreground/40">
-                  Tidak ada pesanan dengan status "{activeTab}".
+                  Tidak ada pesanan dengan status &quot;{activeTab}&quot;.
                 </p>
               </div>
             )}
