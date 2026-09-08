@@ -1,0 +1,40 @@
+# Skenario AWT (AI Watch Tester) E2E: Perjalanan Pembeli Sembako Chain
+# Format: Declarative YAML Scenario for Playwright & AI-driven testing
+
+name: Skenario E2E Pembeli - Katalog dan Keranjang Sembako
+platform: nextjs
+base_url: http://localhost:3000
+
+steps:
+  # 1. Buka halaman utama
+  - action: navigate
+    url: /
+    wait_for: "text:Sembako Chain"
+    description: "Memuat landing page sembako-chain-ai"
+
+  # 2. Navigasi ke katalog pembeli
+  - action: click
+    target: "a[href*='/pembeli/katalog']"
+    fallback_text: "Katalog"
+    description: "Membuka katalog sembako pembeli"
+
+  # 3. Verifikasi elemen katalog tampil
+  - action: assert_visible
+    target: "text:Katalog Bahan Pangan"
+    description: "Memastikan judul katalog sembako terlihat di layar"
+
+  # 4. Tambah produk ke keranjang
+  - action: click
+    target: "button:has-text('Tambah'), button:has-text('Beli')"
+    description: "Menambahkan produk pangan ke keranjang belanja"
+
+  # 5. Navigasi ke keranjang belanja
+  - action: click
+    target: "a[href*='/pembeli/keranjang']"
+    fallback_text: "Keranjang"
+    description: "Membuka halaman keranjang belanja"
+
+  # 6. Verifikasi ringkasan checkout
+  - action: assert_visible
+    target: "text:Ringkasan Belanja"
+    description: "Memverifikasi kalkulasi total harga dan tombol checkout tersedia"

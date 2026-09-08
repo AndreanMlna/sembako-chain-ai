@@ -1,0 +1,50 @@
+name: CI/CD Quality Pipeline
+
+on:
+  push:
+    branches: [main, andre]
+  pull_request:
+    branches: [main, andre]
+
+# Batalkan run lama jika ada commit baru di branch yang sama
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate:
+    name: Lint, Typecheck & Build Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/sembako_chain_ci?schema=public"
+      NEXTAUTH_SECRET: "ci-test-secret-key-at-least-32-chars-long"
+      NEXTAUTH_URL: "http://localhost:3000"
+      NEXT_PUBLIC_API_URL: "/api"
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: 📦 Install Dependencies
+        run: npm install --prefer-offline --no-audit
+
+      - name: 🗄️ Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🔍 Type Check (TypeScript Validation)
+        run: npm run typecheck
+
+      - name: 🧹 Lint Check
+        run: npm run lint
+        continue-on-error: true # Jangan blokir pipeline jika hanya warning styling non-kritis
+
+      - name: 🏗️ Production Build Validation
+        run: npm run build

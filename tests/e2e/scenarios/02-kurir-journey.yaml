@@ -1,0 +1,35 @@
+# Skenario AWT (AI Watch Tester) E2E: Perjalanan Kurir Sembako Chain
+# Format: Declarative YAML Scenario for Playwright & AI-driven testing
+
+name: Skenario E2E Kurir - Lowongan Pengiriman dan Scan QR
+platform: nextjs
+base_url: http://localhost:3000
+
+steps:
+  # 1. Buka dashboard kurir
+  - action: navigate
+    url: /kurir
+    wait_for: "text:Dashboard Kurir"
+    description: "Memuat dashboard kurir"
+
+  # 2. Akses daftar pekerjaan pengiriman yang tersedia
+  - action: click
+    target: "a[href*='/kurir/jobs']"
+    fallback_text: "Ambil Job"
+    description: "Membuka halaman lowongan pengantaran kurir"
+
+  # 3. Verifikasi daftar order tersedia
+  - action: assert_visible
+    target: "text:Lowongan Pengantaran"
+    description: "Memastikan daftar job siap antar tampil"
+
+  # 4. Buka fitur navigasi rute / QR Scanner
+  - action: click
+    target: "a[href*='/kurir/scan-qr']"
+    fallback_text: "Scan QR"
+    description: "Membuka antarmuka verifikasi serah terima pangan via QR"
+
+  # 5. Verifikasi tampilan scanner aktif
+  - action: assert_visible
+    target: "text:Pindai QR Code"
+    description: "Memastikan kamera / area pemindai QR siap digunakan"
