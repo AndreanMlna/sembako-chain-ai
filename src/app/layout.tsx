@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     },
 };
 
-// JSON-LD Structured Data Schema (Schema.org) untuk SEO Mesin Pencari
+// JSON-LD Structured Data Schema (Schema.org) untuk SEO & AI Search Engines (Google AI, ChatGPT, Perplexity)
 const jsonLdSchema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -72,6 +72,57 @@ const jsonLdSchema = {
                 "@id": `${baseUrl}/#organization`
             },
             "inLanguage": "id-ID"
+        },
+        {
+            "@type": "WebApplication",
+            "@id": `${baseUrl}/#webapp`,
+            "name": "Sembako-Chain AI Platform (HARVEST)",
+            "url": baseUrl,
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web Browser",
+            "description": "Ekosistem distribusi pangan hybrid berbasis kecerdasan buatan (Computer Vision, Route Optimizer, Predictive Inflation Warning).",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "IDR"
+            },
+            "featureList": [
+                "AI Crop Quality Check",
+                "AI Route Optimization for Couriers",
+                "Early Warning Inflasi Pangan",
+                "Katalog Stok Komoditas Real-time",
+                "E-Wallet Transaksi Digital"
+            ]
+        },
+        {
+            "@type": "FAQPage",
+            "@id": `${baseUrl}/#faq`,
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "Apa itu Sembako-Chain AI (HARVEST)?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Sembako-Chain AI adalah platform ekosistem distribusi pangan terintegrasi berbasis AI yang menghubungkan petani, mitra toko, kurir lokal, pembeli UMKM, dan regulator untuk menstabilkan inflasi harga pangan serta meningkatkan transparansi rantai pasok di Indonesia."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Bagaimana kecerdasan buatan (AI) membantu rantai pasok pangan?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Platform ini mengintegrasikan Computer Vision untuk klasifikasi mutu hasil panen petani, algoritma optimasi rute logistik untuk kurir pengantar, dan model analitik prediktif sebagai peringatan dini inflasi bagi regulator pasar."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Siapa saja yang dapat bergabung dalam ekosistem Sembako-Chain?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Terdapat lima peran ekosistem: Petani dan agen panen, Mitra Toko kelontong atau pasar, Kurir logistik lokal, Pembeli (UMKM kuliner dan konsumen), serta Regulator (Bank Indonesia dan pemerintah daerah)."
+                    }
+                }
+            ]
         }
     ]
 };

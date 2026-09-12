@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
   Wheat, Store, Truck, ShoppingCart, BarChart3,
-  ArrowRight, Shield, Zap, Users,
+  ArrowRight, Shield, Zap, Users, HelpCircle,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -113,7 +113,59 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Footer */}
+        {/* FAQ Section (Optimized for AI Search & Rich Snippets) */}
+        <section id="faq" className="mx-auto max-w-7xl px-6 py-24" suppressHydrationWarning>
+          <div className="text-center space-y-4 max-w-3xl mx-auto" suppressHydrationWarning>
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary" suppressHydrationWarning>
+              <HelpCircle className="h-3.5 w-3.5" />
+              <span>Pusat Informasi &amp; FAQ</span>
+            </div>
+            <h3 className="text-3xl font-extrabold text-foreground sm:text-4xl">
+              Pertanyaan yang Sering Diajukan
+            </h3>
+            <p className="text-foreground/60 leading-relaxed">
+              Pelajari bagaimana platform Sembako-Chain AI (HARVEST) bekerja mengoptimalkan rantai pasok pangan dan menekan inflasi daerah.
+            </p>
+          </div>
+
+          <div className="mt-16 max-w-4xl mx-auto grid grid-cols-1 gap-6" suppressHydrationWarning>
+            {[
+              {
+                q: "Apa itu Sembako-Chain AI (HARVEST)?",
+                a: "Sembako-Chain AI adalah platform ekosistem distribusi pangan hybrid berbasis kecerdasan buatan. Sistem ini menghubungkan petani lokal, mitra toko pasar, kurir independen, pembeli UMKM, dan regulator untuk memotong rantai perantara tengkulak berlapis dan mewujudkan transparansi distribusi komoditas secara real-time.",
+              },
+              {
+                q: "Bagaimana teknologi AI membantu menstabilkan harga dan mencegah inflasi?",
+                a: "AI mengolah data historis panen dan tren harga pasar untuk memberikan Early Warning Inflasi kepada regulator. Selain itu, modul AI Route Optimizer menekan biaya logistik pengiriman hingga 30%, sementara AI Crop Check menjamin verifikasi mutu komoditas secara otomatis melalui analisis citra kamera.",
+              },
+              {
+                q: "Siapa saja yang dapat menggunakan dan bergabung dalam platform?",
+                a: "Platform menyediakan 5 dashboard peran terintegrasi: Petani (manajemen panen dan e-wallet digital), Mitra Toko (inventori dan auto-restock), Kurir Lokal (job marketplace dan optimasi rute), Pembeli (katalog stok langsung dari pasar), serta Regulator Bank Indonesia dan Pemda (analisis heatmap ketahanan pangan).",
+              },
+              {
+                q: "Apakah riwayat distribusi dan transaksi komoditas dijamin akuntabel?",
+                a: "Ya, seluruh perpindahan komoditas mulai dari panen, gudang toko, hingga serah terima kurir diverifikasi menggunakan QR code digital terenkripsi. Ini memastikan transparansi asal-usul bahan pangan dari lahan hulu hingga ke tangan konsumen akhir.",
+              },
+            ].map((faq, index) => (
+              <div
+                key={faq.q}
+                className="rounded-2xl border border-border bg-card p-6 sm:p-8 transition-all hover:border-primary/40 hover:shadow-md"
+                suppressHydrationWarning
+              >
+                <h4 className="text-lg font-bold text-foreground flex items-start gap-3">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-xs font-extrabold text-primary">
+                    {index + 1}
+                  </span>
+                  <span>{faq.q}</span>
+                </h4>
+                <p className="mt-4 text-sm text-foreground/70 leading-relaxed pl-10">
+                  {faq.a}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Footer */}
         <footer className="border-t border-border bg-card py-16" suppressHydrationWarning>
           <div className="mx-auto max-w-7xl px-6 text-center space-y-6" suppressHydrationWarning>

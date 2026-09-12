@@ -24,6 +24,21 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: ["/api/", "/dashboard/"],
       },
+      {
+        // Bot AI Search: OpenAI (ChatGPT), Perplexity, Anthropic (Claude), Google Gemini
+        userAgent: ["GPTBot", "ChatGPT-User", "PerplexityBot", "ClaudeBot", "Google-Extended", "Bingbot"],
+        allow: ["/", "/pembeli/katalog", "/login", "/register"],
+        disallow: [
+          "/api/",
+          "/dashboard/",
+          "/petani/",
+          "/mitra-toko/",
+          "/kurir/",
+          "/regulator/",
+          "/admin/",
+          "/profil/",
+        ],
+      },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
   };
